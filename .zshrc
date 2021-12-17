@@ -16,7 +16,7 @@ alias kode="/mnt/c/Users/ml/Desktop/Kodebaser"
 ## Kommandoer
 alias lagre="zsh lagre.zsh"                # ZK-autocommit/push 
 alias gitpull="git pull origin master"
-
+alias tiny="source /home/martinlillebo/pythonscript/tiny.zsh"	# Hjemmesnekra tinyURL-API-til-markdownlenke
 
 # OMZ boilerplate
 
@@ -43,12 +43,14 @@ source $ZSH/oh-my-zsh.sh
 source /mnt/c/Users/ml/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
 
 
-# Virtualenvwrapper-detaljer fra mozilla.org sin Django guide 
-export WORKON_HOME=$HOME/.virtualenvs
-export VIRTUALENVWRAPPER_PYTHON=/usr/bin/python3
-export VIRTUALENVWRAPPER_VIRTUALENV_ARGS=' -p /usr/bin/python3 '
-export PROJECT_HOME=$HOME/Devel
-source /usr/local/bin/virtualenvwrapper.sh
+# Legger inn pythonscript-mappa mi til PYTHONPATH:
+export PYTHONPATH="${PYTHONPATH}:/home/martinlillebo/pythonscript"
+
+
+# Setter opp virtualenvwrapper
+# Dette er for WSL, for Linux er filbanen annerledes, se virtualenvwrapper-zettelen
+export PATH=/home/martinlillebo/.local/bin:$PATH
+source /home/martinlillebo/.local/bin/virtualenvwrapper.sh
 
 # Krav fra en openssl-installeringsside ifb. kjøring av sublimeless. 
 # https://help.dreamhost.com/hc/en-us/articles/360001435926-Installing-OpenSSL-locally-under-your-username
