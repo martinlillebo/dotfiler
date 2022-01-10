@@ -1,0 +1,15 @@
+Pythonmodulen og zsh-skriptet jobber i tandem.
+
+
+- .zsh henter inn URL og sender den inn som argument til .py
+- .py tar i bruk requests-biblioteket for å gjøre en spørring til tinyURL sin API
+	- den fester URL-en oppå deres base-URL og gjør en spørring, og returnerer svaret
+
+Jeg kan få svaret rett til utklipp vha "source tiny.zsh | clip.exe"
+
+
+
+**
+
+Kan legge til: 
+- At den hetner rett fra utklippstavla heller enn å be om input

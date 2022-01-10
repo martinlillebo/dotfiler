@@ -1,4 +1,5 @@
 *
 !.gitignore
 !.zshrc
-!pythonscript/*
+
+# Mapper kan ikke legges til. De må `git add`-es manuelt i terminalen
