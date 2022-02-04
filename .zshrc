@@ -51,7 +51,8 @@ export PYTHONPATH="${PYTHONPATH}:/home/martinlillebo/pythonscript"
 # Setter opp virtualenvwrapper
 # Dette er for WSL, for Linux er filbanen annerledes, se virtualenvwrapper-zettelen
 export PATH=/home/martinlillebo/.local/bin:$PATH
-source /home/martinlillebo/.local/bin/virtualenvwrapper.sh
+export VIRTUALENVWRAPPER_PYTHON=$(which python3) # Forklaring: 202201252051
+source /home/martinlillebo/.local/bin/virtualenvwrapper.sh # Denne virker ikke
 
 # Krav fra en openssl-installeringsside ifb. kjøring av sublimeless. 
 # https://help.dreamhost.com/hc/en-us/articles/360001435926-Installing-OpenSSL-locally-under-your-username

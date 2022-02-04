@@ -26,10 +26,21 @@ IfWinNotExist, ahk_exe qModMaster.exe
 }
 
 ; Autoskrive ting
-Numpad5::Send 🌞
+Numpad1::Send, % "[]() "
+Numpad0::Send,% "- [ ] "
+CapsLock::Send,% "- [ ] "
+NumpadSub::Send, % "lillebomartin@gmail.com"
 
+;; emojis
+Numpad5::Send 🌞
+Numpad6::Send 👍
+Numpad8::Send ☕
+Numpad9::Send 🍺  
+Numpad7::Send 🎉
 
 ; Tidsstempel
-Numpad9::
-FormatTime, tid,, yyyy-MM-dd
-Send %tid%
+NumLock::
+{
+	FormatTime, tid,, yyyy-MM-dd
+	Send %tid%
+}
