@@ -44,6 +44,7 @@ NumpadDiv::
 {
 	FormatTime, tid,, yyyy-MM-dd hh:mm:ss
 	Send %tid%
+return
 }
 
 ;~~~~~~~~~~~~~~~~~~~Emojis~~~~~~~~~~~~~~~~~~~
