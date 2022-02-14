@@ -1,5 +1,3 @@
-# Mapper kan ikke legges til. De m� `git add`-es manuelt i terminalen
-
 **/__pycache__/
 *.pyc
 *.swp
