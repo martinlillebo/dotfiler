@@ -1,5 +1,5 @@
-*
-!.gitignore
-!.zshrc
+# Mapper kan ikke legges til. De mï¿½ `git add`-es manuelt i terminalen
 
-# Mapper kan ikke legges til. De må `git add`-es manuelt i terminalen
+**/__pycache__/
+*.pyc
+*.swp
