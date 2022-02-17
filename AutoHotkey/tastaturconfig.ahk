@@ -42,7 +42,7 @@ return
 ; ddd
 NumpadDiv::
 {
-	FormatTime, tid,, yyyy-MM-dd hh:mm:ss
+	FormatTime, tid,, yyyy-MM-dd HH:mm:ss
 	Send %tid%
 return
 }
