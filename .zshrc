@@ -13,6 +13,7 @@ alias BIU="/mnt/c/Users/ml/Desktop/BIU"    # Snarvei til BIU-kodemappa
 alias ml="/mnt/c/Users/ml"
 alias kode="/mnt/c/Users/ml/Desktop/Kodebaser"
 alias desktop="/mnt/c/Users/ml/Desktop"
+alias repos="/mnt/c/repos"
 
 ## Kommandoer
 alias lagre="zsh lagre.zsh"                # ZK-autocommit/push 
