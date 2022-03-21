@@ -14,6 +14,7 @@ alias ml="/mnt/c/Users/ml"
 alias kode="/mnt/c/Users/ml/Desktop/Kodebaser"
 alias desktop="/mnt/c/Users/ml/Desktop"
 alias repos="/mnt/c/repos"
+alias ascii="python3 ~/ascii.py"
 
 ## Kommandoer
 alias lagre="zsh lagre.zsh"                # ZK-autocommit/push 

@@ -2,6 +2,10 @@
 SetNumLockState, alwayson
 
 
+;~~~~~~~~~~~~~~~~~~~~Tips~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+; Finne ut hva et program heter: Høyreklikk AHK i taskbar og velg Windows Spy
+; Bruk ahk_class XXXX som programnavn
+
 ;~~~~~~~~~~~~~~~~~~~Åpne programmer~~~~~~~~~~~~~~~~~~~
 ; Utforsker [^1] 
 NumpadEnter::
@@ -28,7 +32,9 @@ return
 
 ;~~~~~~~~~~~~~~~~~~~Autoskrive ting~~~~~~~~~~~~~~~~~~~
 CapsLock::Send,% "- [ ] "
-Numpad1::Send, % "[]() "
+
+;~~~~~~~~~~~~~~~~~~~Autoskrive ting(numpad)~~~~~~~~~~~
+Numpad1::Send, % "`"
 NumpadSub::Send, % "lillebomartin@gmail.com"
 
 ; Tidsstempel
@@ -53,6 +59,15 @@ Numpad6::Send 👍
 Numpad8::Send ☕
 Numpad9::Send 🍺  
 Numpad7::Send 🎉
+NumpadMult::Send ×
+
+;~~~~~~~~~~~~~~~~~~Excel-greier~~~~~~~~~~~~~~
+#IfWinActive ahk_class XLMAIN
+^r::Send {Click Right}i{Enter}r{Enter} ; "CTRL+R" setter inn ny rad over musepekeren 
+^k::Send {Click Right}i{Enter}c{Enter} ; "CTRL+K" setter inn ny kolonne til venstre for musepekeren 
+^d::Send {Click Right}dr{Enter} ; "CTRL+D" sletter alle markerte rader 
+
+
 
 ;~~~~~~~~~~~~~~~~~~~Ref~~~~~~~~~~~~~~~~~~~
 ;[^1]: Stjælt herfra: https://github.com/TaranVH/2nd-keyboard/blob/9ee39aaccf9c58df9c4a7c19eb7d12ab5223872c/Almost_All_Windows_Functions.ahk#L570
