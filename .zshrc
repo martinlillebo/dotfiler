@@ -18,8 +18,9 @@ alias ascii="python3 ~/ascii.py"
 
 ## Kommandoer
 alias lagre="zsh lagre.zsh"                # ZK-autocommit/push 
-alias gitpull="git pull origin master"
+alias gp="git pull"
 alias tiny="source /home/martinlillebo/pythonscript/tiny.zsh"	# Hjemmesnekra tinyURL-API-til-markdownlenke
+alias zk="cd zettelkasten"
 
 # OMZ boilerplate
 
