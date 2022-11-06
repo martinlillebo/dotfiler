@@ -20,7 +20,7 @@ alias ascii="python3 ~/ascii.py"
 alias lagre="zsh lagre.zsh"                # ZK-autocommit/push 
 alias gp="git pull"
 alias tiny="source /home/martinlillebo/pythonscript/tiny.zsh"	# Hjemmesnekra tinyURL-API-til-markdownlenke
-alias zk="cd zettelkasten"
+# alias zk="cd zettelkasten"
 
 # OMZ boilerplate
 
