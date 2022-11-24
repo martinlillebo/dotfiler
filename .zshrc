@@ -15,6 +15,7 @@ alias kode="/mnt/c/Users/ml/Desktop/Kodebaser"
 alias desktop="/mnt/c/Users/ml/Desktop"
 alias repos="/mnt/c/repos"
 alias ascii="python3 ~/ascii.py"
+alias ggg="git pull origin master"
 
 ## Kommandoer
 alias lagre="zsh lagre.zsh"                # ZK-autocommit/push 
