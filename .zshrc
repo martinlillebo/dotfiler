@@ -9,19 +9,12 @@ export BROWSER=/mnt/c/Program\ Files\ \(x86\)/Mozilla\ Firefox/firefox.exe
 
 ## Mappesnarveier
 alias zk="/mnt/c/Users/ml/zettelkasten"	   # Snarvei til Zettelkasten
-alias BIU="/mnt/c/Users/ml/Desktop/BIU"    # Snarvei til BIU-kodemappa
-alias ml="/mnt/c/Users/ml"
-alias kode="/mnt/c/Users/ml/Desktop/Kodebaser"
 alias desktop="/mnt/c/Users/ml/Desktop"
-alias repos="/mnt/c/repos"
-alias ascii="python3 ~/ascii.py"
 alias ggg="git pull origin master"
 
 ## Kommandoer
 alias lagre="zsh lagre.zsh"                # ZK-autocommit/push 
-alias gp="git pull"
 alias tiny="source /home/martinlillebo/pythonscript/tiny.zsh"	# Hjemmesnekra tinyURL-API-til-markdownlenke
-# alias zk="cd zettelkasten"
 
 # OMZ boilerplate
 
