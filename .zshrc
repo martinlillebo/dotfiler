@@ -21,8 +21,10 @@ alias tiny="source /home/martinlillebo/pythonscript/tiny.zsh"	# Hjemmesnekra tin
 # If you come from bash you might have to change your $PATH.
 # export PATH=$HOME/bin:/usr/local/bin:$PATH
 
-# Path to your oh-my-zsh installation.
-export ZSH="/home/martinlillebo/.oh-my-zsh"
+# Disse to er avgjørende for å få custom prompt til å virke
+export ZSH="$HOME/.oh-my-zsh"
+source $ZSH/oh-my-zsh.sh
+
 
 # Uncomment the following line to disable bi-weekly auto-update checks.
 # DISABLE_AUTO_UPDATE="true"
