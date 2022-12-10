@@ -1,20 +1,31 @@
-# Fra opprinnelig .zshrc
+# Tema. Har alltid bare brukt det originale
 ZSH_THEME="robbyrussell"
 
-# Henger igjen fra bootcamp
-ZSH=$HOME/.oh-my-zsh
-export BROWSER=/mnt/c/Program\ Files\ \(x86\)/Mozilla\ Firefox/firefox.exe
+if [ `uname` = "Linux" ]; then
+else
+	export BROWSER=/mnt/c/Program\ Files\ \(x86\)/Mozilla\ Firefox/firefox.exe
+fi
 
 # Aliaser, skrevet selv 
+alias ggg="git pull origin master"
+alias lagre="zsh lagre.zsh"                # ZK-autocommit/push 
 
 ## Mappesnarveier
-alias zk="/mnt/c/Users/ml/zettelkasten"	   # Snarvei til Zettelkasten
-alias desktop="/mnt/c/Users/ml/Desktop"
-alias ggg="git pull origin master"
+if [ `uname` = "Linux" ]; then
+	alias zk="$HOME/zettelkasten"
+	alias desktop="$HOME/Desktop"
+else
+	alias zk="/mnt/c/Users/ml/zettelkasten"	   # Snarvei til Zettelkasten
+	alias desktop="/mnt/c/Users/ml/Desktop"
+fi
 
 ## Kommandoer
-alias lagre="zsh lagre.zsh"                # ZK-autocommit/push 
-alias tiny="source /home/martinlillebo/pythonscript/tiny.zsh"	# Hjemmesnekra tinyURL-API-til-markdownlenke
+
+if [ `uname` = "Linux" ]; then
+	alias tiny="source $HOME/pythonscript/tiny.zsh"
+else
+	alias tiny="source /home/martinlillebo/pythonscript/tiny.zsh"	# Hjemmesnekra tinyURL-API-til-markdownlenke
+fi
 
 # OMZ boilerplate
 
@@ -23,7 +34,7 @@ alias tiny="source /home/martinlillebo/pythonscript/tiny.zsh"	# Hjemmesnekra tin
 
 # Disse to er avgjørende for å få custom prompt til å virke
 export ZSH="$HOME/.oh-my-zsh"
-source $ZSH/oh-my-zsh.sh
+source "$ZSH"/oh-my-zsh.sh
 
 
 # Uncomment the following line to disable bi-weekly auto-update checks.
@@ -40,18 +51,23 @@ plugins=(git)
 source $ZSH/oh-my-zsh.sh
 
 # Aktiverer fargelegging av gyldige/ugyldige kommandoer
-source /mnt/c/Users/ml/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
-
+if [ `uname` = "Linux" ]; then
+	source "$HOME"/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
+else
+	source /mnt/c/Users/ml/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
+fi
 
 # Legger inn pythonscript-mappa mi til PYTHONPATH:
 export PYTHONPATH="${PYTHONPATH}:/home/martinlillebo/pythonscript"
 
-
-# Setter opp virtualenvwrapper
-# Dette er for WSL, for Linux er filbanen annerledes, se virtualenvwrapper-zettelen
-export PATH=/home/martinlillebo/.local/bin:$PATH
-export VIRTUALENVWRAPPER_PYTHON=$(which python3) # Forklaring: 202201252051
-source /home/martinlillebo/.local/bin/virtualenvwrapper.sh
+# Setter opp virtualenvwrapper. Dette er for WSL, for Linux er filbanen annerledes, se virtualenvwrapper-zettelen
+if [ `uname` = "Linux" ]; then
+	# Jeg bruker egentlig aldri virtualenvwrapper
+else
+	export PATH=/home/martinlillebo/.local/bin:$PATH
+	export VIRTUALENVWRAPPER_PYTHON=$(which python3) # Forklaring: 202201252051
+	source /home/martinlillebo/.local/bin/virtualenvwrapper.sh
+fi
 
 # Krav fra en openssl-installeringsside ifb. kjøring av sublimeless. 
 # https://help.dreamhost.com/hc/en-us/articles/360001435926-Installing-OpenSSL-locally-under-your-username
