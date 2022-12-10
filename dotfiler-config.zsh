@@ -5,5 +5,5 @@ ln -rs pythonscript ../pythonscript
 
 
 ## Feilsøking
-- Om alle symlenkene får "`'$'\r`" i filnavnene sine er det fordi config-filen er blitt endret med et Windows-system som tukler inn sine usynlige linjeskiftsymboler
-    - Løses med `dos2unix dotfiler-config.zsh`
+#- Om alle symlenkene får "`'$'\r`" i filnavnene sine er det fordi config-filen er blitt endret med et Windows-system som tukler inn sine usynlige linjeskiftsymboler
+#    - Løses med `dos2unix dotfiler-config.zsh`
