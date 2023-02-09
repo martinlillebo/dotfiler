@@ -11,6 +11,7 @@ export BROWSER=/mnt/c/Program\ Files\ \(x86\)/Mozilla\ Firefox/firefox.exe
 alias zk="/mnt/c/Users/ml/zettelkasten"	   # Snarvei til Zettelkasten
 alias desktop="/mnt/c/Users/ml/Desktop"
 alias ggg="git pull origin master"
+alias repos="/mnt/c/repos"
 
 ## Kommandoer
 alias lagre="zsh lagre.zsh"                # ZK-autocommit/push 
