@@ -1,5 +1,6 @@
 Pythonmodulen og zsh-skriptet jobber i tandem.
 
+"python3 -m pip install requests" er nødvendig avhengighet
 
 - .zsh henter inn URL og sender den inn som argument til .py
 - .py tar i bruk requests-biblioteket for å gjøre en spørring til tinyURL sin API
