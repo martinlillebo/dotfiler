@@ -13,12 +13,15 @@ alias dec-hex='printf "%x\n"' # %x sier "omgjør til hex", \n legger til newline
 alias hex-dec='printf "%d\n"'
 
 ## Mappesnarveier
+alias ggg="git pull origin master"
+
 if [ `uname` = "Linux" ]; then
 	alias zk="$HOME/zettelkasten"
 	alias desktop="$HOME/Desktop"
-else
+else # Windows
 	alias zk="/mnt/c/Users/ml/zettelkasten"	   # Snarvei til Zettelkasten
 	alias desktop="/mnt/c/Users/ml/Desktop"
+	alias repos="/mnt/c/repos"
 fi
 
 ## Kommandoer
