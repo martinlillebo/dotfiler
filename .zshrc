@@ -9,6 +9,8 @@ fi
 # Aliaser, skrevet selv 
 alias ggg="git pull origin master"
 alias lagre="zsh lagre.zsh"                # ZK-autocommit/push 
+alias dec-hex='printf "%x\n"' # %x sier "omgjør til hex", \n legger til newline
+alias hex-dec='printf "%d\n"'
 
 ## Mappesnarveier
 alias ggg="git pull origin master"
