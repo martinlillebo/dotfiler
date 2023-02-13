@@ -36,6 +36,7 @@ CapsLock::Send,% "- [ ] "
 ;~~~~~~~~~~~~~~~~~~~Autoskrive ting(numpad)~~~~~~~~~~~
 Numpad1::Send, % "`"
 NumpadSub::Send, % "lillebomartin@gmail.com"
+NumpadAdd::Send, % "ml@eco-stor.com"
 
 ; Tidsstempel
 NumLock::

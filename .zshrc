@@ -13,21 +13,23 @@ alias lagre="zsh lagre.zsh"                # ZK-autocommit/push
 ## Mappesnarveier
 alias ggg="git pull origin master"
 
-if [ `uname` = "Linux" ]; then
-	alias zk="$HOME/zettelkasten"
-	alias desktop="$HOME/Desktop"
-else # Windows
-	alias zk="/mnt/c/Users/ml/zettelkasten"	   # Snarvei til Zettelkasten
+if grep -qi microsoft /proc/version; then # Windows
+	alias zk="/mnt/c/Users/ml/zettelkasten"
 	alias desktop="/mnt/c/Users/ml/Desktop"
 	alias repos="/mnt/c/repos"
+
+else # Linux
+	alias zk="$HOME/zettelkasten"
+	alias desktop="$HOME/Desktop"
+
 fi
 
 ## Kommandoer
 
-if [ `uname` = "Linux" ]; then
-	alias tiny="source $HOME/pythonscript/tiny.zsh"
-else
+if grep -qi microsoft /proc/version; then
 	alias tiny="source /home/martinlillebo/pythonscript/tiny.zsh"	# Hjemmesnekra tinyURL-API-til-markdownlenke
+else
+	alias tiny="source $HOME/pythonscript/tiny.zsh"
 fi
 
 # OMZ boilerplate
@@ -54,10 +56,10 @@ plugins=(git)
 source $ZSH/oh-my-zsh.sh
 
 # Aktiverer fargelegging av gyldige/ugyldige kommandoer
-if [ `uname` = "Linux" ]; then
-	source "$HOME"/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
-else
+if grep -qi microsoft /proc/version; then # Windows
 	source /mnt/c/Users/ml/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
+else # Linux
+	source "$HOME"/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
 fi
 
 # Legger inn pythonscript-mappa mi til PYTHONPATH:
