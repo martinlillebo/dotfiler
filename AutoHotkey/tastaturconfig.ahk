@@ -33,7 +33,7 @@ return
 ;~~~~~~~~~~~~~~~~~~~Autoskrive ting~~~~~~~~~~~~~~~~~~~
 CapsLock::Send,% "- [ ] "
 
-;~~~~~~~~~~~~~~~~~~~Autoskrive ting(numpad)~~~~~~~~~~~
+;Numpad:
 Numpad1::Send, % "`"
 NumpadSub::Send, % "lillebomartin@gmail.com"
 NumpadAdd::Send, % "ml@eco-stor.com"
@@ -68,6 +68,12 @@ NumpadMult::Send ×
 ^k::Send {Click Right}i{Enter}c{Enter} ; "CTRL+K" setter inn ny kolonne til venstre for musepekeren 
 ^d::Send {Click Right}dr{Enter} ; "CTRL+D" sletter alle markerte rader 
 
+;~~~~~~~~~~~~~~~~~~Outlook-greier~~~~~~~~~~~~~~
+#IfWinActive ahk_class rctrl_renwnd32
+^s::Send subject"
+^h::Send hasattachments:yes
+^f::Send from:"
+^t::Send to:"
 
 
 ;~~~~~~~~~~~~~~~~~~~Ref~~~~~~~~~~~~~~~~~~~
