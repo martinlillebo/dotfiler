@@ -70,7 +70,7 @@ NumpadMult::Send ×
 
 ;~~~~~~~~~~~~~~~~~~Outlook-greier~~~~~~~~~~~~~~
 #IfWinActive ahk_class rctrl_renwnd32
-^s::Send subject"
+^s::Send subject:"
 ^h::Send hasattachments:yes
 ^f::Send from:"
 ^t::Send to:"
