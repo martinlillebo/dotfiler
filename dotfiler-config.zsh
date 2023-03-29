@@ -1,7 +1,6 @@
 ln -rs .zshrc ../.zshrc
 ln -rs .vimrc ../.vimrc
 ln -rs AutoHotkey ../AutoHotkey
-ln -rs pythonscript ../pythonscript
 ln -rs .nanorc ../.nanorc
 
 ## Feilsøking
