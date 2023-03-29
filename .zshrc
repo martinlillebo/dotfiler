@@ -64,8 +64,11 @@ else # Linux
 	source "$HOME"/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
 fi
 
-# Legger inn pythonscript-mappa mi til PYTHONPATH:
+# Legger til PYTHONPATH:
+## Pythonscriptmappa:
 export PYTHONPATH="${PYTHONPATH}:/home/martinlillebo/pythonscript"
+## pakker som installeres i .local/bin fra WSL:
+export PYTHONPATH="${PYTHONPATH}:/home/martinlillebo/.local/bin"
 
 # Setter opp virtualenvwrapper. Dette er for WSL, for Linux er filbanen annerledes, se virtualenvwrapper-zettelen
 if [ `uname` = "Linux" ]; then

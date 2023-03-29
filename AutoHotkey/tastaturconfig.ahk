@@ -32,6 +32,7 @@ return
 
 ;~~~~~~~~~~~~~~~~~~~Autoskrive ting~~~~~~~~~~~~~~~~~~~
 CapsLock::Send,% "- [ ] "
++CapsLock::Send,% "- [X] "
 
 ;Numpad:
 Numpad1::Send, % "`"
@@ -55,6 +56,7 @@ return
 }
 
 ;~~~~~~~~~~~~~~~~~~~Emojis~~~~~~~~~~~~~~~~~~~
+Numpad2::Send 👌
 Numpad5::Send 🌞
 Numpad6::Send 👍
 Numpad8::Send ☕
