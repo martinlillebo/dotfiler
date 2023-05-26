@@ -37,7 +37,7 @@ CapsLock::Send,% "- [ ] "
 ;Numpad:
 Numpad1::Send, % "`"
 NumpadSub::Send, % "lillebomartin@gmail.com"
-NumpadAdd::Send, % "ml@eco-stor.com"
+NumpadAdd::Send, % "martin.lillebo@eco-stor.no"
 
 ; Tidsstempel
 NumLock::
@@ -68,7 +68,7 @@ NumpadMult::Send ×
 #IfWinActive ahk_class XLMAIN
 ^r::Send {Click Right}i{Enter}r{Enter} ; "CTRL+R" setter inn ny rad over musepekeren 
 ^k::Send {Click Right}i{Enter}c{Enter} ; "CTRL+K" setter inn ny kolonne til venstre for musepekeren 
-^d::Send {Click Right}dr{Enter} ; "CTRL+D" sletter alle markerte rader 
+^d::Send {Click Right}t{Enter}r{Enter} ; "CTRL+D" sletter alle markerte rader 
 
 ;~~~~~~~~~~~~~~~~~~Outlook-greier~~~~~~~~~~~~~~
 #IfWinActive ahk_class rctrl_renwnd32
