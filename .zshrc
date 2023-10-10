@@ -11,8 +11,9 @@ alias ggg="git pull origin master"
 alias lagre="zsh lagre.zsh"                # ZK-autocommit/push 
 alias dec-hex='printf "%x\n"' # %x sier "omgjør til hex", \n legger til newline
 alias hex-dec='printf "%d\n"'
+alias dict='dict.cc.py'
 
-## Mappesnarveier
+## Mappesnarveier og div
 alias ggg="git pull origin master"
 
 if grep -qi microsoft /proc/version; then # Windows
@@ -23,6 +24,7 @@ if grep -qi microsoft /proc/version; then # Windows
 else # Linux
 	alias zk="$HOME/zettelkasten"
 	alias desktop="$HOME/Desktop"
+	xmodmap ~/.Xmodmap # For å få capslock til å virke som konfigurerbar tast i AutoKey
 
 fi
 
