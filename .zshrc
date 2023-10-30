@@ -25,7 +25,7 @@ else # Linux
 	alias zk="$HOME/zettelkasten"
 	alias desktop="$HOME/Desktop"
 	xmodmap ~/.Xmodmap # For å få capslock til å virke som konfigurerbar tast i AutoKey
-
+	alias activate="source venv/bin/activate"
 fi
 
 ## Kommandoer
