@@ -17,12 +17,12 @@ alias dict='dict.cc.py'
 alias ggg="git pull origin master"
 
 if grep -qi microsoft /proc/version; then # Windows
-	alias zk="/mnt/c/Users/ml/zettelkasten"
+	alias zk="/mnt/c/Users/ml/notater"
 	alias desktop="/mnt/c/Users/ml/Desktop"
 	alias repos="/mnt/c/repos"
 
 else # Linux
-	alias zk="$HOME/zettelkasten"
+	alias zk="$HOME/notater"
         alias zk.py="~/Documents/sublimeless_zk/venv/bin/python3 ~/Documents/sublimeless_zk/src/sublimeless_zk.py"
 	alias desktop="$HOME/Desktop"
 	xmodmap ~/.Xmodmap # For å få capslock til å virke som konfigurerbar tast i AutoKey
