@@ -38,6 +38,7 @@ CapsLock::Send,% "- [ ] "
 Numpad1::Send, % "`"
 NumpadSub::Send, % "lillebomartin@gmail.com"
 NumpadAdd::Send, % "martin.lillebo@eco-stor.no"
+LShift & NumpadAdd::Send, % "christiesgate15brl@gmail.com"
 
 ; Tidsstempel
 NumLock::
@@ -57,11 +58,13 @@ return
 
 ;~~~~~~~~~~~~~~~~~~~Emojis~~~~~~~~~~~~~~~~~~~
 Numpad2::Send 👌
+Numpad4::Send 📁
 Numpad5::Send 🌞
 Numpad6::Send 👍
 Numpad8::Send ☕
 Numpad9::Send 🍺  
 Numpad7::Send 🎉
+LShift & Numpad7::Send ⭐
 NumpadMult::Send ×
 
 ;~~~~~~~~~~~~~~~~~~Excel-greier~~~~~~~~~~~~~~
