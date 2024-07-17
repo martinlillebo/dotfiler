@@ -41,20 +41,20 @@ NumpadAdd::Send, % "martin.lillebo@eco-stor.no"
 LShift & NumpadAdd::Send, % "christiesgate15brl@gmail.com"
 
 ; Tidsstempel
-NumLock::
+NumpadDiv::
 {
 	FormatTime, tid,, yyyy-MM-dd
 	Send %tid%
 return
 }
 
-; ddd
-NumpadDiv::
++NumpadDiv::
 {
 	FormatTime, tid,, yyyy-MM-dd HH:mm:ss
 	Send %tid%
 return
 }
+
 
 ;~~~~~~~~~~~~~~~~~~~Emojis~~~~~~~~~~~~~~~~~~~
 Numpad2::Send 👌
