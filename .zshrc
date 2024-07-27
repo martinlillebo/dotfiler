@@ -25,7 +25,7 @@ else # Linux
 	alias zk="$HOME/notater"
         alias zk.py="~/Documents/sublimeless_zk/venv/bin/python3 ~/Documents/sublimeless_zk/src/sublimeless_zk.py"
 	alias desktop="$HOME/Desktop"
-	xmodmap ~/.Xmodmap # For å få capslock til å virke som konfigurerbar tast i AutoKey
+	xmodmap ~/.xmodmap # For å få capslock til å virke som konfigurerbar tast i AutoKey
 	alias activate="source venv/bin/activate"
 fi
 
