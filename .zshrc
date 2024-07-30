@@ -14,17 +14,18 @@ alias hex-dec='printf "%d\n"'
 alias dict='dict.cc.py'
 
 ## Mappesnarveier og div
-alias ggg="git pull origin master"
-
-if grep -qi microsoft /proc/version; then # Windows
-	alias zk="/mnt/c/Users/ml/notater"
-	alias desktop="/mnt/c/Users/ml/Desktop"
+if grep -qi microsoft /proc/version; then # Windows (WSL)
 	alias repos="/mnt/c/repos"
+	alias zk="/mnt/c/Users/ml/repos/notater"
+	alias dotfiler="/mnt/c/Users/ml/repos/dotfiler"
+	alias desktop="/mnt/c/Users/ml/Desktop"
 
 else # Linux
-	alias zk="$HOME/notater"
-        alias zk.py="~/Documents/sublimeless_zk/venv/bin/python3 ~/Documents/sublimeless_zk/src/sublimeless_zk.py"
+	alias repos="$HOME/repos/"
+	alias zk="$HOME/repos/notater"
+	alias dotfiler="$HOME/repos/dotfiler"
 	alias desktop="$HOME/Desktop"
+        alias zk.py="~/Documents/sublimeless_zk/venv/bin/python3 ~/Documents/sublimeless_zk/src/sublimeless_zk.py"
 	xmodmap ~/.xmodmap # For å få capslock til å virke som konfigurerbar tast i AutoKey
 	alias activate="source venv/bin/activate"
 fi
@@ -89,4 +90,3 @@ export PATH=$HOME/openssl/bin:$PATH
 export LD_LIBRARY_PATH=$HOME/openssl/lib
 export LC_ALL="en_US.UTF-8"
 export LDFLAGS="-L/home/martinlillebo/openssl/lib -Wl,-rpath,/home/martinlillebo/openssl/lib"
-alias eco-poller="~/repos/eco-poller/venv/bin/python3 ~/repos/eco-poller/eco-poller.py"
