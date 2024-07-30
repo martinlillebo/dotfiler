@@ -12,6 +12,7 @@ alias lagre="zsh lagre.zsh"                # ZK-autocommit/push
 alias dec-hex='printf "%x\n"' # %x sier "omgjør til hex", \n legger til newline
 alias hex-dec='printf "%d\n"'
 alias dict='dict.cc.py'
+alias dconf-dump="dconf dump /org/gnome/"
 
 ## Mappesnarveier og div
 if grep -qi microsoft /proc/version; then # Windows (WSL)
