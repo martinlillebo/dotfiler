@@ -6,13 +6,14 @@ else
 	export BROWSER=/mnt/c/Program\ Files\ \(x86\)/Mozilla\ Firefox/firefox.exe
 fi
 
-# Aliaser, skrevet selv 
+# Aliaser, skrevet selv
 alias ggg="git pull origin master"
-alias lagre="zsh lagre.zsh"                # ZK-autocommit/push 
+alias lagre="zsh lagre.zsh"                # ZK-autocommit/push
 alias dec-hex='printf "%x\n"' # %x sier "omgjør til hex", \n legger til newline
 alias hex-dec='printf "%d\n"'
 alias dict='dict.cc.py'
 alias dconf-dump="dconf dump /org/gnome/"
+alias autokey-stop="pkill autokey-gtk"
 
 ## Mappesnarveier og div
 if grep -qi microsoft /proc/version; then # Windows (WSL)
