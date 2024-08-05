@@ -19,12 +19,14 @@ alias autokey-stop="pkill autokey-gtk"
 if grep -qi microsoft /proc/version; then # Windows (WSL)
 	alias repos="/mnt/c/repos"
 	alias zk="/mnt/c/Users/ml/repos/notater"
+	alias notater="/mnt/c/Users/ml/repos/notater"
 	alias dotfiler="/mnt/c/Users/ml/repos/dotfiler"
 	alias desktop="/mnt/c/Users/ml/Desktop"
 
 else # Linux
 	alias repos="$HOME/repos/"
 	alias zk="$HOME/repos/notater"
+	alias notater="$HOME/repos/notater"
 	alias dotfiler="$HOME/repos/dotfiler"
 	alias desktop="$HOME/Desktop"
         alias zk.py="~/Documents/sublimeless_zk/venv/bin/python3 ~/Documents/sublimeless_zk/src/sublimeless_zk.py"
