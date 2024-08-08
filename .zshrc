@@ -14,6 +14,7 @@ alias hex-dec='printf "%d\n"'
 alias dict='dict.cc.py'
 alias dconf-dump="dconf dump /org/gnome/"
 alias autokey-stop="pkill autokey-gtk"
+alias autokey-av="pkill autokey-gtk"
 
 ## Mappesnarveier og div
 if grep -qi microsoft /proc/version; then # Windows (WSL)
