@@ -77,20 +77,3 @@ fi
 export PYTHONPATH="${PYTHONPATH}:/home/martinlillebo/pythonscript"
 ## pakker som installeres i .local/bin fra WSL:
 export PYTHONPATH="${PYTHONPATH}:/home/martinlillebo/.local/bin"
-
-# Setter opp virtualenvwrapper. Dette er for WSL, for Linux er filbanen annerledes, se virtualenvwrapper-zettelen
-if [ `uname` = "Linux" ]; then
-	# Jeg bruker egentlig aldri virtualenvwrapper
-else
-	export PATH=/home/martinlillebo/.local/bin:$PATH
-	export VIRTUALENVWRAPPER_PYTHON=$(which python3) # Forklaring: 202201252051
-	source /home/martinlillebo/.local/bin/virtualenvwrapper.sh
-fi
-
-# Krav fra en openssl-installeringsside ifb. kjøring av sublimeless. 
-# https://help.dreamhost.com/hc/en-us/articles/360001435926-Installing-OpenSSL-locally-under-your-username
-# Kan hende dette er unødvendig, vet ikke hva det gjør
-export PATH=$HOME/openssl/bin:$PATH
-export LD_LIBRARY_PATH=$HOME/openssl/lib
-export LC_ALL="en_US.UTF-8"
-export LDFLAGS="-L/home/martinlillebo/openssl/lib -Wl,-rpath,/home/martinlillebo/openssl/lib"
