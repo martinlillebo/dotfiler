@@ -31,7 +31,7 @@ else # Linux
 	alias dotfiler="$HOME/repos/dotfiler"
 	alias desktop="$HOME/Desktop"
         alias zk.py="~/Documents/sublimeless_zk/venv/bin/python3 ~/Documents/sublimeless_zk/src/sublimeless_zk.py"
-	xmodmap ~/.xmodmap # For å få capslock til å virke som konfigurerbar tast i AutoKey
+#	xmodmap ~/.xmodmap # For å få capslock til å virke som konfigurerbar tast i AutoKey
 	alias activate="source venv/bin/activate"
 fi
 
@@ -73,8 +73,3 @@ else # Linux
 	source "$HOME"/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
 fi
 
-# Legger til PYTHONPATH:
-## Pythonscriptmappa:
-export PYTHONPATH="${PYTHONPATH}:/home/martinlillebo/pythonscript"
-## pakker som installeres i .local/bin fra WSL:
-export PYTHONPATH="${PYTHONPATH}:/home/martinlillebo/.local/bin"
