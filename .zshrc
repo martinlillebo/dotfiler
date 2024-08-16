@@ -15,6 +15,7 @@ alias dict='dict.cc.py'
 alias dconf-dump="dconf dump /org/gnome/"
 alias autokey-stop="pkill autokey-gtk"
 alias autokey-av="pkill autokey-gtk"
+alias vm="virt-manager"
 
 ## Mappesnarveier og div
 if grep -qi microsoft /proc/version; then # Windows (WSL)
