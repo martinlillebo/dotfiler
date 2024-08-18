@@ -1,0 +1,30 @@
+{
+    "type": "script",
+    "description": "- [\u00a0]\u00a0",
+    "store": {},
+    "modes": [
+        3
+    ],
+    "usageCount": 15,
+    "prompt": false,
+    "omitTrigger": false,
+    "showInTrayMenu": false,
+    "abbreviation": {
+        "abbreviations": [],
+        "backspace": true,
+        "ignoreCase": false,
+        "immediate": false,
+        "triggerInside": false,
+        "wordChars": "[\\w]"
+    },
+    "hotkey": {
+        "modifiers": [
+            "<shift>"
+        ],
+        "hotKey": "<code191>"
+    },
+    "filter": {
+        "regex": null,
+        "isRecursive": false
+    }
+}
