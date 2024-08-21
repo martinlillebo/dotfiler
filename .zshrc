@@ -16,6 +16,7 @@ alias dconf-dump="dconf dump /org/gnome/"
 alias autokey-stop="pkill autokey-gtk"
 alias autokey-av="pkill autokey-gtk"
 alias vm="virt-manager"
+alias code="com.visualstudio.code"
 
 ## Mappesnarveier og div
 if grep -qi microsoft /proc/version; then # Windows (WSL)
@@ -48,6 +49,10 @@ fi
 
 # If you come from bash you might have to change your $PATH.
 # export PATH=$HOME/bin:/usr/local/bin:$PATH
+
+# Legger til nødvendige PATH-er
+export PATH="$PATH:/var/lib/flatpak/exports/bin"
+
 
 # Disse to er avgjørende for å få custom prompt til å virke
 export ZSH="$HOME/.oh-my-zsh"
