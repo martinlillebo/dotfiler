@@ -17,6 +17,7 @@ alias autokey-stop="pkill autokey-gtk"
 alias autokey-av="pkill autokey-gtk"
 alias vm="virt-manager"
 alias code="com.visualstudio.code"
+alias docker="sudo docker"
 
 ## Mappesnarveier og div
 if grep -qi microsoft /proc/version; then # Windows (WSL)
