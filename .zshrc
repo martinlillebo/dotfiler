@@ -15,6 +15,7 @@ alias code="com.visualstudio.code"
 alias docker="sudo docker"
 alias c="clear"
 alias skruav="systemctl poweroff"
+alias xclip="xclip -selection c" # for å kunne pipe til clipboard med (...) | xclip
 
 ## Aliaser-Git
 alias gst="git status"
@@ -65,3 +66,5 @@ else # Linux
 	source "$HOME"/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
 fi
 
+
+export PYTHONPATH="/home/ml/repos/EcoPlatform"
