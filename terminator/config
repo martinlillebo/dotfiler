@@ -4,8 +4,10 @@
   [[default]]
     background_darkness = 0.92
     background_type = transparent
+    font = Monospace 15
     show_titlebar = False
     scrollbar_position = hidden
+    use_system_font = False
   [[martin]]
 [layouts]
   [[default]]

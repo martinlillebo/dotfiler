@@ -1,3 +1,9 @@
+# Temp til CPP EMS installering
+#export LD_LIBRARY_PATH=/home/ml/repos/ems-cpp/3rd-party/lib/x86:
+#export LD_LIBRARY_PATH=/home/ml/repos/ems-cpp/3rd-party/x86/lib:/home/ml/repos/ems-cpp/build/x86/lib:
+
+
+
 # Tema. Har alltid bare brukt det originale
 ZSH_THEME="robbyrussell"
 
@@ -11,11 +17,12 @@ alias dconf-dump="dconf dump /org/gnome/"
 alias autokey-stop="pkill autokey-gtk"
 alias autokey-av="pkill autokey-gtk"
 alias vm="virt-manager"
-alias code="com.visualstudio.code"
+#alias code="com.visualstudio.code"
 alias docker="sudo docker"
 alias c="clear"
 alias skruav="systemctl poweroff"
 alias xclip="xclip -selection c" # for å kunne pipe til clipboard med (...) | xclip
+alias tiny='source /home/ml/repos/tiny/tiny.zsh'
 
 ## Aliaser-Git
 alias gst="git status"
@@ -67,4 +74,5 @@ else # Linux
 fi
 
 
-export PYTHONPATH="/home/ml/repos/EcoPlatform"
+export PYTHONPATH="${PYTHONPATH}:/home/ml/repos/EcoPlatform"
+export PYTHONPATH="${PYTHONPATH}:/home/ml/repos/tiny"
