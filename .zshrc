@@ -23,6 +23,7 @@ alias c="clear"
 alias skruav="systemctl poweroff"
 alias xclip="xclip -selection c" # for å kunne pipe til clipboard med (...) | xclip
 alias tiny='source /home/ml/repos/tiny/tiny.zsh'
+alias i='ip -c a'
 
 ## Aliaser-Git
 alias gst="git status"
