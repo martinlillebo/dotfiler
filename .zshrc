@@ -3,6 +3,9 @@
 #export LD_LIBRARY_PATH=/home/ml/repos/ems-cpp/3rd-party/x86/lib:/home/ml/repos/ems-cpp/build/x86/lib:
 
 
+# PATH
+export PATH="$HOME/.config/emacs/bin:$PATH"
+
 
 # Tema. Har alltid bare brukt det originale
 ZSH_THEME="robbyrussell"
