@@ -69,5 +69,8 @@
 ;; You can also try 'gd' (or 'C-c c d') to jump to their definition and see how
 ;; they are implemented.
 
-;; Enable Vim-esque relative linjenumre
+;; Aktiverer Vim-esque relative linjenumre
 (setq display-line-numbers-type 'relative)
+
+;; Gjør at bokmerker holder seg lagra på tvers av reboots
+(setq bookmark-save-flag 1)
