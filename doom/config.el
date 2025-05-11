@@ -74,3 +74,7 @@
 
 ;; Gjør at bokmerker holder seg lagra på tvers av reboots
 (setq bookmark-save-flag 1)
+
+;; prøver å autolagre buffere:
+(setq auto-save-visited-interval 15)
+(auto-save-visited-mode +1)
