@@ -78,3 +78,6 @@
 ;; prøver å autolagre buffere:
 (setq auto-save-visited-interval 15)
 (auto-save-visited-mode +1)
+
+;; Projectile prosjekter
+(setq projectile-project-search-path '("~/repos/notater"))
