@@ -84,3 +84,6 @@
 
 ;; 🐱
 (nyan-mode 1)
+
+;; fjerner "really quit Emacs?"-prompt ved exit
+(setq confirm-kill-emacs nil)
