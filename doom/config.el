@@ -81,3 +81,6 @@
 
 ;; Projectile prosjekter
 (setq projectile-project-search-path '("~/repos/notater"))
+
+;; 🐱
+(nyan-mode 1)
