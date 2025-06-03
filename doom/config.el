@@ -28,7 +28,20 @@
 ;; There are two ways to load a theme. Both assume the theme is installed and
 ;; available. You can either set `doom-theme' or manually load a theme with the
 ;; `load-theme' function. This is the default:
-(setq doom-theme 'doom-material-dark)
+(setq doom-theme 'catppuccin)
+(setq catppuccin-flavor 'macchiato) ;; or 'latte, 'macchiato, or 'mocha
+
+
+;; (add-hook 'server-after-make-frame-hook #'catppuccin-reload) ;; for å unngå dette problemet: https://github.com/catppuccin/emacs/issues/121
+;; nedenfor: chatgpt-magi fordi original fix ikke virka
+(add-hook 'server-after-make-frame-hook
+          (lambda () (when (fboundp 'catppuccin-reload)
+                       (catppuccin-reload))))
+
+(when (fboundp 'catppuccin-reload)
+  (catppuccin-reload))
+
+
 ;; numbers are disabled. For relative line numbers, set this to `relative'.
 (setq display-line-numbers-type t)
 
@@ -43,7 +56,7 @@
 ;;   (after! PACKAGE
 ;;     (setq x y))
 ;;
-;; The exceptions to this rule:
+;; Th
 ;;
 ;;   - Setting file/directory variables (like `org-directory')
 ;;   - Setting variables which explicitly tell you to set them before their
@@ -80,10 +93,86 @@
 (auto-save-visited-mode +1)
 
 ;; Projectile prosjekter
-(setq projectile-project-search-path '("~/repos/notater"))
+(setq projectile-project-search-path '("~/repos/notater/"))
+
+;; PRøver å få projectile til å alltid søke i /notater om jeg ikke har spesifisert noe annet, for akkurat nå søker den alltid i /dotfiler, som ikke er nyttig
+(after! projectile
+  (setq projectile-require-project-root nil)  ; allow fallback roots
+  (add-to-list 'projectile-project-root-functions
+               (lambda (_)
+                 (expand-file-name "~/repos/notater/"))))
+
 
 ;; 🐱
 (nyan-mode 1)
 
 ;; fjerner "really quit Emacs?"-prompt ved exit
 (setq confirm-kill-emacs nil)
+
+
+(setq org-directory (expand-file-name "~/repos/notater/org/"))
+
+(setq org-roam-directory org-directory)
+(after! org-roam
+  (org-roam-db-autosync-mode))
+
+
+
+;; toc-org config
+(setq org-export-with-todo-keywords t)
+
+
+;; Forsøker å få Ansible til å kjøre i en literal org-fil:
+;; 2025-06-01: Dette gir riktig syntax highlighting, men får den fortsatt ikke til å kjøre
+
+
+(add-load-path! "~/.config/doom/lokal")
+
+(after! org
+  (require 'ob-ansible)
+  (org-babel-do-load-languages
+   'org-babel-load-languages
+   '((ansible . t)  ; enables org-babel-execute:ansible 😊
+     ;; …other languages you already have…
+     )))
+
+
+;; Mal for å sette opp nye notater
+(defun my/datert-orgfil (title)
+  "Create a new Org file with format YYYYMMDDMM Title.org in ~/repos/notater/."
+  (interactive "sTitle: ")
+  (let* ((timestamp (format-time-string "%Y%m%d%M"))
+         (filename (format "~/repos/notater/%s %s.org" timestamp title)))
+    (find-file filename)))
+
+;; hotkey til funksjonen over
+(map! :leader
+      :desc "New dated org file"
+      "- RET" #'my/datert-orgfil)
+
+
+
+
+;; Forsøk på å sette en ny capture template
+(setq org-capture-templates
+     '(("m" "Innboks jobb" item (file+headline "~/repos/notater/202111121500 Innboks jobb.org" "Tasks")
+        "%?")
+;     ("o" "Innbokos jobb TODO" entry (file "~/repos/notater/capture-test.org")
+;        "* TODO %?")
+     ("i" "Innboks jobb TODO" entry (file "~/repos/notater/capture-test.org")
+        "* TODO %?")))
+
+;; \n Skrevet fra: %a \n"
+
+;;(setq org-capture-templates
+;;      '(("t" "Todo" entry (file+headline "~/org/gtd.org" "Tasks")
+;;         "* TODO %?\n  %i\n  %a")
+;;        ("j" "Journal" entry (file+datetree "~/org/journal.org")
+;;         "* %?\nEntered on %U\n  %i\n  %a")))
+;;;;
+;;
+;;        ("j" "Journal" entry (file+datetree "~/repos/notater/capture-test.org")
+  ;;       "* %?\nEntered on %U\n  %i\n  %a")))
+
+;; Fjerner vindu-baren på topp, og "minimize"/"maximize"-knappene og alt på den linja
+;;  (add-to-list 'default-frame-alist '(undecorated . t))
