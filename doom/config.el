@@ -176,3 +176,7 @@
 
 ;; Fjerner vindu-baren på topp, og "minimize"/"maximize"-knappene og alt på den linja
 ;;  (add-to-list 'default-frame-alist '(undecorated . t))
+
+(setq initial-buffer-choice "~/repos/notater/2025060408 doom-startside.org")
+
+
