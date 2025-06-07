@@ -60,15 +60,13 @@
      ("i" "Innboks jobb TODO" entry (file "~/repos/notater/capture-test.org")
         "* TODO %?")))
 
-
-
-;; prøver å autolagre buffere:
 (setq auto-save-visited-interval 15)
 (auto-save-visited-mode +1)
 
+
+
 ;; fjerner "really quit Emacs?"-prompt ved exit
 (setq confirm-kill-emacs nil)
-
 
 (add-load-path! "~/.config/doom/lokal")
 
