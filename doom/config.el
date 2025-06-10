@@ -46,6 +46,12 @@
      ;; …other languages you already have…
      )))
 
+(defun my/org-export-to-tmp-html ()
+  (interactive)
+  (let* ((basename (file-name-base (or (buffer-file-name) (buffer-name))))
+         (outfile (concat "/tmp/" basename ".html")))
+    (org-export-to-file 'html outfile nil nil nil nil nil)))
+
 (setq org-directory (expand-file-name "~/repos/notater/org/"))
 
 (setq org-roam-directory org-directory)
