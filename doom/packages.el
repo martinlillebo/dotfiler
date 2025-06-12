@@ -12,3 +12,4 @@
 (package! nyan-mode)
 (package! fireplace)
 (package! zone-rainbow)
+(package! rainbow-mode)

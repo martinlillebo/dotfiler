@@ -36,6 +36,16 @@
 
 (setq bookmark-save-flag 1)
 
+(after! org
+  (setq org-todo-keyword-faces
+        '(;;("TODO" . (:foreground "#ffff00" :weight bold))
+          ("STRT" . (:foreground "#ffff00" :weight bold))
+          ("KILL" . (:foreground "#595e60" :weight bold))
+          ("WAIT" . (:foreground "#B4F8C8" :weight bold))
+          ("PROJ" . (:foreground "#B4F8C8" :weight bold))
+          ;;("DONE" . (:foreground "forest green" :weight bold))
+          )))
+
 (setq org-log-done 'time)  ; adds CLOSED timestamp when marking DONE 🕒
 
 (setq org-capture-templates
@@ -93,3 +103,7 @@
 (setq initial-buffer-choice "~/repos/notater/2025060408 doom-startside.org")
 
 (nyan-mode 1)
+
+
+(after! org
+  (add-hook 'org-mode-hook #'rainbow-mode))
