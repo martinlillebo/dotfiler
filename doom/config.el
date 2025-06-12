@@ -75,11 +75,11 @@
 (defun my/datert-orgfil (title)
   "Create a new Org file with format YYYYMMDDMM Title.org in ~/repos/notater/."
   (interactive "sTitle: ")
-  (let* ((timestamp (format-time-string "%Y%m%d%M"))
+  (let* ((timestamp (format-time-string "%Y%m%d%H%M"))
          (filename (format "~/repos/notater/%s %s.org" timestamp title)))
     (find-file filename)))
 
-(setq auto-save-visited-interval 15)
+(setq auto-save-visited-interval 5)
 (auto-save-visited-mode +1)
 
 
