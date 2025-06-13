@@ -1,3 +1,5 @@
+
+
 ;;; $DOOMDIR/config.el -*- lexical-binding: t; -*-
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -7,6 +9,21 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (setq confirm-kill-emacs nil)
+
+(setq auto-save-visited-interval 5)
+(auto-save-visited-mode +1)
+
+(map! :leader
+      :desc "New dated org file"
+      "- RET" #'my/datert-orgfil)
+
+(map! :leader
+      :desc "Dirvish quick access"
+      "RET" #'dirvish-quick-access)
+
+(setq display-line-numbers-type 'relative)
+
+(setq bookmark-save-flag 1)
 
 ;; There are two ways to load a theme. Both assume the theme is installed and
 ;; available. You can either set `doom-theme' or manually load a theme with the
@@ -31,10 +48,6 @@
 ;; Legger til vibe-config for å fjerne feilmelding
   (setq projectile-project-root-files-bottom-up
         (remove ".git" projectile-project-root-files-bottom-up)))
-
-(setq display-line-numbers-type 'relative)
-
-(setq bookmark-save-flag 1)
 
 (after! org
   (setq org-todo-keyword-faces
@@ -89,16 +102,14 @@
          (filename (format "~/repos/notater/%s %s.org" timestamp title)))
     (find-file filename)))
 
-(setq auto-save-visited-interval 5)
-(auto-save-visited-mode +1)
-
-
-
-;; hotkey til funksjonen over
-(map! :leader
-      :desc "New dated org file"
-      "- RET" #'my/datert-orgfil)
-
+(after! dirvish
+  (setq dirvish-quick-access-entries
+        '(("e" "/repos/notater/2025060337 emacs-config.org" "emacs-config.org")
+          ("a" "~/repos/notater/202012010931 Arbeidsoppgaver.org"         "Arbeidsoppgaver.org")
+          ("j" "~/repos/notater/202505280758 2025-06 jobb.org"          "2025-06 jobb")
+          ("d" "~/repos/notater/2025060333 Doom Emacs - Læring.org"     "Emacs Doom - Læring")
+          ;; Add more entries as desired
+          )))
 
 (setq initial-buffer-choice "~/repos/notater/2025060408 doom-startside.org")
 
