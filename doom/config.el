@@ -104,10 +104,13 @@
 
 (after! dirvish
   (setq dirvish-quick-access-entries
-        '(("e" "/repos/notater/2025060337 emacs-config.org" "emacs-config.org")
-          ("a" "~/repos/notater/202012010931 Arbeidsoppgaver.org"         "Arbeidsoppgaver.org")
-          ("j" "~/repos/notater/202505280758 2025-06 jobb.org"          "2025-06 jobb")
-          ("d" "~/repos/notater/2025060333 Doom Emacs - Læring.org"     "Emacs Doom - Læring")
+        '(("e" "~/repos/notater/2025060337 emacs-config.org"                   "emacs-config")
+          ("d" "~/repos/notater/2025060333 Doom Emacs - Læring.org"            "Emacs Doom - Læring")
+          ("a" "~/repos/notater/202012010931 Arbeidsoppgaver.org"              "Arbeidsoppgaver")
+          ("j" "~/repos/notater/202505280758 2025-06 jobb.org"                 "2025-06 jobb")
+          ("i" "~/repos/notater/202012111337 Innboks.org"                      "Innboks")
+          ("n" "~/repos/notater/202505280757 2025-06.org"                      "2025-06")
+          ("b" "~/repos/notater/20200906130506 Bøker jeg kanskje vil lese.org" "Bøker - Kanskje lese")
           ;; Add more entries as desired
           )))
 
