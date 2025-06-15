@@ -13,3 +13,4 @@
 (package! fireplace)
 (package! zone-rainbow)
 (package! rainbow-mode)
+(package! vimgolf)

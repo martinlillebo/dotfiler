@@ -61,6 +61,19 @@
 
 (setq org-log-done 'time)  ; adds CLOSED timestamp when marking DONE 🕒
 
+(defun my/datert-orgfil (title)
+  "Create a new Org file with format YYYYMMDDMM Title.org in ~/repos/notater/."
+  (interactive "sTitle: ")
+  (let* ((timestamp (format-time-string "%Y%m%d%H%M"))
+         (filename (format "~/repos/notater/%s %s.org" timestamp title)))
+    (find-file filename)))
+
+(setq org-directory (expand-file-name "~/repos/notater/org/"))
+
+(setq org-roam-directory org-directory)
+(after! org-roam
+  (org-roam-db-autosync-mode))
+
 (setq org-capture-templates
      '(("m" "Innboks jobb" item (file+headline "~/repos/notater/202111121500 Innboks jobb.org" "Tasks")
         "%?")
@@ -68,6 +81,8 @@
 ;        "* TODO %?")
      ("i" "Innboks jobb TODO" entry (file "~/repos/notater/capture-test.org")
         "* TODO %?")))
+
+(setq org-export-with-todo-keywords t)
 
 (add-load-path! "~/.config/doom/lokal")
 
@@ -84,23 +99,6 @@
   (let* ((basename (file-name-base (or (buffer-file-name) (buffer-name))))
          (outfile (concat "/tmp/" basename ".html")))
     (org-export-to-file 'html outfile nil nil nil nil nil)))
-
-(setq org-directory (expand-file-name "~/repos/notater/org/"))
-
-(setq org-roam-directory org-directory)
-(after! org-roam
-  (org-roam-db-autosync-mode))
-
-;; toc-org config
-(setq org-export-with-todo-keywords t)
-
-;; Mal for å sette opp nye notater
-(defun my/datert-orgfil (title)
-  "Create a new Org file with format YYYYMMDDMM Title.org in ~/repos/notater/."
-  (interactive "sTitle: ")
-  (let* ((timestamp (format-time-string "%Y%m%d%H%M"))
-         (filename (format "~/repos/notater/%s %s.org" timestamp title)))
-    (find-file filename)))
 
 (after! dirvish
   (setq dirvish-quick-access-entries
@@ -121,3 +119,10 @@
 
 (after! org
   (add-hook 'org-mode-hook #'rainbow-mode))
+
+(after! vimgolf
+  (map! :leader
+        ;; call vimgolf prompt
+        "g v" #'vimgolf
+        ;; default bindings as listed in README
+        "g V" #'vimgolf-submit))
