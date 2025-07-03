@@ -30,7 +30,7 @@
 ;; `load-theme' function. This is the default:
 
 (setq doom-theme 'catppuccin)
-(setq catppuccin-flavor 'macchiato) ;; or 'latte, 'macchiato, or 'mocha
+(setq catppuccin-flavor 'mocha) ;; or 'latte, 'macchiato, or 'mocha
 
 (add-hook 'server-after-make-frame-hook
           (lambda () (when (fboundp 'catppuccin-reload)
@@ -38,6 +38,23 @@
 
 (when (fboundp 'catppuccin-reload)
   (catppuccin-reload))
+
+(custom-set-faces!
+  ;;'(line-number-current-line :weight bold :foreground "#cdd6f4")  ;; Current line number
+  '(line-number              :foreground "#b8c2dc"))               ;; Other line numbers
+
+(nyan-mode 1)
+
+
+(after! org
+  (add-hook 'org-mode-hook #'rainbow-mode))
+
+(after! vimgolf
+  (map! :leader
+        ;; call vimgolf prompt
+        "g v" #'vimgolf
+        ;; default bindings as listed in README
+        "g V" #'vimgolf-submit))
 
 (setq projectile-project-search-path '("~/repos/notater/"))
 
@@ -59,7 +76,7 @@
           ;;("DONE" . (:foreground "forest green" :weight bold))
           )))
 
-(setq org-log-done 'time)  ; adds CLOSED timestamp when marking DONE 🕒
+(setq org-log-done 'time)
 
 (defun my/datert-orgfil (title)
   "Create a new Org file with format YYYYMMDDMM Title.org in ~/repos/notater/."
@@ -84,6 +101,10 @@
 
 (setq org-export-with-todo-keywords t)
 
+(setq org-refile-targets
+      '(("~/repos/notater/202111121500 Innboks jobb.org" :maxlevel . 1)
+        ("~/repos/notater/202012111337 Innboks.org" :level . 1)))
+
 (add-load-path! "~/.config/doom/lokal")
 
 (after! org
@@ -105,24 +126,84 @@
         '(("e" "~/repos/notater/2025060337 emacs-config.org"                   "emacs-config")
           ("d" "~/repos/notater/2025060333 Doom Emacs - Læring.org"            "Emacs Doom - Læring")
           ("a" "~/repos/notater/202012010931 Arbeidsoppgaver.org"              "Arbeidsoppgaver")
-          ("j" "~/repos/notater/202505280758 2025-06 jobb.org"                 "2025-06 jobb")
-          ("i" "~/repos/notater/202012111337 Innboks.org"                      "Innboks")
+          ("f" "~/repos/notater/org/20250531191654-todo_familie.org"           "Todo familie")
+          ("t" "~/repos/notater/202506120825 Todo.org"                         "Todo privat")
+          ("s" "~/repos/notater/202505280758 2025-06 jobb.org"                 "2025-06 jobb")
           ("n" "~/repos/notater/202505280757 2025-06.org"                      "2025-06")
+          ("i" "~/repos/notater/202012111337 Innboks.org"                      "Innboks")
+          ("o" "~/repos/notater/202111121500 Innboks jobb.org"                 "Innboks jobb")
           ("b" "~/repos/notater/20200906130506 Bøker jeg kanskje vil lese.org" "Bøker - Kanskje lese")
           ;; Add more entries as desired
           )))
 
-(setq initial-buffer-choice "~/repos/notater/2025060408 doom-startside.org")
+;;(setq initial-buffer-choice "~/repos/notater/2025060408 doom-startside.org")
 
-(nyan-mode 1)
+(use-package emms
+  :config
+  (emms-minimalistic)
+  (setq emms-player-list '(emms-player-mpv)
+        emms-player-mpv-command-name "mpv")
 
+  (defun my/radio-defcon ()
+    "Spiller av DEF CON Radio"
+    (interactive)
+    (emms-play-url "http://ice3.somafm.com/defcon-128-mp3")))
 
-(after! org
-  (add-hook 'org-mode-hook #'rainbow-mode))
+(use-package emms
+  :config
+  (emms-minimalistic)
+  (setq emms-player-list '(emms-player-mpv)
+        emms-player-mpv-command-name "mpv")
 
-(after! vimgolf
-  (map! :leader
-        ;; call vimgolf prompt
-        "g v" #'vimgolf
-        ;; default bindings as listed in README
-        "g V" #'vimgolf-submit))
+  (defun my/radio-nrk-klassisk ()
+    "foobar Spiller av NRK Klassisk"
+    (interactive)
+    (emms-play-url "https://cdn0-47115-liveicecast0.dna.contentdelivery.net/klassisk_mp3_h")))
+
+(defun my/convert-md-header-to-org ()
+  "Convert flexible ZK-style .md file to Org-roam-compatible .org file and rename it."
+  (interactive)
+  (when (string-match "\\.md$" buffer-file-name)
+    (save-excursion
+      (goto-char (point-min))
+
+      ;; Title line: "# <!-- TIMESTAMP --> Title" OR "# TIMESTAMP Title"
+      (when (looking-at "^# *\\(?:<!-- *\\([0-9]+\\) *-->\\|\\([0-9]+\\)\\) *\\(.*\\)")
+        (let ((title (match-string 3)))
+          (replace-match (format "#+title: %s" title) t t)))
+
+      ;; Tags line: replace full line
+      (goto-char (point-min))
+      (when (re-search-forward "^<!-- *tags: *\\(.*?\\) *-->" nil t)
+        (let* ((raw-tags (match-string 1))
+               (tags (mapconcat
+                      (lambda (tag)
+                        (concat ":" (string-trim-left (replace-regexp-in-string "^#" "" tag)) ":"))
+                      (split-string raw-tags) "")))
+          (replace-match (format "#+filetags: %s" tags) nil nil)))
+
+      ;; Backlink line: plain or commented
+      (goto-char (point-min))
+      (when (re-search-forward "^\\(?:<!-- *\\)?\\(Fra\\|Opprettet fra\\): *\\(\\[\\[.*?\\]\\] .*\\)\\(?: *-->\\)?$" nil t)
+        (replace-match (format "#+ROAM_REFS: %s" (match-string 2)) t t)))
+
+    ;; Normalize "## Ref", "## Kilder", etc.
+    (save-excursion
+      (goto-char (point-min))
+      (while (re-search-forward "^\\(?:## *\\)?\\(ref\\|Ref\\|kilder\\|Kilder\\)\\s-*$" nil t)
+        (replace-match "* ref")))
+
+    ;; Insert :ID: property if not already present
+    (save-excursion
+      (goto-char (point-min))
+      (unless (re-search-forward "^:PROPERTIES:" nil t)
+        (let ((uuid (org-id-uuid)))
+          (forward-line)
+          (insert ":PROPERTIES:\n:ID: " uuid "\n:END:\n\n"))))
+
+    ;; Rename file
+    (let ((new-name (concat (file-name-sans-extension buffer-file-name) ".org")))
+      (when (file-exists-p new-name)
+        (delete-file new-name))
+      (rename-visited-file new-name)
+      (message "Converted and renamed to: %s" new-name))))

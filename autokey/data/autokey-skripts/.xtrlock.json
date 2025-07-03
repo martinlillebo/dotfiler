@@ -1,9 +1,11 @@
 {
     "type": "script",
-    "description": "\ud83d\udc4c",
+    "description": "xtrlock",
     "store": {},
-    "modes": [],
-    "usageCount": 0,
+    "modes": [
+        3
+    ],
+    "usageCount": 5,
     "prompt": false,
     "omitTrigger": false,
     "showInTrayMenu": false,
@@ -16,8 +18,11 @@
         "wordChars": "[\\w]"
     },
     "hotkey": {
-        "modifiers": [],
-        "hotKey": null
+        "modifiers": [
+            "<shift>",
+            "<super>"
+        ],
+        "hotKey": "l"
     },
     "filter": {
         "regex": null,

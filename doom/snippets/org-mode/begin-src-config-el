@@ -1,6 +1,6 @@
 # -*- mode: snippet -*-
 # name: begin-src-config-el
-# key: >begin-src-config
+# key: <begin-src-config
 # --
 \,#+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
 $0

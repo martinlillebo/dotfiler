@@ -14,3 +14,4 @@
 (package! zone-rainbow)
 (package! rainbow-mode)
 (package! vimgolf)
+(package! evil-tutor)
