@@ -15,3 +15,5 @@
 (package! rainbow-mode)
 (package! vimgolf)
 (package! evil-tutor)
+
+(package! org-bullets)

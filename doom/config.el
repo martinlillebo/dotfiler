@@ -56,15 +56,11 @@
         ;; default bindings as listed in README
         "g V" #'vimgolf-submit))
 
-(setq projectile-project-search-path '("~/repos/notater/"))
-
 (after! projectile
-  (setq projectile-require-project-root nil)  ; allow fallback roots
-  (add-to-list 'projectile-project-root-functions
-               (lambda (_) (expand-file-name "~/repos/notater/")))
-;; Legger til vibe-config for å fjerne feilmelding
-  (setq projectile-project-root-files-bottom-up
-        (remove ".git" projectile-project-root-files-bottom-up)))
+  (dolist (p '("~/repos/notater"
+               "~/repos/ansible-desktop"
+               "~/repos/EcoPlatform"))
+    (projectile-add-known-project p)))
 
 (after! org
   (setq org-todo-keyword-faces
@@ -119,7 +115,10 @@
   (interactive)
   (let* ((basename (file-name-base (or (buffer-file-name) (buffer-name))))
          (outfile (concat "/tmp/" basename ".html")))
-    (org-export-to-file 'html outfile nil nil nil nil nil)))
+t   (org-export-to-file 'html outfile nil nil nil nil nil)))
+
+(use-package! org-bullets
+  :hook (org-mode . org-bullets-mode))
 
 (after! dirvish
   (setq dirvish-quick-access-entries
@@ -128,15 +127,19 @@
           ("a" "~/repos/notater/202012010931 Arbeidsoppgaver.org"              "Arbeidsoppgaver")
           ("f" "~/repos/notater/org/20250531191654-todo_familie.org"           "Todo familie")
           ("t" "~/repos/notater/202506120825 Todo.org"                         "Todo privat")
-          ("s" "~/repos/notater/202505280758 2025-06 jobb.org"                 "2025-06 jobb")
-          ("n" "~/repos/notater/202505280757 2025-06.org"                      "2025-06")
+          ("s" "~/repos/notater/202507040828 2025-07 jobb.org"                 "2025-07 jobb")
+          ("n" "~/repos/notater/202507040829 2025-07.org"                      "2025-07")
           ("i" "~/repos/notater/202012111337 Innboks.org"                      "Innboks")
           ("o" "~/repos/notater/202111121500 Innboks jobb.org"                 "Innboks jobb")
           ("b" "~/repos/notater/20200906130506 Bøker jeg kanskje vil lese.org" "Bøker - Kanskje lese")
           ;; Add more entries as desired
           )))
 
-;;(setq initial-buffer-choice "~/repos/notater/2025060408 doom-startside.org")
+(setq initial-buffer-choice "~/repos/notater/2025060408 doom-startside.org")
+
+(map! :leader
+      (:prefix ("e" . "emms")
+       :desc "Stopp EMMS-radio" "s" #'emms-stop))
 
 (use-package emms
   :config
@@ -155,10 +158,65 @@
   (setq emms-player-list '(emms-player-mpv)
         emms-player-mpv-command-name "mpv")
 
+  (defun my/radio-nrk-jazz ()
+    "Spiller av NRK Jazz"
+    (interactive)
+    (emms-play-url "https://cdn0-47115-liveicecast0.dna.contentdelivery.net/jazz_mp3_h")))
+
+(use-package emms
+  :config
+  (emms-minimalistic)
+  (setq emms-player-list '(emms-player-mpv)
+        emms-player-mpv-command-name "mpv")
+
   (defun my/radio-nrk-klassisk ()
-    "foobar Spiller av NRK Klassisk"
+    "Spiller av NRK Klassisk"
     (interactive)
     (emms-play-url "https://cdn0-47115-liveicecast0.dna.contentdelivery.net/klassisk_mp3_h")))
+
+(use-package emms
+  :config
+  (emms-minimalistic)
+  (setq emms-player-list '(emms-player-mpv)
+        emms-player-mpv-command-name "mpv")
+
+  (defun my/radio-nrk-p2 ()
+    "Spiller av NRK P2"
+    (interactive)
+    (emms-play-url "https://cdn0-47115-liveicecast0.dna.contentdelivery.net/p2_mp3_h")))
+
+(use-package emms
+  :config
+  (emms-minimalistic)
+  (setq emms-player-list '(emms-player-mpv)
+        emms-player-mpv-command-name "mpv")
+
+  (defun my/radio-nrk-p3 ()
+    "Spiller av NRK P3"
+    (interactive)
+    (emms-play-url "https://cdn0-47115-liveicecast0.dna.contentdelivery.net/p3_mp3_h")))
+
+(use-package emms
+  :config
+  (emms-minimalistic)
+  (setq emms-player-list '(emms-player-mpv)
+        emms-player-mpv-command-name "mpv")
+
+  (defun my/radio-nrk-p13 ()
+    "Spiller av NRK P13"
+    (interactive)
+    (emms-play-url "https://cdn0-47115-liveicecast0.dna.contentdelivery.net/p13_mp3_h")))
+
+(use-package emms
+  :config
+  (emms-minimalistic)
+  (setq emms-player-list '(emms-player-mpv)
+        emms-player-mpv-command-name "mpv")
+
+  (defun my/radio-freecodecamp ()
+    "Spiller av freeCodeCamp sin nettradio"
+    (interactive)
+    (emms-play-url "https://coderadio-admin-v2.freecodecamp.org/listen/coderadio/radio.mp3")))
 
 (defun my/convert-md-header-to-org ()
   "Convert flexible ZK-style .md file to Org-roam-compatible .org file and rename it."
