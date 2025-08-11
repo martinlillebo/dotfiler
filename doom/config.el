@@ -1,5 +1,3 @@
-
-
 ;;; $DOOMDIR/config.el -*- lexical-binding: t; -*-
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -7,6 +5,36 @@
 ;; Hei, ikke endre denne filen direkte - den veves ut fra literalfilen ~emacs-config.org~ ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(setq doom-theme 'kanagawa-wave)
+
+;; (setq doom-theme 'catppuccin)
+;; (setq catppuccin-flavor 'mocha) 
+;; (setq catppuccin-flavor 'macchiato)
+
+(add-hook 'server-after-make-frame-hook
+          (lambda () (when (fboundp 'catppuccin-reload)
+                       (catppuccin-reload))))
+
+(when (fboundp 'catppuccin-reload)
+  (catppuccin-reload))
+
+(custom-set-faces!
+  ;;'(line-number-current-line :weight bold :foreground "#cdd6f4")  ;; Current line number
+  '(line-number              :foreground "#b8c2dc"))               ;; Other line numbers
+
+;; (remove-hook '+doom-dashboard-functions #'doom-dashboard-widget-shortmenu)
+
+(add-to-list '+doom-dashboard-menu-sections
+ '("jump to bookmark 2 test"
+   :icon (nerd-icons-octicon "nf-oct-bookmark" :face 'doom-dashboard-menu-title)
+  :action bookmark-jump))
+
+(assoc-delete-all "Recently opened files" +doom-dashboard-menu-sections)
+(assoc-delete-all "Reload last session" +doom-dashboard-menu-sections)
+(assoc-delete-all "Open project" +doom-dashboard-menu-sections)
+(assoc-delete-all "Open private configuration" +doom-dashboard-menu-sections)
+(assoc-delete-all "Open documentation" +doom-dashboard-menu-sections)
 
 (setq confirm-kill-emacs nil)
 
@@ -25,23 +53,8 @@
 
 (setq bookmark-save-flag 1)
 
-;; There are two ways to load a theme. Both assume the theme is installed and
-;; available. You can either set `doom-theme' or manually load a theme with the
-;; `load-theme' function. This is the default:
-
-(setq doom-theme 'catppuccin)
-(setq catppuccin-flavor 'mocha) ;; or 'latte, 'macchiato, or 'mocha
-
-(add-hook 'server-after-make-frame-hook
-          (lambda () (when (fboundp 'catppuccin-reload)
-                       (catppuccin-reload))))
-
-(when (fboundp 'catppuccin-reload)
-  (catppuccin-reload))
-
-(custom-set-faces!
-  ;;'(line-number-current-line :weight bold :foreground "#cdd6f4")  ;; Current line number
-  '(line-number              :foreground "#b8c2dc"))               ;; Other line numbers
+(set-frame-parameter (selected-frame) 'alpha '(94 . 94))
+(add-to-list 'default-frame-alist '(alpha . (94 . 94)))
 
 (nyan-mode 1)
 
@@ -61,6 +74,18 @@
                "~/repos/ansible-desktop"
                "~/repos/EcoPlatform"))
     (projectile-add-known-project p)))
+
+;;(evil-escape-mode -1)
+
+(require 'key-chord)
+(key-chord-mode 1)
+(key-chord-define evil-insert-state-map "oi" 'evil-normal-state)
+(key-chord-define evil-visual-state-map "oi" 'evil-normal-state)
+(setq key-chord-two-keys-delay 0.2)
+
+;; (after! evil
+;;     (define-key evil-insert-state-map (kbd "<escape>") 'ignore)
+;;     (define-key evil-visual-state-map (kbd "<escape>") 'ignore))
 
 (after! org
   (setq org-todo-keyword-faces
@@ -87,13 +112,23 @@
 (after! org-roam
   (org-roam-db-autosync-mode))
 
-(setq org-capture-templates
-     '(("m" "Innboks jobb" item (file+headline "~/repos/notater/202111121500 Innboks jobb.org" "Tasks")
-        "%?")
-;     ("o" "Innbokos jobb TODO" entry (file "~/repos/notater/capture-test.org")
-;        "* TODO %?")
-     ("i" "Innboks jobb TODO" entry (file "~/repos/notater/capture-test.org")
-        "* TODO %?")))
+(after! org
+  (setq org-capture-templates
+        '(("3" "Jobb innboks - TODO" entry
+           (file "~/repos/notater/202111121500 Innboks jobb.org")
+           "* TODO %?\n%U\n" :prepend t)
+
+          ("4" "Jobb innboks" entry
+           (file "~/repos/notater/202111121500 Innboks jobb.org")
+           "* %?\n%U\n" :prepend t)
+
+          ("1" "Privat innboks - TODO" entry
+           (file "~/repos/notater/202012111337 Innboks.org")
+           "* TODO %?\n%U\n" :prepend t)
+
+          ("2" "Privat innboks" entry
+           (file "~/repos/notater/202012111337 Innboks.org")
+           "* %?\n%U\n" :prepend t))))
 
 (setq org-export-with-todo-keywords t)
 
@@ -131,11 +166,26 @@ t   (org-export-to-file 'html outfile nil nil nil nil nil)))
           ("n" "~/repos/notater/202507040829 2025-07.org"                      "2025-07")
           ("i" "~/repos/notater/202012111337 Innboks.org"                      "Innboks")
           ("o" "~/repos/notater/202111121500 Innboks jobb.org"                 "Innboks jobb")
+          ("p" "~/repos/notater/202008161252 Pakkeliste.org"                 "Pakkelista")
           ("b" "~/repos/notater/20200906130506 Bøker jeg kanskje vil lese.org" "Bøker - Kanskje lese")
           ;; Add more entries as desired
           )))
 
-(setq initial-buffer-choice "~/repos/notater/2025060408 doom-startside.org")
+(use-package blamer
+  :bind (("s-i" . blamer-show-commit-info))
+  :defer 20
+  :custom
+  (blamer-idle-time 0.3)
+  (blamer-min-offset 70)
+  :custom-face
+  (blamer-face ((t :foreground "#7a88cf"
+                    :background nil
+                    :height 140
+                    :italic t)))
+  :config
+  (global-blamer-mode 0))
+
+;; (setq initial-buffer-choice "~/repos/notater/2025060408 doom-startside.org")
 
 (map! :leader
       (:prefix ("e" . "emms")
@@ -218,6 +268,17 @@ t   (org-export-to-file 'html outfile nil nil nil nil nil)))
     (interactive)
     (emms-play-url "https://coderadio-admin-v2.freecodecamp.org/listen/coderadio/radio.mp3")))
 
+(use-package emms
+  :config
+  (emms-minimalistic)
+  (setq emms-player-list '(emms-player-mpv)
+        emms-player-mpv-command-name "mpv")
+
+  (defun my/radio-rainwave ()
+    "Spiller av Rainwave.cc sin nettradio - Videospillmusikk"
+    (interactive)
+    (emms-play-url "https://relay.rainwave.cc/all.mp3")))
+
 (defun my/convert-md-header-to-org ()
   "Convert flexible ZK-style .md file to Org-roam-compatible .org file and rename it."
   (interactive)
@@ -265,3 +326,11 @@ t   (org-export-to-file 'html outfile nil nil nil nil nil)))
         (delete-file new-name))
       (rename-visited-file new-name)
       (message "Converted and renamed to: %s" new-name))))
+
+(defun my/search-files-two-words ()
+  (interactive)
+  (let ((word1 (read-string "First word: "))
+        (word2 (read-string "Second word: ")))
+    (compilation-start
+     (format "rg -l0 %s | xargs -0 rg -l %s" word1 word2)
+     'grep-mode)))

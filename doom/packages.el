@@ -7,6 +7,8 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+(package! kanagawa-themes)
+
 (package! catppuccin-theme)
 
 (package! nyan-mode)
@@ -16,4 +18,8 @@
 (package! vimgolf)
 (package! evil-tutor)
 
+(package! key-chord)
+
 (package! org-bullets)
+
+(package! blamer)

@@ -27,6 +27,7 @@ alias xclip="xclip -selection c" # for å kunne pipe til clipboard med (...) | x
 alias tiny='source /home/ml/repos/tiny/tiny.zsh'
 alias i='ip -c a'
 alias pymodbus.console='~/venv-pymodbus/bin/python3 ~/venv-pymodbus/bin/pymodbus.console'
+alias eco-poller='/home/ml/repos/EcoPlatform/eco-poller/venv/bin/python3 /home/ml/repos/EcoPlatform/eco-poller/eco-poller.py'
 
 ## Aliaser-Git
 alias gst="git status"
