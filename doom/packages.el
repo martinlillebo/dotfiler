@@ -17,6 +17,7 @@
 (package! rainbow-mode)
 (package! vimgolf)
 (package! evil-tutor)
+(package! elisp-format)
 
 (package! key-chord)
 

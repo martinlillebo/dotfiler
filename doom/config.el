@@ -6,11 +6,11 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(setq doom-theme 'kanagawa-wave)
+;; (setq doom-theme 'kanagawa-wave)
 
-;; (setq doom-theme 'catppuccin)
-;; (setq catppuccin-flavor 'mocha) 
-;; (setq catppuccin-flavor 'macchiato)
+(setq doom-theme 'catppuccin)
+(setq catppuccin-flavor 'mocha)
+(setq catppuccin-flavor 'macchiato)
 
 (add-hook 'server-after-make-frame-hook
           (lambda () (when (fboundp 'catppuccin-reload)
@@ -23,20 +23,21 @@
   ;;'(line-number-current-line :weight bold :foreground "#cdd6f4")  ;; Current line number
   '(line-number              :foreground "#b8c2dc"))               ;; Other line numbers
 
-;; (remove-hook '+doom-dashboard-functions #'doom-dashboard-widget-shortmenu)
+(remove-hook '+doom-dashboard-functions #'doom-dashboard-widget-shortmenu)
 
-(add-to-list '+doom-dashboard-menu-sections
- '("jump to bookmark 2 test"
-   :icon (nerd-icons-octicon "nf-oct-bookmark" :face 'doom-dashboard-menu-title)
-  :action bookmark-jump))
+(remove-hook '+doom-dashboard-functions #'doom-dashboard-widget-footer)
 
-(assoc-delete-all "Recently opened files" +doom-dashboard-menu-sections)
-(assoc-delete-all "Reload last session" +doom-dashboard-menu-sections)
-(assoc-delete-all "Open project" +doom-dashboard-menu-sections)
-(assoc-delete-all "Open private configuration" +doom-dashboard-menu-sections)
-(assoc-delete-all "Open documentation" +doom-dashboard-menu-sections)
+(remove-hook '+doom-dashboard-functions #'doom-dashboard-widget-loaded)
 
-(setq confirm-kill-emacs nil)
+(setq fancy-splash-image "~/repos/dotfiler/doom/emacs.png")
+
+(setq confirm-kill-emacs nil) ;; ff
+
+(setq-default lexical-binding t)
+
+(setq initial-major-mode 'lisp-interaction-mode)
+
+(setq +scratch-default-mode 'lisp-interaction-mode)
 
 (setq auto-save-visited-interval 5)
 (auto-save-visited-mode +1)
@@ -58,7 +59,6 @@
 
 (nyan-mode 1)
 
-
 (after! org
   (add-hook 'org-mode-hook #'rainbow-mode))
 
@@ -79,8 +79,8 @@
 
 (require 'key-chord)
 (key-chord-mode 1)
-(key-chord-define evil-insert-state-map "oi" 'evil-normal-state)
-(key-chord-define evil-visual-state-map "oi" 'evil-normal-state)
+;; (key-chord-define evil-insert-state-map "oi" 'evil-normal-state)
+;; (key-chord-define evil-visual-state-map "oi" 'evil-normal-state)
 (setq key-chord-two-keys-delay 0.2)
 
 ;; (after! evil
@@ -150,10 +150,64 @@
   (interactive)
   (let* ((basename (file-name-base (or (buffer-file-name) (buffer-name))))
          (outfile (concat "/tmp/" basename ".html")))
-t   (org-export-to-file 'html outfile nil nil nil nil nil)))
+    ;; export the Org buffer to /tmp/basename.html
+    (org-export-to-file 'html outfile nil nil nil nil nil)
+    ;; open it in Firefox in a new tab
+    (start-process "firefox-preview" nil "/usr/bin/firefox" "--new-tab" outfile)))
 
 (use-package! org-bullets
   :hook (org-mode . org-bullets-mode))
+
+(setq embark-prompter 'embark-completing-read-prompter)
+
+(defun my/open-gmail-firefox-tab ()
+  "Åpner Gmail som ny tab i Firefox"
+  (interactive)
+  (start-process
+   "firefox" nil
+   "/usr/bin/firefox" "--new-tab" "https://mail.google.com/mail/u/0/#inbox"))
+
+(defun my/open-outlook-firefox-tab ()
+  "Åpner Outlook som ny tab i Firefox"
+  (interactive)
+  (start-process
+   "firefox" nil
+   "/usr/bin/firefox" "--new-tab" "https://outlook.office.com/mail/"))
+
+(defun my/yr-lillebo ()
+  "Værmelding for Lillebo"
+  (interactive)
+  (start-process
+   "firefox" nil
+   "/usr/bin/firefox" "--new-tab" "https://www.yr.no/nb/v%C3%A6rvarsel/daglig-tabell/1-174419/Norge/Innlandet/Engerdal/Lillebo"))
+
+(defun my/yr-innbygda ()
+  "Værmelding for Innbygda"
+  (interactive)
+  (start-process
+   "firefox" nil
+   "/usr/bin/firefox" "--new-tab" "https://www.yr.no/nb/v%C3%A6rvarsel/daglig-tabell/1-157692/Norge/Innlandet/Trysil/Innbygda"))
+
+(defun my/yr-oslo-christies ()
+  "Værmelding for Oslo"
+  (interactive)
+  (start-process
+   "firefox" nil
+   "/usr/bin/firefox" "--new-tab" "https://www.yr.no/nb/v%C3%A6rvarsel/daglig-tabell/10-995776/Norge/Oslo/Oslo/Christies%20gate"))
+
+(defun my/open-google-kalender-firefox-tab ()
+  "Åpner Google Calendar som ny tab i Firefox"
+  (interactive)
+  (start-process
+   "firefox" nil
+   "/usr/bin/firefox" "--new-tab" "https://calendar.google.com/"))
+
+(defun my/open-outlook-kalender-firefox-tab ()
+  "Åpner Outlook Calendar som ny tab i Firefox"
+  (interactive)
+  (start-process
+   "firefox" nil
+   "/usr/bin/firefox" "--new-tab" "https://outlook.office.com/calendar/view/week"))
 
 (after! dirvish
   (setq dirvish-quick-access-entries
@@ -223,6 +277,17 @@ t   (org-export-to-file 'html outfile nil nil nil nil nil)))
     "Spiller av NRK Klassisk"
     (interactive)
     (emms-play-url "https://cdn0-47115-liveicecast0.dna.contentdelivery.net/klassisk_mp3_h")))
+
+(use-package emms
+  :config
+  (emms-minimalistic)
+  (setq emms-player-list '(emms-player-mpv)
+        emms-player-mpv-command-name "mpv")
+
+  (defun my/radio-nrk-p1 ()
+    "Spiller av NRK P1"
+    (interactive)
+    (emms-play-url "https://cdn0-47115-liveicecast0.dna.contentdelivery.net/p1_mp3_h")))
 
 (use-package emms
   :config
@@ -326,11 +391,3 @@ t   (org-export-to-file 'html outfile nil nil nil nil nil)))
         (delete-file new-name))
       (rename-visited-file new-name)
       (message "Converted and renamed to: %s" new-name))))
-
-(defun my/search-files-two-words ()
-  (interactive)
-  (let ((word1 (read-string "First word: "))
-        (word2 (read-string "Second word: ")))
-    (compilation-start
-     (format "rg -l0 %s | xargs -0 rg -l %s" word1 word2)
-     'grep-mode)))
