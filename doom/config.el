@@ -158,6 +158,8 @@
 (use-package! org-bullets
   :hook (org-mode . org-bullets-mode))
 
+(setq writeroom-width 50)
+
 (setq embark-prompter 'embark-completing-read-prompter)
 
 (defun my/open-gmail-firefox-tab ()
@@ -216,8 +218,8 @@
           ("a" "~/repos/notater/202012010931 Arbeidsoppgaver.org"              "Arbeidsoppgaver")
           ("f" "~/repos/notater/org/20250531191654-todo_familie.org"           "Todo familie")
           ("t" "~/repos/notater/202506120825 Todo.org"                         "Todo privat")
-          ("s" "~/repos/notater/202507040828 2025-07 jobb.org"                 "2025-07 jobb")
-          ("n" "~/repos/notater/202507040829 2025-07.org"                      "2025-07")
+          ("s" "~/repos/notater/org/20250811084530-2025_08_jobb.org"                 "2025-08 jobb")
+          ("n" "~/repos/notater/202011200904 Dagnotater.md"                      "Dagnotater")
           ("i" "~/repos/notater/202012111337 Innboks.org"                      "Innboks")
           ("o" "~/repos/notater/202111121500 Innboks jobb.org"                 "Innboks jobb")
           ("p" "~/repos/notater/202008161252 Pakkeliste.org"                 "Pakkelista")
@@ -328,6 +330,17 @@
   (setq emms-player-list '(emms-player-mpv)
         emms-player-mpv-command-name "mpv")
 
+  (defun my/radio-nrk-mp3 ()
+    "Spiller av NRK mP3"
+    (interactive)
+    (emms-play-url "https://cdn0-47115-liveicecast0.dna.contentdelivery.net/mp3_mp3_h")))
+
+(use-package emms
+  :config
+  (emms-minimalistic)
+  (setq emms-player-list '(emms-player-mpv)
+        emms-player-mpv-command-name "mpv")
+
   (defun my/radio-freecodecamp ()
     "Spiller av freeCodeCamp sin nettradio"
     (interactive)
@@ -343,6 +356,24 @@
     "Spiller av Rainwave.cc sin nettradio - Videospillmusikk"
     (interactive)
     (emms-play-url "https://relay.rainwave.cc/all.mp3")))
+
+(eval-after-load "org-present"
+  '(progn
+     (add-hook 'org-present-mode-hook
+               (lambda ()
+                 (org-present-big)
+                 (org-display-inline-images)
+                 (org-present-hide-cursor)
+                 (org-present-read-only)))
+     (add-hook 'org-present-mode-quit-hook
+               (lambda ()
+                 (org-present-small)
+                 (org-remove-inline-images)
+                 (org-present-show-cursor)
+                 (org-present-read-write)))))
+
+(after! org-present
+  (setq org-present-level 99))  ;; 2 = * and ** are slides
 
 (defun my/convert-md-header-to-org ()
   "Convert flexible ZK-style .md file to Org-roam-compatible .org file and rename it."
@@ -391,3 +422,16 @@
         (delete-file new-name))
       (rename-visited-file new-name)
       (message "Converted and renamed to: %s" new-name))))
+
+(defvar my/emoji-numpad-map
+  '((7 . "📁") (2 . "🍺") (6 . "👍") (5 . "🌞"))
+  "Mapping from numbers to emojis for `my/emoji-numpad'.")
+
+(defun my/emoji-numpad ()
+  "Prompt for a number; insert mapped emoji, else say 'undefined' in echo area."
+  (interactive)
+  (let* ((n (read-number "Enter a number: "))
+         (emoji (alist-get n my/emoji-numpad-map)))
+    (if emoji
+        (insert emoji)
+      (message "undefined"))))

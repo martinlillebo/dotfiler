@@ -24,3 +24,5 @@
 (package! org-bullets)
 
 (package! blamer)
+
+(package! org-present)
