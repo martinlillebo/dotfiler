@@ -31,7 +31,9 @@
 
 (setq fancy-splash-image "~/repos/dotfiler/doom/emacs.png")
 
-(setq confirm-kill-emacs nil) ;; ff
+(setq frame-title-format '("%b"))
+
+(setq confirm-kill-emacs nil)
 
 (setq-default lexical-binding t)
 
@@ -54,6 +56,15 @@
 
 (setq bookmark-save-flag 1)
 
+;; (setq browse-url-firefox-program "explorer.exe")
+
+;; (setq browse-url-firefox-program nil)
+
+(setq browse-url-browser-function 'browse-url-generic
+      browse-url-generic-program "explorer.exe")
+
+(setq org-ellipsis " ...")
+
 (set-frame-parameter (selected-frame) 'alpha '(94 . 94))
 (add-to-list 'default-frame-alist '(alpha . (94 . 94)))
 
@@ -71,8 +82,7 @@
 
 (after! projectile
   (dolist (p '("~/repos/notater"
-               "~/repos/ansible-desktop"
-               "~/repos/EcoPlatform"))
+               "~/repos/ansible-desktop"))
     (projectile-add-known-project p)))
 
 ;;(evil-escape-mode -1)
@@ -106,7 +116,7 @@
          (filename (format "~/repos/notater/%s %s.org" timestamp title)))
     (find-file filename)))
 
-(setq org-directory (expand-file-name "~/repos/notater/org/"))
+(setq org-directory (expand-file-name "~/repos/notater/"))
 
 (setq org-roam-directory org-directory)
 (after! org-roam
@@ -211,6 +221,19 @@
    "firefox" nil
    "/usr/bin/firefox" "--new-tab" "https://outlook.office.com/calendar/view/week"))
 
+(defun my/tidsstempel-sekund ()
+  (interactive)
+  "Returnerer tidsstempel som YYYY-MM-DD TT:MM:SS"
+  (insert (format-time-string "%Y-%m-%d %H:%M:%S")))
+
+(defun my/tidsstempel-dato ()
+  (interactive)
+  "Returnerer tidsstempel som YYYY-MM-DD"
+  (insert (format-time-string "%Y-%m-%d")))
+
+(map! "<S-delete>" #'my/tidsstempel-dato)
+(map! "<C-S-delete>" #'my/tidsstempel-sekund)
+
 (after! dirvish
   (setq dirvish-quick-access-entries
         '(("e" "~/repos/notater/2025060337 emacs-config.org"                   "emacs-config")
@@ -218,7 +241,7 @@
           ("a" "~/repos/notater/202012010931 Arbeidsoppgaver.org"              "Arbeidsoppgaver")
           ("f" "~/repos/notater/org/20250531191654-todo_familie.org"           "Todo familie")
           ("t" "~/repos/notater/202506120825 Todo.org"                         "Todo privat")
-          ("s" "~/repos/notater/org/20250811084530-2025_08_jobb.org"                 "2025-08 jobb")
+          ("s" "~/repos/notater/org/20250730110754-sopra_steria_oversikt.org"  "Sopra Steria")
           ("n" "~/repos/notater/202011200904 Dagnotater.md"                      "Dagnotater")
           ("i" "~/repos/notater/202012111337 Innboks.org"                      "Innboks")
           ("o" "~/repos/notater/202111121500 Innboks jobb.org"                 "Innboks jobb")
@@ -258,6 +281,10 @@
     (interactive)
     (emms-play-url "http://ice3.somafm.com/defcon-128-mp3")))
 
+(map! :leader
+      (:prefix ("e" . "emms")
+       :desc "Spill av DEF CON radio" "d" #'my/radio-defcon))
+
 (use-package emms
   :config
   (emms-minimalistic)
@@ -268,6 +295,10 @@
     "Spiller av NRK Jazz"
     (interactive)
     (emms-play-url "https://cdn0-47115-liveicecast0.dna.contentdelivery.net/jazz_mp3_h")))
+
+(map! :leader
+      (:prefix ("e" . "emms")
+       :desc "Spill av NRK Jazz" "j" #'my/radio-nrk-jazz))
 
 (use-package emms
   :config
@@ -280,6 +311,10 @@
     (interactive)
     (emms-play-url "https://cdn0-47115-liveicecast0.dna.contentdelivery.net/klassisk_mp3_h")))
 
+(map! :leader
+      (:prefix ("e" . "emms")
+       :desc "Spill av NRK Klassisk" "k" #'my/radio-nrk-klassisk))
+
 (use-package emms
   :config
   (emms-minimalistic)
@@ -290,6 +325,10 @@
     "Spiller av NRK P1"
     (interactive)
     (emms-play-url "https://cdn0-47115-liveicecast0.dna.contentdelivery.net/p1_mp3_h")))
+
+(map! :leader
+      (:prefix ("e" . "emms")
+       :desc "Spill av " "1" #'my/radio-nrk-p1))
 
 (use-package emms
   :config
@@ -302,6 +341,10 @@
     (interactive)
     (emms-play-url "https://cdn0-47115-liveicecast0.dna.contentdelivery.net/p2_mp3_h")))
 
+(map! :leader
+      (:prefix ("e" . "emms")
+       :desc "Spill av NRK P2" "2" #'my/radio-nrk-p2))
+
 (use-package emms
   :config
   (emms-minimalistic)
@@ -312,6 +355,10 @@
     "Spiller av NRK P3"
     (interactive)
     (emms-play-url "https://cdn0-47115-liveicecast0.dna.contentdelivery.net/p3_mp3_h")))
+
+(map! :leader
+      (:prefix ("e" . "emms")
+       :desc "Spill av nrk P3" "3" #'my/radio-nrk-p3))
 
 (use-package emms
   :config
@@ -324,6 +371,10 @@
     (interactive)
     (emms-play-url "https://cdn0-47115-liveicecast0.dna.contentdelivery.net/p13_mp3_h")))
 
+(map! :leader
+      (:prefix ("e" . "emms")
+       :desc "Spill av " "t" #'my/radio-nrk-p13))
+
 (use-package emms
   :config
   (emms-minimalistic)
@@ -334,6 +385,10 @@
     "Spiller av NRK mP3"
     (interactive)
     (emms-play-url "https://cdn0-47115-liveicecast0.dna.contentdelivery.net/mp3_mp3_h")))
+
+(map! :leader
+      (:prefix ("e" . "emms")
+       :desc "Spill av NRK mP3" "m" #'my/radio-nrk-mp3))
 
 (use-package emms
   :config
@@ -346,6 +401,10 @@
     (interactive)
     (emms-play-url "https://coderadio-admin-v2.freecodecamp.org/listen/coderadio/radio.mp3")))
 
+(map! :leader
+      (:prefix ("e" . "emms")
+       :desc "Spill av radio FreeCodeCamp" "f" #'my/radio-freecodecamp))
+
 (use-package emms
   :config
   (emms-minimalistic)
@@ -356,6 +415,10 @@
     "Spiller av Rainwave.cc sin nettradio - Videospillmusikk"
     (interactive)
     (emms-play-url "https://relay.rainwave.cc/all.mp3")))
+
+(map! :leader
+      (:prefix ("e" . "emms")
+       :desc "Spill av Rainwave-radio" "r" #'my/radio-rainwave))
 
 (eval-after-load "org-present"
   '(progn
@@ -374,6 +437,19 @@
 
 (after! org-present
   (setq org-present-level 99))  ;; 2 = * and ** are slides
+
+;; defun (my/åpne-config
+;;   (interactive)
+;;        )
+
+(defun my/org-insert-subheading ()
+  "Insert a new subheading below, position cursor after a space, ready for input."
+  (interactive)
+  (org-insert-heading)
+  (org-metaright)
+  (end-of-line)                 ;; go to end of heading stars
+  (insert " ")                  ;; add a space
+  (evil-insert-state))          ;; switch to insert mode
 
 (defun my/convert-md-header-to-org ()
   "Convert flexible ZK-style .md file to Org-roam-compatible .org file and rename it."
