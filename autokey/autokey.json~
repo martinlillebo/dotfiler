@@ -28,7 +28,10 @@
         "disabledModifiers": [],
         "scriptGlobals": {},
         "gtkTheme": "classic",
-        "gtkExpandedRows": [],
+        "gtkExpandedRows": [
+            "2",
+            "3"
+        ],
         "pathLastOpen": "0"
     },
     "folders": [],
