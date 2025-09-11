@@ -251,6 +251,10 @@
           ;; Add more entries as desired
           )))
 
+(map! :leader
+      (:prefix ("o" . "open")
+       :desc "Open Dirvish (alias SPC o /)" "o" #'dirvish))
+
 (use-package blamer
   :bind (("s-i" . blamer-show-commit-info))
   :defer 20
