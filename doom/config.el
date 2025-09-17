@@ -60,8 +60,8 @@
 
 ;; (setq browse-url-firefox-program nil)
 
-(setq browse-url-browser-function 'browse-url-generic
-      browse-url-generic-program "explorer.exe")
+;; (setq browse-url-browser-function 'browse-url-generic
+;;       browse-url-generic-program "explorer.exe")
 
 (setq org-ellipsis " ...")
 

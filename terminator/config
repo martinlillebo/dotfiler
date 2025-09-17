@@ -9,6 +9,16 @@
     scrollbar_position = hidden
     use_system_font = False
   [[martin]]
+  [[default - lysere]]
+    background_darkness = 0.92
+    background_type = transparent
+    cursor_fg_color = "#ffa348"
+    cursor_bg_color = "#ff7800"
+    cursor_color_default = False
+    font = Monospace 15
+    show_titlebar = False
+    scrollbar_position = hidden
+    use_system_font = False
 [layouts]
   [[default]]
     #    show_titlebar = false
