@@ -42,10 +42,10 @@ alias ecop="~/repos/EcoPlatform"
 
 ## WSL
 if grep -qi microsoft /proc/version; then # Windows (WSL)
-	alias repos="/mnt/c/repos"
+	alias repos="~/repos"
 	alias zk="/mnt/c/Users/ml/repos/notater"
 	alias notater="/mnt/c/Users/ml/repos/notater"
-	alias dotfiler="/mnt/c/Users/ml/repos/dotfiler"
+	alias dotfiler="~/repos/dotfiler"
 	alias desktop="/mnt/c/Users/ml/Desktop"
 	export BROWSER=/mnt/c/Program\ Files\ \(x86\)/Mozilla\ Firefox/firefox.exe
 
@@ -74,9 +74,9 @@ plugins=(git)
 
 # Fargelegging av gyldige/ugyldige kommandoer
 if grep -qi microsoft /proc/version; then # Windows
-	source /mnt/c/Users/ml/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
+	source ~/repos/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
 else # Linux
-	source "$HOME"/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
+	source "$HOME"/repos/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
 fi
 
 
@@ -85,3 +85,4 @@ export PYTHONPATH="${PYTHONPATH}:/home/ml/repos/tiny"
 
 autoload -U +X bashcompinit && bashcompinit
 complete -o nospace -C /usr/bin/terraform terraform
+
