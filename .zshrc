@@ -43,8 +43,8 @@ alias ecop="~/repos/EcoPlatform"
 ## WSL
 if grep -qi microsoft /proc/version; then # Windows (WSL)
 	alias repos="~/repos"
-	alias zk="/mnt/c/Users/ml/repos/notater"
-	alias notater="/mnt/c/Users/ml/repos/notater"
+	alias zk="~/repos/notater"
+	alias notater="~/repos/notater"
 	alias dotfiler="~/repos/dotfiler"
 	alias desktop="/mnt/c/Users/ml/Desktop"
 	export BROWSER=/mnt/c/Program\ Files\ \(x86\)/Mozilla\ Firefox/firefox.exe
