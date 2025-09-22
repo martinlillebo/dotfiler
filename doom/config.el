@@ -31,6 +31,9 @@
 
 (setq fancy-splash-image "~/repos/dotfiler/doom/emacs.png")
 
+(when (find-font (font-spec :family "FantasqueSansMNerdFontMono"))
+  (setq doom-font (font-spec :family "FantasqueSansMNerdFontMono" :size 14)))
+
 (setq frame-title-format '("%b"))
 
 (setq confirm-kill-emacs nil)
@@ -56,14 +59,25 @@
 
 (setq bookmark-save-flag 1)
 
-;; (setq browse-url-firefox-program "explorer.exe")
-
-;; (setq browse-url-firefox-program nil)
-
-;; (setq browse-url-browser-function 'browse-url-generic
-;;       browse-url-generic-program "explorer.exe")
-
 (setq org-ellipsis " ...")
+
+(after! browse-url
+  ;; Default to Firefox everywhere
+  (setq browse-url-browser-function 'browse-url-generic)
+
+  (cond
+   ;; WSLENV fins bare på WSL, altså Windows
+   ((and (eq system-type 'gnu/linux)
+         (getenv "WSLENV"))
+    (setq browse-url-generic-program "explorer.exe"))
+
+   ;; --- Linux desktop ---
+   ((eq system-type 'gnu/linux)
+    (setq browse-url-generic-program "firefox"))
+
+   ;; Native Android build
+   ((eq system-type 'android)
+    (setq browse-url-generic-program "xdg-open"))))
 
 (set-frame-parameter (selected-frame) 'alpha '(94 . 94))
 (add-to-list 'default-frame-alist '(alpha . (94 . 94)))

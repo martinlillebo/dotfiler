@@ -3,3 +3,5 @@
 *.swp
 
 *.ini
+/doom/flycheck_config.el
+/doom/flycheck_flycheck_config.el

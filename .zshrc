@@ -8,7 +8,7 @@ export PATH="$HOME/.config/emacs/bin:$PATH"
 export PATH=$PATH:/usr/sbin 
 
 # Tema. Har alltid bare brukt det originale
-ZSH_THEME="robbyrussell"
+ZSH_THEME="robbyrussell" # set by `omz`
 
 # Aliaser, skrevet selv
 alias tf="terraform"
