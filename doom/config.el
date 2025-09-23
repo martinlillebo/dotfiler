@@ -31,7 +31,6 @@
 
 (setq fancy-splash-image "~/repos/dotfiler/doom/emacs.png")
 
-
 (when (find-font (font-spec :family "FantasqueSansMNerdFontMono"))
   (setq doom-font (font-spec :family "FantasqueSansMNerdFontMono" :size 14)))
 
