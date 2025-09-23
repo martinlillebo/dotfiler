@@ -11,6 +11,7 @@ export PATH=$PATH:/usr/sbin
 ZSH_THEME="robbyrussell"
 
 # Aliaser, skrevet selv
+alias e="emacs"
 alias tf="terraform"
 alias ggg="git pull origin master"
 alias lagre="zsh lagre.zsh"                # ZK-autocommit/push
