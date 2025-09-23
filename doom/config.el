@@ -31,8 +31,10 @@
 
 (setq fancy-splash-image "~/repos/dotfiler/doom/emacs.png")
 
+
 (when (find-font (font-spec :family "FantasqueSansMNerdFontMono"))
   (setq doom-font (font-spec :family "FantasqueSansMNerdFontMono" :size 14)))
+
 
 (setq frame-title-format '("%b"))
 
@@ -253,6 +255,7 @@
         '(("e" "~/repos/notater/2025060337 emacs-config.org"                   "emacs-config")
           ("d" "~/repos/notater/2025060333 Doom Emacs - Læring.org"            "Emacs Doom - Læring")
           ("a" "~/repos/notater/202012010931 Arbeidsoppgaver.org"              "Arbeidsoppgaver")
+          ("c" "~/repos/notater/20250922135432-statnett_oversikt.org"              "Statnett")
           ("." "/home/ml/repos/dotfiler"                                       "dotfiler")
           ("f" "~/repos/notater/org/20250531191654-todo_familie.org"           "Todo familie")
           ("t" "~/repos/notater/202506120825 Todo.org"                         "Todo privat")
