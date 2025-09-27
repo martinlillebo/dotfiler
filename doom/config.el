@@ -34,6 +34,7 @@
 (when (find-font (font-spec :family "FantasqueSansMNerdFontMono"))
   (setq doom-font (font-spec :family "FantasqueSansMNerdFontMono" :size 14)))
 
+
 (setq frame-title-format '("%b"))
 
 (setq confirm-kill-emacs nil)
