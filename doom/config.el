@@ -79,6 +79,9 @@
    ((eq system-type 'android)
     (setq browse-url-generic-program "xdg-open"))))
 
+(when (eq system-type 'android)
+    (add-hook 'help-mode-hook #'visual-line-mode))
+
 (set-frame-parameter (selected-frame) 'alpha '(94 . 94))
 (add-to-list 'default-frame-alist '(alpha . (94 . 94)))
 
@@ -138,19 +141,9 @@
 
 (after! org
   (setq org-capture-templates
-        '(("3" "Jobb innboks - TODO" entry
-           (file "~/repos/notater/202111121500 Innboks jobb.org")
-           "* TODO %?\n%U\n" :prepend t)
+        '(
 
-          ("4" "Jobb innboks" entry
-           (file "~/repos/notater/202111121500 Innboks jobb.org")
-           "* %?\n%U\n" :prepend t)
-
-          ("1" "Privat innboks - TODO" entry
-           (file "~/repos/notater/202012111337 Innboks.org")
-           "* TODO %?\n%U\n" :prepend t)
-
-          ("2" "Privat innboks" entry
+          ("1" "Innboks" entry
            (file "~/repos/notater/202012111337 Innboks.org")
            "* %?\n%U\n" :prepend t))))
 
@@ -253,7 +246,8 @@
         '(("e" "~/repos/notater/2025060337 emacs-config.org"                   "emacs-config")
           ("d" "~/repos/notater/2025060333 Doom Emacs - Læring.org"            "Emacs Doom - Læring")
           ("a" "~/repos/notater/202012010931 Arbeidsoppgaver.org"              "Arbeidsoppgaver")
-          ("." "/home/ml/repos/dotfiler"                                       "dotfiler")
+          ("c" "~/repos/notater/20250922135432-statnett_oversikt.org"              "Statnett")
+          ("." "~/repos/dotfiler/.zshrc"                                       "dotfiler")
           ("f" "~/repos/notater/org/20250531191654-todo_familie.org"           "Todo familie")
           ("t" "~/repos/notater/202506120825 Todo.org"                         "Todo privat")
           ("s" "~/repos/notater/org/20250730110754-sopra_steria_oversikt.org"  "Sopra Steria")
