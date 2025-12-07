@@ -19,6 +19,10 @@
 (package! evil-tutor)
 (package! elisp-format)
 (package! keyfreq)
+<<<<<<< HEAD
+=======
+(package! try)
+>>>>>>> 7694af8dba4c7e7e419ff9b05a7e91a03e14adaf
 (package! verb)
 (package! keycast)
 
