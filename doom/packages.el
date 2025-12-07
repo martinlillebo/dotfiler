@@ -18,11 +18,16 @@
 (package! vimgolf)
 (package! evil-tutor)
 (package! elisp-format)
+(package! keyfreq)
+(package! verb)
+(package! keycast)
 
 (package! key-chord)
+
+(package! org-sidebar)
 
 (package! org-bullets)
 
 (package! blamer)
 
-(package! org-present)
+(package! gptel :recipe (:nonrecursive t))
