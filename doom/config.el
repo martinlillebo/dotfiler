@@ -6,6 +6,9 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+(when (file-exists-p "~/.emacs.secrets")
+  (load-file "~/.emacs.secrets"))
+
 ;; (setq doom-theme 'kanagawa-wave)
 
 ;; (setq doom-theme 'catppuccin)
@@ -421,23 +424,16 @@
 (map! :leader
       "g n" #'my/notatcommit)
 
+(defmacro measure-time (&rest body)
+  "Measure the time it takes to evaluate BODY."
+  `(let ((time (current-time)))
+     ,@body
+     (message "%.06f seconds"
+              (float-time (time-since time)))))
+
 (after! dirvish
-  (setq dirvish-quick-access-entries
-        '(("e" "~/repos/notater/2025060337 emacs-config.org"                   "emacs-config")
-          ("d" "~/repos/notater/2025060333 Doom Emacs - Læring.org"            "Emacs Doom - Læring")
-          ("a" "~/repos/notater/202012010931 Arbeidsoppgaver.org"              "Arbeidsoppgaver")
-          ("c" "~/repos/notater/20250922135432-statnett_oversikt.org"          "Statnett")
-          ("." "~/repos/dotfiler/doom/config.el"                                       "dotfiler")
-          ("f" "~/repos/notater/org/20250531191654-todo_familie.org"           "Todo familie")
-          ("t" "~/repos/notater/202506120825 Todo.org"                         "Todo privat")
-          ("s" "~/repos/notater/org/20250730110754-sopra_steria_oversikt.org"  "Sopra Steria")
-          ("n" "~/repos/notater/202011200904 Dagnotater.md"                    "Dagnotater")
-          ("h" "~/repos/notater/202110181729 Handleliste hverdag.md"           "Handleliste")
-          ("i" "~/repos/notater/202012111337 Innboks.org"                      "Innboks")
-          ("o" "~/repos/notater/202111121500 Innboks jobb.org"                 "Innboks jobb")
-          ("p" "~/repos/notater/202008161252 Pakkeliste.org"                   "Pakkelista")
-          ("b" "~/repos/notater/20200906130506 Bøker jeg kanskje vil lese.org" "Bøker - Kanskje lese")
-          )))
+  (when (boundp 'my/dirvish-quick-access-entries)
+    (setq dirvish-quick-access-entries my/dirvish-quick-access-entries)))
 
 (map! :leader
       (:prefix ("o" . "open")
@@ -457,7 +453,8 @@
   :config
   (global-blamer-mode 0))
 
-(setq initial-buffer-choice "~/repos/notater/20250922135432-statnett_oversikt.org")
+(unless (stringp initial-buffer-choice)
+  (setq initial-buffer-choice "~/repos/notater/202012111337 Innboks.org"))
 
 (eval-after-load "org-present"
   '(progn
