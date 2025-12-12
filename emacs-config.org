@@ -666,7 +666,7 @@ Men på mobil er det kronglete å scrolle sidelengs, så jeg bytter til ~visual-
 
 
 #+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
-(defun android-launch-gmail ()
+(defun my/android-launch-gmail ()
   "Launch the Gmail app"
       (interactive)
             (shell-command "am start -n com.google.android.gm/.ConversationListActivityGmail"))
@@ -674,7 +674,7 @@ Men på mobil er det kronglete å scrolle sidelengs, så jeg bytter til ~visual-
 
 #+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
 (map! :leader
-      "g n" #'my/notatcommit)
+      "l g" #'my/android-launch-gmail)
 #+end_src
 
 
