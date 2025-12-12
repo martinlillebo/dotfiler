@@ -990,6 +990,18 @@ Dette er den vanlige eksportfunksjonen ~org-latex-export-to-pdf~, pluss...
       (browse-url pdf-file))))
 #+end_src
 
+** noeksport = notangle
+
+~:noexport:~-taggen gjør at alt nedstrøms headline blir ignorert når man eksporterer til PDF/HTML og andre formater. Mem den har i utgangspunktet ingenting med tangling til konfigfil å gjøre.
+
+Her legger jeg inn et advice på ~org-babel-tangle-single-block~-funksjonen, og ber den ignorere alle kodeblokker nedstrøms en :noexport:-tagg.
+
+#+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
+(advice-add 'org-babel-tangle-single-block :before-while
+            (lambda (&rest _)
+                          (not (member "noexport" (org-get-tags)))))
+#+end_src
+
 * Org-bullets
 
 Gjør headerpunkter finere. Prøvde opprinnelig ~org-modern~, men det inneholdt så mye annet rart som ikke funket så bra med temaet jeg har. 
@@ -1653,7 +1665,7 @@ Setter org-mode som standardsyntax over Markdown som er default:
 #+end_src
 
 
-* ibuffer
+* ibuffer :noexport:
 
 Doom Emacs-rammeverket bruker [[https://www.nerdfonts.com/][Nerd Fonts]] for å trylle fram symboler til alt mulig. Bortsett fra ~ibuffer~, som er veldig grå og trist. 
 
