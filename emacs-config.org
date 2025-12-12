@@ -2,7 +2,9 @@
 #+STARTUP: overview
 #+HTML_HEAD: <link rel="stylesheet" href="https://cdn.simplecss.org/simple.min.css">
 
-Dette er en [[https://orgmode.org/manual/Extracting-Source-Code.html][literal konfigurasjonsfil]], som betyr at all koden til ~config.el~, ~init.el~ og ~packages.el~ utgår automatisk fra denne filen.
+Denne Emacs-konfigurasjonen baserer seg på [[https://github.com/doomemacs/doomemacs][Doom Emacs]]-rammeverket, som deler inn all konfigurasjon til ~init.el~, ~packages.el~, og ~config.el~.
+
+Dette er en [[https://orgmode.org/manual/Extracting-Source-Code.html][literal konfigurasjonsfil]], som betyr at all konfigurasjon defineres i denne artikkelen, også hentes innholdet i kodeblokkene her ut til de riktige konfigfilene når man ønsker å oppdatere. Med andre ord skriver man README-en først, også utgår all konfig automatisk ut fra den. 
 
 * Toppnivå headere
 ** packages.el
@@ -662,8 +664,7 @@ Men på mobil er det kronglete å scrolle sidelengs, så jeg bytter til ~visual-
 #+end_src
 ** App-hurtigtaster
 
-~am~ - Android Manager - på Termux kan snakke med Android sitt API og starte apper fra kommandolinja. Det kan Emacs bruke:
-
+~am~ - Android Manager - på Termux kan snakke med Android sitt API og starte apper fra kommandolinja. Det kan Emacs bruke - her er en test som starter opp Gmail: 
 
 #+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
 (defun my/android-launch-gmail ()
@@ -676,7 +677,6 @@ Men på mobil er det kronglete å scrolle sidelengs, så jeg bytter til ~visual-
 (map! :leader
       "l g" #'my/android-launch-gmail)
 #+end_src
-
 
 * Projectile
 
@@ -1652,6 +1652,31 @@ Setter org-mode som standardsyntax over Markdown som er default:
 (setq gptel-default-mode #'org-mode)
 #+end_src
 
+
+* ibuffer
+
+Doom Emacs-rammeverket bruker [[https://www.nerdfonts.com/][Nerd Fonts]] for å trylle fram symboler til alt mulig. Bortsett fra ~ibuffer~, som er veldig grå og trist. 
+
+[[https://github.com/seagle0128/nerd-icons-ibuffer][nerd-icons-ibuffer]] legger til ikoner på alle filnavn i ~ibuffer~, basert på den samme Nerd Font-en man allerede har installert. Den tar seg også av fargelegging av kolonner, og legger til såkalt human-readable filstørrelser i stedet for å oppgi alt i bits.  
+
+Installerer pakken: 
+
+#+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/packages.el
+(package! nerd-icons-ibuffer) 
+#+end_src
+
+Setter opp en hook som aktiverer ~nerd-icons-ibuffer-mode~ når ~ibuffer~ åpnes
+
+#+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
+(use-package! nerd-icons-ibuffer
+  :hook (ibuffer-mode . nerd-icons-ibuffer-mode))
+#+end_src
+
+Flisespikker på smådetaljer:
+
+#+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
+(setq nerd-icons-ibuffer-icon-size 1.2)
+#+end_src
 
 * Testing :noexport:
 ** Skille mellom Windows og Linux
