@@ -1,0 +1,1917 @@
+#+title: 2025060337 Emacs Config
+#+STARTUP: overview
+##+HTML_HEAD: <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/water.css@2/out/water.css">
+#+HTML_HEAD: <link rel="stylesheet" href="https://cdn.simplecss.org/simple.min.css">
+
+Dette er en [[https://orgmode.org/manual/Extracting-Source-Code.html][literal konfigurasjonsfil]], som betyr at all koden til ~config.el~, ~init.el~ og ~packages.el~ utgår automatisk fra denne filen.
+
+* Toppnivå headere
+** packages.el
+#+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/packages.el
+
+;; -*- no-byte-compile: t; -*-
+;;; $DOOMDIR/packages.el
+#+end_src
+
+~;; -*- no-byte-compile: t; -*-~ sier at Emacs ikke skal kompilere filen til en ~.elc~-fil. Det blir vanligvis gjort for at ting skal kjøre fortere
+
+** config.el
+#+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
+;;; $DOOMDIR/config.el -*- lexical-binding: t; -*-
+#+end_src
+
+** init.el
+
+#+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/init.el
+;;; init.el -*- lexical-binding: t; -*-
+#+end_src
+
+* Secrets
+
+Sensitiv info som passord, personlige ting og jobbrelaterte referanser som ikke passer seg på et offentlig repo legges til en ~.emacs.secrets~-fil som jeg synkroniserer privat, utenfor denne configen.
+
+~when~-uttrykket på første linje passer på at Emacs ikke krasjer hvis ~.secrets~-fila skulle mangle
+
+#+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
+(when (file-exists-p "~/.emacs.secrets")
+  (load-file "~/.emacs.secrets"))
+#+end_src
+
+* init.el
+
+Dette er hele ~init.el~-fila slik den er originalt etter Doom Emacs-rammeverket. Har ikke kommet over noen god grunn til å dele den opp
+
+#+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/init.el
+(doom! :input
+       ;;bidi              ; (tfel ot) thgir etirw uoy gnipleh
+       ;;chinese
+       ;;japanese
+       ;;layout            ; auie,ctsrnm is the superior home row
+
+       :completion
+       ;;company           ; the ultimate code completion backend
+       (corfu +orderless)  ; complete with cap(f), cape and a flying feather!
+       ;;helm              ; the *other* search engine for love and life
+       ;;ido               ; the other *other* search engine...
+       ;;ivy               ; a search engine for love and life
+       vertico           ; the search engine of the future
+
+       :ui
+       ;;deft              ; notational velocity for Emacs
+       doom              ; what makes DOOM look the way it does
+       doom-dashboard    ; a nifty splash screen for Emacs
+       ;;doom-quit         ; DOOM quit-message prompts when you quit Emacs
+       (emoji +unicode)  ; 🙂
+       hl-todo           ; highlight TODO/FIXME/NOTE/DEPRECATED/HACK/REVIEW
+       ;;indent-guides     ; highlighted indent columns
+       ;;ligatures         ; ligatures and symbols to make your code pretty again
+       ;;minimap           ; show a map of the code on the side
+       modeline          ; snazzy, Atom-inspired modeline, plus API
+       ;;nav-flash         ; blink cursor line after big motions
+       ;;neotree           ; a project drawer, like NERDTree for vim
+       ophints           ; highlight the region an operation acts on
+       (popup +defaults)   ; tame sudden yet inevitable temporary windows
+       smooth-scroll     ; So smooth you won't believe it's not butter
+       ;;tabs              ; a tab bar for Emacs
+       ;;treemacs          ; a project drawer, like neotree but cooler
+       ;;unicode           ; extended unicode support for various languages
+       (vc-gutter +pretty) ; vcs diff in the fringe
+       vi-tilde-fringe   ; fringe tildes to mark beyond EOB
+       ;;window-select     ; visually switch windows
+       workspaces        ; tab emulation, persistence & separate workspaces
+       zen               ; distraction-free coding or writing
+
+       :editor
+       (evil +everywhere); come to the dark side, we have cookies
+       file-templates    ; auto-snippets for empty files
+       fold              ; (nigh) universal code folding
+       ;;(format +onsave)  ; automated prettiness
+       ;;god               ; run Emacs commands without modifier keys
+       ;;lispy             ; vim for lisp, for people who don't like vim
+       ;;multiple-cursors  ; editing in many places at once
+       ;;objed             ; text object editing for the innocent
+       ;;parinfer          ; turn lisp into python, sort of
+       ;;rotate-text       ; cycle region at point between text candidates
+       snippets          ; my elves. They type so I don't have to
+       ;;word-wrap         ; soft wrapping with language-aware indent
+
+       :emacs
+       (dired +dirvish +icons)             ; making dired pretty [functional]
+       electric          ; smarter, keyword-based electric-indent
+       ;;eww               ; the internet is gross
+       ;;ibuffer           ; interactive buffer management
+       undo              ; persistent, smarter undo for your inevitable mistakes
+       vc                ; version-control and Emacs, sitting in a tree
+
+       :term
+       ;;eshell            ; the elisp shell that works everywhere
+       ;;shell             ; simple shell REPL for Emacs
+       ;;term              ; basic terminal emulator for Emacs
+       vterm             ; the best terminal emulation in Emacs
+
+       :checkers
+       syntax              ; tasing you for every semicolon you forget
+       ;;(spell +flyspell) ; tasing you for misspelling mispelling
+       ;;grammar           ; tasing grammar mistake every you make
+
+       :tools
+       ansible
+       ;;biblio            ; Writes a PhD for you (citation needed)
+       ;;collab            ; buffers with friends
+       ;;debugger          ; FIXME stepping through code, to help you add bugs
+       ;;direnv
+       ;;docker
+       ;;editorconfig      ; let someone else argue about tabs vs spaces
+       ;;ein               ; tame Jupyter notebooks with emacs
+       (eval +overlay)     ; run code, run (also, repls)
+       lookup              ; navigate your code and its documentation
+       ;;lsp               ; M-x vscode
+       magit             ; a git porcelain for Emacs
+       ;;make              ; run make tasks from Emacs
+       ;;pass              ; password manager for nerds
+       pdf               ; pdf enhancements
+       terraform         ; infrastructure as code
+       ;;tmux              ; an API for interacting with tmux
+       ;;tree-sitter       ; syntax and parsing, sitting in a tree...
+       ;;upload            ; map local to remote projects via ssh/ftp
+
+       :os
+       (:if (featurep :system 'macos) macos)  ; improve compatibility with macOS
+       ;;tty               ; improve the terminal Emacs experience
+
+       :lang
+       ;;agda              ; types of types of types of types...
+       ;;beancount         ; mind the GAAP
+       ;;(cc +lsp)         ; C > C++ == 1
+       ;;clojure           ; java with a lisp
+       ;;common-lisp       ; if you've seen one lisp, you've seen them all
+       ;;coq               ; proofs-as-programs
+       ;;crystal           ; ruby at the speed of c
+       ;;csharp            ; unity, .NET, and mono shenanigans
+       ;;data              ; config/data formats
+       ;;(dart +flutter)   ; paint ui and not much else
+       ;;dhall
+       ;;elixir            ; erlang done right
+       ;;elm               ; care for a cup of TEA?
+       emacs-lisp        ; drown in parentheses
+       ;;erlang            ; an elegant language for a more civilized age
+       ;;ess               ; emacs speaks statistics
+       ;;factor
+       ;;faust             ; dsp, but you get to keep your soul
+       ;;fortran           ; in FORTRAN, GOD is REAL (unless declared INTEGER)
+       ;;fsharp            ; ML stands for Microsoft's Language
+       ;;fstar             ; (dependent) types and (monadic) effects and Z3
+       ;;gdscript          ; the language you waited for
+       ;;(go +lsp)         ; the hipster dialect
+       ;;(graphql +lsp)    ; Give queries a REST
+       ;;(haskell +lsp)    ; a language that's lazier than I am
+       ;;hy                ; readability of scheme w/ speed of python
+       ;;idris             ; a language you can depend on
+       ;;json              ; At least it ain't XML
+       ;;(java +lsp)       ; the poster child for carpal tunnel syndrome
+       ;;javascript        ; all(hope(abandon(ye(who(enter(here))))))
+       ;;julia             ; a better, faster MATLAB
+       ;;kotlin            ; a better, slicker Java(Script)
+       ;;latex             ; writing papers in Emacs has never been so fun
+       ;;lean              ; for folks with too much to prove
+       ;;ledger            ; be audit you can be
+       ;;lua               ; one-based indices? one-based indices
+       markdown          ; writing docs for people to ignore
+       ;;nim               ; python + lisp at the speed of c
+       ;;nix               ; I hereby declare "nix geht mehr!"
+       ;;ocaml             ; an objective camel
+       (org +roam2)               ; organize your plain life in plain text
+       ;;php               ; perl's insecure younger brother
+       ;;plantuml          ; diagrams for confusing people more
+       ;;graphviz          ; diagrams for confusing yourself even more
+       ;;purescript        ; javascript, but functional
+       ;;python            ; beautiful is better than ugly
+       ;;qt                ; the 'cutest' gui framework ever
+       ;;racket            ; a DSL for DSLs
+       ;;raku              ; the artist formerly known as perl6
+       rest              ; Emacs as a REST client
+       ;;rst               ; ReST in peace
+       ;;(ruby +rails)     ; 1.step {|i| p "Ruby is #{i.even? ? 'love' : 'life'}"}
+       ;;(rust +lsp)       ; Fe2O3.unwrap().unwrap().unwrap().unwrap()
+       ;;scala             ; java, but good
+       ;;(scheme +guile)   ; a fully conniving family of lisps
+       sh                ; she sells {ba,z,fi}sh shells on the C xor
+       ;;sml
+       ;;solidity          ; do you need a blockchain? No.
+       ;;swift             ; who asked for emoji variables?
+       ;;terra             ; Earth and Moon in alignment for performance.
+       ;;web               ; the tubeS
+       ;;yaml              ; JSON, but readable
+       ;;zig               ; C, but simpler
+
+       :email
+       ;;(mu4e +org +gmail)
+       ;;notmuch
+       ;;(wanderlust +gmail)
+
+       :app
+       ;;calendar
+       ;;emms
+       everywhere        ; *leave* Emacs!? You must be joking
+       ;;irc               ; how neckbeards socialize
+       ;;(rss +org)        ; emacs as an RSS reader
+
+       :config
+       ;;literate
+       (default +bindings +smartparens))
+#+end_src
+* packages.el
+
+Her ligger det småpakker som ikke har gjort seg fortjent til egne kapitler
+
+- ~rainbow-mode~ fargelegger hexnumre direkte, f.eks. #EEEE3E.
+- ~keyfreq~ gir statistikk på hvor ofte kommandoer brukes
+- ~verb~ er [[https://github.com/federicotdn/verb][herfra]]. Et alternativ til ~restclient.el~
+
+#+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/packages.el
+(package! nyan-mode)
+(package! fireplace)
+(package! zone-rainbow)
+(package! rainbow-mode)
+(package! vimgolf)
+(package! evil-tutor)
+(package! elisp-format)
+(package! keyfreq)
+(package! verb)
+#+end_src
+
+~nyan-mode~ og ~rainbow-mode~ må også aktiveres i ~config.el~ slik:
+
+#+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
+(nyan-mode 1)
+
+(after! org
+  (add-hook 'org-mode-hook #'rainbow-mode))
+#+end_src
+
+vimgolf config:
+
+#+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
+(after! vimgolf
+  (map! :leader
+        ;; call vimgolf prompt
+        "g v" #'vimgolf
+        ;; default bindings as listed in README
+        "g V" #'vimgolf-submit))
+#+end_src
+
+keyfreq config: Fjerner tracking av scroll-events, for de støyer ned all statistikken.
+Fjerner også ~org-self-insert-command~, som kjøres for hvert eneste tastetrykk
+
+#+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
+
+(setq keyfreq-excluded-commands
+        '(mwheel-scroll
+          ultra-scroll
+          self-insert-command
+          org-self-insert-command))
+
+(setq keyfreq-autosave-timeout 180)
+(keyfreq-mode 1)
+(keyfreq-autosave-mode 1)
+#+end_src
+
+* Tema
+
+Dette er temaer jeg har lagt til i tillegg til alle som fins i Emacs fra før.
+Siste headline har en ~(setq doom-theme NAVN)~-uttrykk som faktisk velger en av disse
+
+** Kanagawa
+
+Temaet kommer [[https://github.com/emacsmirror/kanagawa-themes][herfra]]. Fargepaletten er inspirert av det japanske [[https://en.wikipedia.org/wiki/The_Great_Wave_off_Kanagawa][Kanagawa-maleriet]]. 
+
+#+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/packages.el
+(package! kanagawa-themes)
+#+end_src
+
+** Catppuccin
+
+Herfra: [[https://github.com/catppuccin/emacs/][Catppuccin - Soothing pastel theme for Emacs]]
+
+Installerer ~catppuccin~-temaet gjennom ~packages.el~
+
+#+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/packages.el
+(package! catppuccin-theme)
+#+end_src
+
+Deretter må det settes i ~config.el~ vha. ~doom-theme~. Temaet kommer i fire varianter (Latte, Frappé, Macchiato, Mocha), også setter en av disse via en "flavor"-string. 
+
+#+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
+(setq catppuccin-flavor 'mocha)
+(setq catppuccin-flavor 'macchiato)
+#+end_src
+
+...da jeg la inn dette fikk jeg en feilmelding om *Symbol’s function definition is void*, som jeg løste med en blanding av løsningen fra et [[https://github.com/catppuccin/emacs/issues/121][GitHub-issue]] og litt vibe-code fra ChatGPT:
+
+#+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
+(add-hook 'server-after-make-frame-hook
+          (lambda () (when (fboundp 'catppuccin-reload)
+                       (catppuccin-reload))))
+
+(when (fboundp 'catppuccin-reload)
+  (catppuccin-reload))
+#+end_src
+
+#+RESULTS:
+: t
+
+** Modus Vivendi
+Protesilaos' temaer: https://protesilaos.com/emacs/modus-themes
+
+De er blitt tatt inn som standardtemaer i Emacs, så det er bare å sette dark-versjonen (~modus-vivendi-tinted~) som standard
+
+** Standardtema
+
+#+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
+(setq doom-theme 'modus-vivendi-tinted)
+#+end_src
+
+* Velkomstskjerm :noexport:
+; ~noexport~ fordi jeg ikke bruker velkomstskjerm for tida 
+
+Følger hlissner sin guide herfra: https://discourse.doomemacs.org/t/how-to-change-your-splash-screen/57
+
+Fjerner først alle widgetene:
+
+#+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
+(remove-hook '+doom-dashboard-functions #'doom-dashboard-widget-shortmenu)
+#+end_src
+
+Det funker fint. Da kommer det bare en ASCII-DOOM-logo, en setning om at "Doom loaded 160 packages...", og en logo som lenker til Doom-GitHub.
+
+Fjerner den lille GitHub-emojien som lenker til Doom-repoet:
+
+#+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
+(remove-hook '+doom-dashboard-functions #'doom-dashboard-widget-footer)
+#+end_src
+
+Fjerner til slutt den setningen om at "Doom loaded X modules in Y seconds":
+
+#+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
+(remove-hook '+doom-dashboard-functions #'doom-dashboard-widget-loaded)
+#+end_src
+
+Legger til et eget bilde i stedet for DOOM-ASCII-art-en
+
+#+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
+(setq fancy-splash-image "~/repos/dotfiler/doom/emacs.png")
+#+end_src
+
+Da står jeg igjen med kun et bilde på velkomstskjermen
+
+* Generell Emacs config
+** Størrelse på vinduet ved oppstart
+
+Dette er for å få Emacs til å starte opp med en hensiktsmessig størrelse på vinduet, slik at jeg slipper å resize-e det hver gang Emacs starter opp. 
+
+For å se størrelsen på vinduet akkurat nå, kan man evaluere denne:
+
+#+begin_src emacs-lisp
+(format "Width: %d, Height: %d" (frame-width) (frame-height))
+#+end_src
+
+#+RESULTS:
+: Width: 168, Height: 44
+
+WSL og Linux oppfører seg forskjellig, så de trenger hver sin setting:
+
+#+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
+(cond
+ ;; ---  WSL  ---
+ ((and (eq system-type 'gnu/linux) (getenv "WSLENV"))
+  (add-to-list 'initial-frame-alist '(width . 90))
+  (add-to-list 'initial-frame-alist '(height . 60)))
+
+ ;; --- Linux ---
+ ((eq system-type 'gnu/linux)
+  (add-to-list 'initial-frame-alist '(width . 83))
+  (add-to-list 'initial-frame-alist '(height . 44))))
+#+end_src
+
+Ved første øyekast ser det ut som om vinduet settes til å være nesten dobbelt så bredt som det er høyt, før man skjønner at høyden oppgis i linjer, og bredden oppgis i antall characters. Det gir mening når man får høre at Emacs måler alt i tekst, og rektangelet som omslutter en bokstav på datamaskiner er mye høyere enn det er bredt.
+
+
+** Kill ring max
+Emacs' lagrer utklippstavlen over tid, men standard maxlengde for historikken er 120 entries, som ikke er så mye. Øker denne en del:
+
+#+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
+(setq kill-ring-max 1000)
+#+end_src
+
+** Fjern word wrap
+
+Det er egentlig fint at ord wrapper på høyresiden av skjermen, men ~word-wrap~ gjør også at URL-er starter med et linjeskift, og det er irriterende. Håper å finne ut en måte å fjerne bare newline på venstresiden, samtidig som jeg kan beholde vanlig word wrap på høyresiden
+
+Det er uansett raskt å bytte mellom modusene med ~M-x toggle-ord-wrap~. Setter default til å ikke bryte:
+
+#+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
+;(setq word-wrap nil)
+(add-hook 'doom-after-init-modules-hook
+  (lambda () (setq-default word-wrap nil)))
+#+end_src
+
+** Nerd fonts
+
+[[https://www.nerdfonts.com/][Nerd Fonts]] brukes aktivt i Doom Emacs til alle mulige små symboler rundt omkring. 
+
+På Linux kan man installere Nerd Fonts med ~M-x install-nerd-fonts~, men Emacs som kjører under WSL/Windows eller på Termux/Android klarer ikke det. Da må man i tillegg installere en font selv, også deretter sette den med ~doom-font~.
+
+Det som er ekstra spennende, er at hele Doom Emacs-korthuset ramler sammen dramatisk hvis man prøver å sette ~doom font~ til noe som ikke fins. Så for å sikre mot det, ligger ~setq doom-font~ etter en ~when~-clause som sjekker om den fins før vi setter den
+
+#+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
+(when (find-font (font-spec :family "FantasqueSansMNerdFontMono"))
+  (setq doom-font (font-spec :family "FantasqueSansMNerdFontMono" :size 14)))
+#+end_src
+
+Installasjon av nerd fonts kan gjøres sånn:
+
+1. Last ned en font-variasjon av Nerd Fonts, f.eks. ~Fantasque~, [[https://www.nerdfonts.com/font-downloads][herfra]]
+   - [[https://github.com/ryanoasis/nerd-fonts/releases/download/v3.4.0/FantasqueSansMono.zip][Direktelenke til FantasqueSansMono.zip]] 
+2. Ekstraher ~.zip~-en og gå inn i mappa fra kommandolinjen
+3. Kjør dette for å installere fonten: 
+
+#+begin_src shell
+mkdir -p ~/.local/share/fonts
+cp FantasqueSansMNerdFont-*.ttf ~/.local/share/fonts/
+fc-cache -fv
+#+end_src 
+
+** Grunnleggende personinfo
+
+Navn og e-post kan finne på å bli printa i eksporterte dokumenter.
+Linux, WSL og Android finner på forskjellige ting her, og fyller inn hostname o.l. som standard.
+Så jeg setter de eksplisitt her:
+
+#+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
+(setq user-full-name "Martin Lillebo"
+      user-mail-address "lillebomartin@gmail.com")
+#+end_src
+
+
+** Vindustekst
+
+Dette er linja helt på toppen av hele Emacs-GUI-et
+
+Default fra Doom-config er filnavn + "". Fjerner sistnevnte med å redefinere ~frame-title-format~ til å bare inneholde buffernavnet
+
+#+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
+(setq frame-title-format '("%b"))
+#+end_src
+
+** Fjerne "are you sure you want to close Emacs? (y/n)"
+Sånn:
+
+#+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
+(setq confirm-kill-emacs nil)
+#+end_src
+
+** Lexical binding
+
+Setter lexical binding som standard, i stedet for dynamic som er (foreløpig fortsatt) default standard:
+
+#+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
+(setq-default lexical-binding t)
+#+end_src
+
+Forskjellen mellom lexical/dynamic binding handler om hvorvidt verdier satt med ~let~ er tilgjengelige for nøsta funksjoner eller ikke. Lexical er det som er vanlig ellers, f.eks. i Python. Det er bra forklart her: https://web.archive.org/web/20250409165354/https://www.gnu.org/software/emacs/manual/html_node/eintr/Lexical-vs-Dynamic-Binding-Example.html
+
+** Autolagre buffere
+
+Standardinnstillingen til Emacs er at man åpner opp fil-innholdet i en uavhengig buffer, også skrives ikke endringer til filen før man husker å lagre med ~SPC b s~. Det glemmer jeg hele tida, så denne innstillingen aktiverer autolagring-modus med ~+1~ med 5-sekunders intervall mellom hver lagring
+
+
+#+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
+(setq auto-save-visited-interval 5)
+(auto-save-visited-mode +1)
+#+end_src
+
+** Hurtigtaster
+*** ~C-s~ for å lagre
+~SPC b s~ føles unødvendig når man har ~C-s~ i alle andre programmer i hele verden, så jeg legger inn sistnvente som hotkey til å lagre buffer:
+
+#+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
+(map! :i "C-s" #'save-buffer   ; insert mode
+      :n "C-s" #'save-buffer)  ; normal mode
+#+end_src
+
+*** ~SPC y k~: yank-from-kill-ring
+Bruker denne veldig ofte
+
+#+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
+(map! :leader
+      "y k" #'yank-from-kill-ring)
+#+end_src
+*** ~SPC v s~ for å markere som kode 
+
+jeg ~markerer~ ofte et helt ord og wrapper det i ~tilde~. Da må man skrive "viWS~", som er både blanding av case og et tildesymbol. På et norsk tastatur krever det 9 tastetrykk. Får denne ned til 3 trykk slik:
+
+bruker ~SPC v s~ fordi den minner meg om den originale versjonen.
+
+~evil-forward-WORD-end~ er den funksjonen som er bundet opp til ~e~ i vanlig ~evil-mode~
+
+Lager i tillegg en versjon som bare kjører "S ~" når jeg har markert tekst, slik at jeg har en løsning som også kan håndtere flere ord med mellomrom mellom seg. Da har jeg samme hotkey for normal mode og visual mode. 
+
+#+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
+(define-key evil-normal-state-map (kbd "SPC v s")
+  (lambda () (interactive)
+    (execute-kbd-macro (kbd "v i W S ~"))
+    (evil-forward-WORD-end)))
+
+(define-key evil-visual-state-map (kbd "SPC v s")
+  (lambda () (interactive)
+    (let ((end-pos (region-end)))
+      (execute-kbd-macro (kbd "S ~"))
+      (goto-char (+ end-pos 1)))))
+#+end_src
+
+** Relative linjenumre
+Relative linjenumre gjør det mulig å hoppe til riktig linje med vim motions
+
+#+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
+(setq display-line-numbers-type 'visual)
+#+end_src
+
+Det fins også et valg som heter ~'relative~, men da får man bufferlinjer i stedet for skjermlinjer. Da slutter Vim-referanser å virke så fort man har en innsnevring i bufferen.
+
+** Fargelegge linjenumre
+Standardfargen for linjenumrene er litt for mørke, som er upraktisk når man ofte refererer til de med vimbindings
+
+Standarden er: 
+
+- Foreground: ~#45475a~
+- Background: ~#1e1e2e~
+
+Gjør de lysere slik: 
+
+#+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
+(custom-set-faces!
+  '(line-number              :foreground "#b8c2dc"))
+#+end_src
+
+
+** Bokmerker
+
+Gjør at bokmerker holder seg lagra på tvers av reboots:
+
+#+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
+(setq bookmark-save-flag 1)
+#+end_src
+** Deaktivere ~pg dn~ og ~pg up~
+Disse er rett ved piltastene på min laptop, og jeg kommer borti de hele tiden. Jeg bruker de ikke til vanlig, så jeg bare deaktiverer de:
+
+#+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
+(with-eval-after-load 'pixel-scroll
+  (defalias 'pixel-scroll-interpolate-down 'ignore)
+  (defalias 'pixel-scroll-interpolate-up 'ignore))
+#+end_src
+
+uten ~with-eval-after-load~ så funker ikke ~defalias~-uttrykkene, selv om de legges helt nederst i ~config.el~
+** Garbage collection-meldinger
+
+Setter på denne for å må melding i echo-area når garbage collection starter og slutter. Bare fordi det er interessant å få et inntrykk av hvor ofte det skjer: 
+
+#+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
+(setq garbage-collection-messages t)
+#+end_src
+
+** Gå ut av insert mode etter idletid
+
+Hvis jeg er i idle mode lengre en 30 sek uten aktivitet, så går den ut av insert og inn i normal mode.
+
+#+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
+(run-with-idle-timer 30 t
+  (lambda ()
+      (when (evil-insert-state-p)
+            (evil-normal-state))))
+#+end_src
+
+** Gjennomsiktig bakgrunn og dimming
+
+Alle kule utviklere har delvis gjennomsiktig bakgrunn
+
+~add-to-list~ er der for å gi samme transparens til sekundære Emacs-vinduer, eller "frames" i Emacs-sjargong. Det skjer ikke så ofte, men f.eks. Emacs Everywhere-buffervinduer er selvstående vinduer som ikke blir transparente uten denne innstillingen
+
+Det var nå jeg måtte lære meg hva en "frame" er, i tillegg til "window" og "buffer" 
+
+#+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
+(set-frame-parameter (selected-frame) 'alpha '(94 . 94))
+(add-to-list 'default-frame-alist '(alpha . (94 . 94)))
+#+end_src
+
+* Utviklermiljø
+** Parenteser
+
+Aktiverer ~smartparens-mode~ overalt for å lyse opp motsats-parentesen til den jeg har markøren på:
+
+#+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
+(setq show-smartparens-global-mode t)
+#+end_src
+
+
+
+
+* Åpne URL-er i Firefox på alle plattformer
+
+Configen nedenfor gjør at jeg kan trykke på en URL og forvente at den åpnes i Firefox, i både WSL2 på Windows, i Android gjennom Termux, og på vanlig Linux.
+
+Uten denne configen, så Emacs på Windows åpne URL-er i ~eww~-leseren hvis kjøres som ~.exe~, og ingensteds gjennom WSL. Og Android-klienten bare klager på at det mangler en innstilling og åpner ingenting.
+
+Trikset er å utnytte ~system-type~ som returnerer ~gnu/linux~ i WSL og Linux, og ~android~ på Android. For å skille WSL fra Linux er det en ~and~ clause som i tillegg sjekker om miljøvariablene ~WSLENV~ er satt til noe, for det er den bare i WSL. Kunne sikkert kommet unna med å bare sjekke ~WSLENV~, men det funker slik det står. 
+
+#+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
+(after! browse-url
+  ;; Default to Firefox everywhere
+  (setq browse-url-browser-function 'browse-url-generic)
+
+  (cond
+   ;; WSLENV fins bare på WSL, altså Windows
+   ((and (eq system-type 'gnu/linux)
+         (getenv "WSLENV"))
+    (setq browse-url-generic-program "cmd.exe"
+          browse-url-generic-args '("/c" "start" "")))
+
+   ;; --- Linux ---
+   ((eq system-type 'gnu/linux)
+    (setq browse-url-generic-program "firefox"))
+
+   ;; Android
+   ((eq system-type 'android)
+    (setq browse-url-generic-program "xdg-open"))))
+#+end_src
+
+- Detaljer om WSL-nettleserlinjene:
+  - ~cmd.exe /c~: Kjør det som kommer etterpå i ~cmd.exe~.
+  - ~start~: En Windows-builtin som sier at det som fôres inn til ~cmd~ skal åpnes med Windows' standardprogram for det
+  - ~""~ trengs fordi den plasseringen i argumentrekkefølga er forbeholdt hva tittelen på toppen av programvinduet skal si. Flagget ignoreres vanligvis om det ikke gis inn, men en URL kommer inn med quotes, og uten en blank quote i forkant så tror windows at URL-en skal inn i vindustittelen
+  - URL-en til slutt er URL-en som skal åpnes, som Windows nå skjønner at skal åpnes i standardnettleseren
+
+* Android 
+** Terminering av help-text
+Help-text i minibufferen terminerer linjer som går utenfor skjermen. Det er visstnok for å bevare ting som meningsfull indentering i kodeeksempler.
+
+Men på mobil er det kronglete å scrolle sidelengs, så jeg bytter til ~visual-line-mode~ i den situasjonen slik at lange setninger heller wrapper rundt
+
+
+#+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
+(when (eq system-type 'android)
+    (add-hook 'help-mode-hook #'visual-line-mode))
+#+end_src
+
+* Projectile
+
+Legger til mapper jeg ofte søker gjennom
+
+#+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
+(after! projectile
+  (dolist (p '("~/repos/notater"
+               "~/repos/ansible-desktop"))
+    (projectile-add-known-project p)))
+#+end_src
+
+Bytter caching metode fra hybrid til alien, for at nye filer skal bli søkbare med en gang. Før jeg gjorde dette, måtte jeg kjøre ~projectile-invalidate-cache~ ofte for å få med nye filer
+
+#+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
+(setq projectile-indexing-method 'alien)
+#+end_src
+
+Setter opp et advice som gjør at ~projectile-invalidate-cache~ kjøres etter hver ~rename-file~, slik at filer med nytt navn er automatisk søkbare i Projectile etter navneendring.
+
+#+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
+(after! projectile
+  (defun my/rename-file-invalidate-projectile-cache (&rest _)
+      (when (and (called-interactively-p 'any)
+                       (featurep 'projectile))
+                                     (projectile-invalidate-cache nil)))
+
+  (advice-add 'rename-file :after #'my/rename-file-invalidate-projectile-cache))
+#+end_src
+    
+* Better-jumper
+
+I ~Vim~ så funker ~``~ fint til å hoppe mellom ~evil-next-line~/~evil-previous-line~ når disse kalles med et tall, f.eks. ~5j~ eller ~10k~. Men ~evil-mode~ inkluderer ikke det.
+
+Jeg brukte litt for mye tid til å prøve å vibe det til å virke, også ga jeg opp. Men jeg fant en løsning som heller bruker ~better-jumper~, som Doom har bundet til ~C-o~/~C-i~.
+
+Boilerplate-koden nedenfor her er henta fra denne [[https://www.reddit.com/r/emacs/comments/1mztz6i/share_your_tips_for_fast_movements_and_navigation/][reddittråden]] 
+
+#+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
+(use-package better-jumper
+
+    :custom
+    ; this is the key to avoiding conflict with evils jumping stuff
+    (better-jumper-use-evil-jump-advice nil)
+
+    :config
+    (better-jumper-mode 1)
+
+    ; this lets me toggle between two points. (adapted from evil-jump-backward-swap)
+    (evil-define-motion better-jumper-toggle (count)
+      (let ((pnt (point)))
+        (better-jumper-jump-backward 1)
+        (better-jumper-set-jump pnt)))
+
+    ; this is the key here. This advice makes it so you only set a jump point
+    ; if you move more than one line with whatever command you call. For example
+    ; if you add this advice around evil-next-line, you will set a jump point
+    ; if you do 10 j, but not if you just hit j. I did not write this code, I
+    ; I found it a while back and updated it to work with better-jumper.
+    (defun my-jump-advice (oldfun &rest args)
+      (let ((old-pos (point)))
+        (apply oldfun args)
+        (when (> (abs (- (line-number-at-pos old-pos) (line-number-at-pos (point))))
+                  1)
+          (better-jumper-set-jump old-pos))))
+
+    ; jump scenarios
+    (advice-add 'evil-next-line :around #'my-jump-advice)
+    (advice-add 'evil-previous-line :around #'my-jump-advice)
+    (advice-add 'helm-swoop :around #'my-jump-advice)
+    (advice-add 'evil-goto-definition :around #'my-jump-advice)
+    (advice-add 'evil-goto-mark  :around #'my-jump-advice))
+    ; ... whenever you want a new jump scenario just use the above pattern.
+#+end_src
+
+
+* Org-mode
+** Org-ellipsis
+
+~org~ viser i utgangspunktet fram ~[...]~ når tekst skjules under en headline. Gjør den litt mer minimal slik:
+
+#+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
+(after! org
+  (setq org-ellipsis " ..."))
+#+end_src
+
+** Fjerne newlines mellom headere
+
+Når man trykker ~TAB~ for å se headline-oversikten i en fil, så beholder org-mode en blank linje under alle headlines som har 2 eller flere newlines helt nederst. Det er ikke nyttig og ser stygt ut, så jeg fjerner det:
+
+Det styres av ~setq org-cycle-separator-lines~, som har en veldig god forklaring om man inspect-er variabelen
+
+løses ved å settte den til 0
+
+#+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
+(setq org-cycle-separator-lines 0)
+#+end_src
+
+** Fargelegge TODO/DONE osv
+
+Standard-fargene er ikke helt topp, så her er noen endringer:
+
+#+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
+(after! org
+  (setq org-todo-keyword-faces
+        '(;;("TODO" . (:foreground "#ffff00" :weight bold))
+          ("STRT" . (:foreground "#ffff00" :weight bold))
+          ("KILL" . (:foreground "#595e60" :weight bold))
+          ("WAIT" . (:foreground "#B4F8C8" :weight bold))
+          ("HOLD" . (:foreground "#B4F8C8" :weight bold))
+          ("PROJ" . (:foreground "#B4F8C8" :weight bold))
+          ;;("DONE" . (:foreground "forest green" :weight bold))
+          )))
+#+end_src
+
+#+RESULTS:
+
+** CLOSED-property til TODO's
+Denne setter opp en "CLOSED" timestamp når en oppgave markeres som DONE:
+
+#+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
+(setq org-log-done 'time)
+#+end_src
+
+#+RESULTS:
+: time
+
+** Egendefinert filnavn på nye org-filer
+
+Org har sin egen måte å lage filnavn på, men jeg liker bedre standaradmåten sublimeless gjorde det på
+
+#+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
+(defun my/datert-orgfil (title)
+  "Create a new Org file with format YYYYMMDDMM Title.org in ~/repos/notater/."
+  (interactive "sTitle: ")
+  (let* ((timestamp (format-time-string "%Y%m%d%H%M"))
+         (filename (format "~/repos/notater/%s %s.org" timestamp title)))
+    (find-file filename)))
+#+end_src
+
+#+RESULTS:
+: my/datert-orgfil
+
+** Org-directory
+
+Forteller Emacs/org-mode hvor det skal letes etter ~.org~-filer:
+
+#+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
+(setq org-directory (expand-file-name "~/repos/notater/"))
+
+(setq org-roam-directory org-directory)
+(after! org-roam
+  (org-roam-db-autosync-mode))
+#+end_src
+
+** Org-capture templates
+
+Org-capture gjør at man kan få skrevet inn smånotater til en fil uten å måtte åpne filen.
+
+#+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
+(after! org
+  (setq org-capture-templates
+        '(
+
+          ("1" "Innboks" entry
+           (file "~/repos/notater/202012111337 Innboks.org")
+           "%?\n" :prepend t))))
+#+end_src
+
+** toc-org
+
+toc-org het opprinnelig org-toc, men så var det noe navnekonflikter som førte til navnebytte. Men begge referanser fins fortsatt på internett, som gjør at LLM-er refererer til begge deler når man spør om hjelp.
+
+Denne linja gjør at innholdsfortegnelser tar med statuser som TODO/STRT/DONE o.l., i stedet for standardsettingen som er å ignorere de
+#+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
+(setq org-export-with-todo-keywords t)
+#+end_src
+
+** deaktivere element cache
+
+Når den er aktiv, så får jeg feilmeldinger på XX når jeg jobber i en buffer som er constrained med ~SPC m s n~ eller ~z n~
+
+#+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
+(setq org-element-use-cache nil)
+#+end_src
+
+Den skal gi performance-økning på filer med tusenvis av linjer eller headings. Så kan ev. aktivere den for sånne filer spesifikt.
+
+* Org-agenda
+
+** Global agendaconfig
+Fjerner visning av tags og filnavn
+
+#+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
+(setq org-agenda-remove-tags t)
+#+end_src
+
+Så fjerner jeg alt fra ~org-agenda-prefix-format~. Spesielt ~search~-delen gjør at jeg slipper å se filbanen til hver TODO. Resten gjør ingenting såvidt jeg forstår, så jeg starter like greit med et blankt utgangspunkt og tilpasser det fra scratch:
+
+#+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
+(setq org-agenda-prefix-format
+      '((agenda . "")
+        (todo . "")
+        (tags . "")
+        (search . "")))
+#+end_src
+
+Fjerner helpteksten øverst i agendaen. Default melding før jeg fjerna den var dette:
+
+#+begin_quote
+Headlines with TAGS match: sprint
+Press ‘C-u r’ to search again
+#+end_quote
+
+Fjerner de og erstatter alt med ~" "~. SPC-tegnet gjør at jeg setter inn en blank linje helt på topp, for å få litt margin.
+
+#+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
+(setq org-agenda-overriding-header " ")
+#+end_src
+
+
+
+
+** Agendaview for jobbsprinter
+
+Setter opp "sprint"-taggen til å kobles til et eget agendaview
+
+#+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
+(setq org-agenda-custom-commands
+      '(("j" "Jobb-sprint" tags-todo "sprint")))
+
+#+end_src
+
+org-agenda har veldig lyst til å liste opp alle sub-TODOs under de jeg tagger. Fjerner alt som jeg ikke tagger eksplisitt:
+
+- ~my-skip-if-parent-has-tag~ er Claude-vibe for å gjøre akkurat det tittelen sier
+- Så setter jeg en ~org-agenda-custom-commands~ for å liste opp jobb-oppgaver med en gitt tag, der jeg samtidig kaller skip-funksjonen på hver entry.
+
+#+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
+(defun my/skip-if-parent-has-tag (tag)
+  "Skip entry if any ancestor has TAG."
+  (let ((subtree-end (save-excursion (org-end-of-subtree t))))
+    (if (save-excursion
+          (while (and (org-up-heading-safe)
+                      (not (member tag (org-get-tags)))))
+          (member tag (org-get-tags)))
+        subtree-end
+      nil)))
+
+(setq org-agenda-custom-commands
+      '(("j" "Jobb-sprint" tags-todo "sprint"
+         ((org-agenda-skip-function '(my/skip-if-parent-has-tag "sprint"))))))
+
+(setq org-agenda-dim-blocked-tasks nil)
+#+end_src
+
+Detaljen med ~org-agenda-dim-blocked-tasks~ må med fordi en TODO ansees angivelig som "blokkert" når jeg fjerner nedstrøms oppgaver fra visningen, og da får den dimmed farge. Kan løses med å disable dimming i agendaview med å sette denne til ~nil~.
+
+* Org-babel
+** Ansible-støtte
+
+~org-babel~ støtter ikke Ansible-kode ut fra boksen, men det kan legges til med ~ob-ansible.el~. Jeg klarte ikke finne på en smart måte å legge den til, så jeg lasta ned ob-ansible fra Github og kopierte kildekoden rett inn i ~/dotfiler/doom/lokal/ob-ansible.el~, og ~require~-er den inn derfra. Så jeg har en frossen kopi av akkurat denne pakka. Antar jeg la til den ´add-load-path´-setningen først for å få Emacs til å lete etter ~ob-ansible~ i riktig mappe
+
+#+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
+
+(add-load-path! "~/.config/doom/lokal")
+
+(after! org
+  (require 'ob-ansible)
+  (org-babel-do-load-languages
+   'org-babel-load-languages
+   '((ansible . t)  
+     )))
+#+end_src
+
+** Eksport til HTML
+Hjemmesnekra alternativ til ~org-export-to-html~, som eksporterer til ~/tmp~ i stedet for den versjonskontrollerte mappa jeg vanligvis er i. Også åpner den automatisk fila i nettleser
+
+~browse-url~ har jeg moddet [[*Åpne URL-er i Firefox på alle plattformer][her]], sånn at den åpner i nettleser på tvers av WSL, Linux og Android
+
+#+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
+(defun my/org-export-to-tmp-html ()
+  (interactive)
+  (let ((outfile (concat "/tmp/"
+                         (file-name-base (or (buffer-file-name)
+                                             (buffer-name)))
+                         ".html")))
+    (org-export-to-file 'html outfile nil nil nil nil nil)
+    (browse-url (if (and (eq system-type 'gnu/linux)
+                         (getenv "WSLENV"))
+                    (concat "\\\\wsl.localhost\\Ubuntu" outfile)
+                  outfile))))
+#+end_src
+** Eksport til PDF
+
+Dette er den vanlige eksportfunksjonen ~org-latex-export-to-pdf~, pluss...
+
+- Tittel er toppnivå headline i valgt tekst, i stedet for filnavnet
+- PDF-en åpnes automatisk i nettleser med ~browse-url~ som jeg har moddet tidligere til å virke bra på alle OS-plattformer
+
+#+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
+(defun my/org-eksport-til-pdf ()
+  "Export subtree using headline as title and open in browser."
+  (interactive)
+  (org-back-to-heading t)
+  (let* ((title (nth 4 (org-heading-components)))
+         (pdf-file (progn
+                     (org-set-property "EXPORT_TITLE" title)
+                     (org-latex-export-to-pdf nil t))))
+    (when pdf-file
+      (browse-url pdf-file))))
+#+end_src
+
+* Org-bullets
+
+Gjør headerpunkter finere. Prøvde opprinnelig ~org-modern~, men det inneholdt så mye annet rart som ikke funket så bra med temaet jeg har. 
+
+#+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/packages.el
+(package! org-bullets)
+#+end_src
+
+#+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
+(use-package! org-bullets
+  :hook (org-mode . org-bullets-mode))
+#+end_src
+
+
+* Writeroom
+
+#+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
+(setq writeroom-width 50)
+#+end_src
+
+* Embark
+
+Aka "action menu super buffer". Det er den som popper opp når man har tastet en halv hotkey, og Emacs venter på neste tast. Da ser man alle alternativer. Embark legger til fuzzy search av actions, så jeg slipper å lese gjennom actionlista hver gang i forsøk på å finne ting. Ulempen er at jeg -må- skrive kommandonavnet i stedet for å bruke en hotkey, men tror det er best nå
+
+#+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
+(setq embark-prompter 'embark-completing-read-prompter)
+#+end_src
+
+* Hurtiglenker til nettsider
+** Epost
+Åpne Gmail- og Outlook-innboksene fra Emacs:
+
+#+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
+(defun my/open-gmail-firefox-tab ()
+  "Åpner Gmail som ny tab i Firefox"
+  (interactive)
+  (browse-url
+   "https://mail.google.com/mail/u/0/#inbox"))
+#+end_src
+
+#+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
+(defun my/open-outlook-firefox-tab ()
+  "Åpner Outlook som ny tab i Firefox"
+  (interactive)
+  (browse-url "https://outlook.office.com/mail/"))
+#+end_src
+
+** Værmeldinger
+*** my/yr-lillebo
+
+#+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
+(defun my/yr-lillebo ()
+  "Open the weather forecast for Lillebo in the system’s default browser."
+  (interactive)
+  (browse-url
+  "https://www.yr.no/nb/v%C3%A6rvarsel/daglig-tabell/1-174419/Norge/Innlandet/Engerdal/Lillebo"))
+#+end_src
+
+*** my/yr-innbygda
+#+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
+(defun my/yr-innbygda ()
+  "Værmelding for Innbygda"
+  (interactive)
+  (browse-url "https://www.yr.no/nb/v%C3%A6rvarsel/daglig-tabell/1-157692/Norge/Innlandet/Trysil/Innbygda"))
+#+end_src
+
+*** my/yr-oslo-christies
+#+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
+(defun my/yr-oslo-christies ()
+  "Værmelding for Oslo"
+  (interactive)
+  (browse-url "https://www.yr.no/nb/v%C3%A6rvarsel/daglig-tabell/10-995776/Norge/Oslo/Oslo/Christies%20gate"))
+#+end_src
+*** Hurtigtast til alle værmeldinger
+
+#+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
+(map! :leader
+      (:prefix ("y" . "yr")
+       :desc "Lillebo"  "l" #'my/yr-lillebo
+       :desc "Innbygda" "i" #'my/yr-innbygda
+       :desc "Oslo"     "o" #'my/yr-oslo-christies))
+#+end_src
+
+** Kalender
+*** Google
+
+#+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
+(defun my/open-google-kalender-firefox-tab ()
+  "Åpner Google Calendar som ny tab i Firefox"
+  (interactive)
+  (browse-url "https://calendar.google.com/"))
+#+end_src
+
+*** Outlook
+
+#+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
+(defun my/open-outlook-kalender-firefox-tab ()
+  "Åpner Outlook Calendar som ny tab i Firefox"
+  (interactive)
+  (browse-url "https://outlook.office.com/calendar/view/week"))
+#+end_src
+
+* Små funksjoner og hurtigtaster
+** Markdown-lenker -> Org-lenke
+
+Oversetter lenker fra ~[]()~ til ~[[][]]~ med innhold
+
+regex-en er vibbekoda med Claude. Før regex-en er det noen linjer for å få plassert markøren på rett plass
+
+#+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
+(defun my/markdown-lenke-til-org ()
+  (interactive)
+  (beginning-of-line)
+  (search-forward "[")
+  (backward-char)
+  (when (looking-at "\\[\\([^]]+\\)\\](\\([^)]+\\))")
+    (replace-match "[[\\2][\\1]]")))
+#+end_src
+
+** Funksjon for å skrive YYYY-MM-DD-TT-MM
+
+Jeg skriver ofte tidsstempler, så her er to custom funksjoner for å til det med en hotkey
+
+To funksjoner for hhv. ~YYYY-MM-DD TT:MM:SS~ og kun ~YYYY-MM-DD~:
+
+#+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
+(defun my/tidsstempel-sekund ()
+  (interactive)
+  "Returnerer tidsstempel som YYYY-MM-DD TT:MM:SS"
+  (insert (format-time-string "%Y-%m-%d %H:%M:%S")))
+#+end_src
+
+#+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
+(defun my/tidsstempel-dato ()
+  (interactive)
+  "Returnerer tidsstempel som YYYY-MM-DD"
+  (insert (format-time-string "%Y-%m-%d")))
+#+end_src
+
+Så binder jeg de opp mot hver sin hotkey:
+
+#+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
+(map! "<S-delete>" #'my/tidsstempel-dato)
+(map! "<C-S-delete>" #'my/tidsstempel-sekund)
+#+end_src
+
+** Ukenummer til echo area
+
+#+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
+(defun my/ukenummer ()
+  (interactive)
+  (let ((now (current-time)))
+    (message "Uke %s" (format-time-string "%V" now))))
+#+end_src
+
+** Autocommit med Magit
+
+Jeg committer vanligvis notater med "NN " etterfulgt av my/tidsstempel-sekund.
+
+Det er fortsatt litt for mange steg på en mobiltelefon, så jeg automatiserer det fram til commitsteget her:
+
+#+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
+(defun my/notatcommit ()
+  (interactive)
+  (magit-stage-modified)
+  (magit-commit-create (list "-m" (concat "NN " (format-time-string "%Y-%m-%d %H:%M:%S")))))
+#+end_src
+
+Setter opp hotkey så den kan kjøres med ~SPC g n~:
+
+#+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
+(map! :leader
+      "g n" #'my/notatcommit)
+#+end_src
+
+** Måle tidsbruk på evaluering
+
+Denne er stjålet [[https://github.com/cloudstreet-dev/Emacs-for-Goodness-Sake/blob/main/04-configuration.md][herfra]]. 
+
+#+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
+(defmacro measure-time (&rest body)
+  "Measure the time it takes to evaluate BODY."
+  `(let ((time (current-time)))
+     ,@body
+     (message "%.06f seconds"
+              (float-time (time-since time)))))
+#+end_src
+
+Eksempel på bruk:
+
+#+begin_src elisp
+(measure-time (sleep-for 5))
+#+end_src
+
+Resultat:
+
+#+begin_quote
+#+RESULTS:
+: 5.000108 seconds
+#+end_quote
+
+** Huftigtast - Markere til linjeslutt
+
+Jeg markerer veldig ofte til slutten av ei linje uten å ville ta med linjeskift. Lager en hotkey for det:
+
+Med vimbindings kan man oppnå det med ~vg_~. Søkte opp hvilke funksjoner ~v~ og ~g_~ er bundet til, og la de inn i en egen funksjon nedenfor her.
+
+Denne feiler om jeg legger den for høyt i configfila. Prøvde en times tid å finne ur hvorfor, før jeg ga opp og la den nederst her:
+
+#+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
+(defun my/visual-to-line-end ()
+  (interactive)
+  (evil-visual-char)
+  (evil-last-non-blank))
+
+(map! :leader
+  (:prefix ("v" . "markering")
+    :desc "Marker til linjeslutt"
+    "g" #'my/visual-to-line-end))
+#+end_src
+
+** Legge inn debugprint i *Messages*-bufferen
+:PROPERTIES:
+:EXPORT_TITLE: Linjeskift/debugprint i *Messages*-bufferen
+:END:
+
+For å lage luft, og se hvor noe starter og noe annet slutter
+
+#+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
+(defun my/message-debugprint()
+  (interactive)
+  (message "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n")
+  (message "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n")
+  (message "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n"))
+#+end_src
+
+* Dirvish
+
+Dirvish sin hurtigmeny er bedre enn bookmarks-funksjonen til Emacs, så jeg overstyrer ~SPC RET~ hurtigtasten for det her:
+
+#+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
+(map! :leader
+      :desc "Dirvish quick access"
+      "RET" #'dirvish-quick-access)
+#+end_src
+
+I ~dirvish-quick-access-entries~ kan man liste opp snarveier til filer man bruker ofte, også kan man hente de raskt ut med ~SPC RET .~. Lista mi inneholder referanser til jobb og fritid, så selve lista er definert i ~.emacs.secrets~ og importeres hit under [[*Secrets][Secrets]]-headeren. Også binder denne elisp-snutten lista opp mot Dirvish
+
+#+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
+(after! dirvish
+  (when (boundp 'my/dirvish-snarveier)
+    (setq dirvish-quick-access-entries my/dirvish-snarveier)))
+#+end_src
+
+Skifter ut ~SPC o /~ for å åpne filutforskeren med ~SPC o o~, for å passe bedre med norsk tastatur:
+
+#+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
+(map! :leader
+      (:prefix ("o" . "open")
+       :desc "Open Dirvish (alias SPC o /)" "o" #'dirvish))
+#+end_src
+
+* Blamer.el - inline git blame
+
+Tilsvarende GitLens fra VSCode 
+
+Bruker ~blamer.el~: https://github.com/Artawower/blamer.el
+
+#+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/packages.el
+(package! blamer)
+#+end_src
+
+Utgangspunktet er kopi-pasta rett fra README-en
+
+#+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
+(use-package blamer
+  :bind (("s-i" . blamer-show-commit-info))
+  :defer 20
+  :custom
+  (blamer-idle-time 0.3)
+  (blamer-min-offset 70)
+  :custom-face
+  (blamer-face ((t :foreground "#7a88cf"
+                    :background unspecified
+                    :height 140
+                    :italic t)))
+  :config
+  (global-blamer-mode 0))
+#+end_src
+
+* Startside
+
+Setter Emacs til å starte opp i et generisk innboksnotat.
+
+~unless~-linja er der fordi jeg av og til har en jobbrelatert fil som oppstartsbuffer. Den settes i så fall i en ~.secrets~-fil som lastes tidligere. 
+
+Så lenge jeg bruker Doom Emacs, så er ~initial-buffer-choice~ satt til symbolet ~doom-fallback-buffer~ med mindre jeg har satt den til noe annet. "Noe annet" vil i så fall være en filbane i plaintext. Derfor sjekker jeg om ~initial-buffer-choice~ er en string, og hvis den ikke er det, da setter jeg den til standardfilen nedenfor
+
+#+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
+(unless (stringp initial-buffer-choice)
+  (setq initial-buffer-choice "~/repos/notater/202012111337 Innboks.org"))
+#+end_src
+
+* Nettradio med EMMS
+
+Prøvde opprinnelig å få radiostasjoner inn i ~emms-streams~-lista, men jeg ga opp. Jeg endte opp med å vibe-kode en egen måte å legge inn radiostasjoner på. Det har fungert fint å bare sette opp en egen funksjon for hver radiokanal, sånn at jeg kan starte hver radio med ~M-x kanalnavn~ eller en hotkey. 
+
+NRK-lenkene er henta herfra: https://lyd.nrk.no/. 
+
+** Hvordan hente ut stream-URLs
+Noen nettradioer skjuler stream-URL-en. Da kan man ofte få tak i den slik:
+
+1) I Firefox: Ctrl+Shift+C for å få opp developer tools
+2) Velg ~Network~
+3) Filtrer på "media" hvis det er mye støy
+4) Se etter noe som slutter på ~.mp3~, ~.aac~, ~.m3u~ eller lignende
+5) Hvis det ikke er noe, kan man skru radioen av og på for å trigge en ny GET-request
+   
+** Installere EMMS og MPV
+
+Installerer ~emms~:
+
+#+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/packages.el
+(package! emms :recipe (:host github :repo "emacsmirror/emms"))
+#+end_src
+
+I utgangspunktet kunne jeg bare avkommentert ~emms~ fra ~init.el~-filen, også hadde Doom-rammeverket installert det automagisk. Men det har vist seg å være ustabilt, fordi standardserveren som hoster ~emms~ er under press og svarer ikke regelmessig. Derfor ber jeg om å hente ~emms~ fra https://github.com/emacsmirror/emms i stedet for http://savannah.gnu.org/, som er standard. 
+
+Når det er installert kan jeg be om å ta i bruk pakka, og peke på en mediaspiller som skal brukes til å spille av lyd. Her er det [[https://mpv.io/][mpv]] som brukes. 
+
+#+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
+(use-package emms
+  :config
+  (emms-minimalistic)
+  (setq emms-player-list '(emms-player-mpv)))
+#+end_src
+
+** Hurtigtast: Stoppe radioen
+Mapper ~emms-stop~ til ~SPC e s~:
+
+#+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
+(map! :leader
+      (:prefix ("e" . "emms")
+       :desc "Stopp EMMS" "s" #'emms-stop))
+#+end_src
+
+** DEFCON
+
+[[https://somafm.com/player24/station/defcon][soma fm - DEF CON Radio]]
+
+Legger inn stream URL: 
+
+#+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
+(defun my/radio-defcon ()
+  "Spiller av DEF CON Radio"
+  (interactive)
+  (emms-play-url "http://ice3.somafm.com/defcon-128-mp3"))
+#+end_src
+
+Hurtigtast:
+
+#+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
+(map! :leader
+      (:prefix ("e" . "emms")
+       :desc "DEF CON" "d" #'my/radio-defcon))
+#+end_src
+
+** NRK Jazz
+
+#+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
+(defun my/radio-nrk-jazz ()
+  "Spiller av NRK Jazz"
+  (interactive)
+  (emms-play-url "https://cdn0-47115-liveicecast0.dna.contentdelivery.net/jazz_mp3_h"))
+#+end_src
+
+#+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
+(map! :leader
+      (:prefix ("e" . "emms")
+       :desc "NRK Jazz" "j" #'my/radio-nrk-jazz))
+#+end_src
+** NRK Klassisk
+
+#+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
+(defun my/radio-nrk-klassisk ()
+  "Spiller av NRK Klasisk"
+  (interactive)
+  (emms-play-url "https://cdn0-47115-liveicecast0.dna.contentdelivery.net/klassisk_mp3_h"))
+#+end_src
+
+#+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
+(map! :leader
+      (:prefix ("e" . "emms")
+       :desc "NRK Klassisk" "k" #'my/radio-nrk-klassisk))
+#+end_src
+
+** NRK P1
+
+#+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
+(defun my/radio-nrk-p1 ()
+  "Spiller av NRK P1"
+  (interactive)
+  (emms-play-url "https://cdn0-47115-liveicecast0.dna.contentdelivery.net/p1_mp3_h"))
+#+end_src
+
+#+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
+(map! :leader
+      (:prefix ("e" . "emms")
+       :desc "NRK P1" "1" #'my/radio-nrk-p1))
+#+end_src
+
+** NRK P2
+
+#+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
+(defun my/radio-nrk-p2 ()
+  "Spiller av NRK P2"
+  (interactive)
+  (emms-play-url "https://cdn0-47115-liveicecast0.dna.contentdelivery.net/p2_mp3_h"))
+#+end_src
+
+#+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
+(map! :leader
+      (:prefix ("e" . "emms")
+       :desc "NRK P2" "2" #'my/radio-nrk-p2))
+#+end_src
+
+** NRK P3
+
+#+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
+(defun my/radio-nrk-p3 ()
+  "Spiller av NRK P3"
+  (interactive)
+  (emms-play-url "https://cdn0-47115-liveicecast0.dna.contentdelivery.net/p3_mp3_h"))
+#+end_src
+
+#+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
+(map! :leader
+      (:prefix ("e" . "emms")
+       :desc "NRK P3" "3" #'my/radio-nrk-p3))
+#+end_src
+
+** NRK P13
+
+#+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
+(defun my/radio-nrk-p13 ()
+  "Spiller av NRK P13"
+  (interactive)
+  (emms-play-url "https://cdn0-47115-liveicecast0.dna.contentdelivery.net/p13_mp3_h"))
+#+end_src
+
+#+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
+(map! :leader
+      (:prefix ("e" . "emms")
+       :desc "NRK P13" "t" #'my/radio-nrk-p13))
+#+end_src
+
+** NRK mP3
+
+#+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
+(defun my/radio-nrk-mp3 ()
+  "Spiller av NRK mP3"
+  (interactive)
+  (emms-play-url "https://cdn0-47115-liveicecast0.dna.contentdelivery.net/mp3_mp3_h"))
+#+end_src
+
+#+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
+(map! :leader
+      (:prefix ("e" . "emms")
+       :desc "NRK mP3" "m" #'my/radio-nrk-mp3))
+#+end_src
+
+** Freecodecamp radio
+
+https://coderadio.freecodecamp.org/
+
+#+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
+(defun my/radio-freecodecamp ()
+  "Spiller av freeCodeCamp sin nettradio"
+  (interactive)
+  (emms-play-url "https://coderadio-admin-v2.freecodecamp.org/listen/coderadio/radio.mp3"))
+
+#+end_src
+
+#+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
+(map! :leader
+      (:prefix ("e" . "emms")
+       :desc "FreeCodeCamp" "f" #'my/radio-freecodecamp))
+#+end_src
+
+** Rainwave
+
+Videospillmusikk. Herfra: https://rainwave.cc//
+
+De har fem ulike kanaler: Chiptune, "games", oc remix, og covers. Denne kanalen er "all", som henter litt fra alle fire
+
+#+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
+(defun my/radio-rainwave ()
+  "Spiller av Rainwave.cc sin nettradio - Videospillmusikk"
+  (interactive)
+  (emms-play-url "https://relay.rainwave.cc/all.mp3"))
+
+#+end_src
+
+#+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
+(map! :leader
+      (:prefix ("e" . "emms")
+       :desc "Rainwave" "r" #'my/radio-rainwave))
+#+end_src
+
+** Cinemix
+
+Filmusikk. Herfra: https://www.cinemix.us/
+
+#+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
+(defun my/radio-cinemix ()
+  "Spiller av Cinemix sin nettradio - Filmmusikk"
+  (interactive)
+  (emms-play-url "https://kathy.torontocast.com:1190/stream"))
+#+end_src
+
+#+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
+(map! :leader
+      (:prefix ("e" . "emms")
+       :desc "Cinemix" "c" #'my/radio-cinemix))
+#+end_src
+** Radio Pays de Guéret
+
+Fransk [[https://www.radiopaysdegueret.fr/][nettradio]] som spiller veldig variert musikk
+
+#+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
+(defun my/radio-pays-de-gueret ()
+  "Spiller av Radio Pays de Gueret - Misc. fransk++"
+  (interactive)
+  (emms-play-url "https://radiopaysdegueret.ice.infomaniak.ch/radiopaysdegueret.mp3"))
+#+end_src
+
+#+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
+(map! :leader
+      (:prefix ("e" . "emms")
+       :desc "Pays de Guéret" "p" #'my/radio-pays-de-gueret))
+#+end_src
+
+** ChilledCow
+
+Nettside: https://liveonlineradio.net/chilledcow
+
+#+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
+(defun my/radio-chilledcow ()
+  "Spiller av ChilledCow radio"
+  (interactive)
+  (emms-play-url "https://ilm.stream35.radiohost.de/ilm_ilovechillhop_mp3-192"))
+#+end_src
+
+#+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
+(map! :leader
+      (:prefix ("e" . "emms")
+       :desc "ChilledCow" "x" #'my/radio-chilledcow))
+#+end_src
+
+* gptel
+** Installering og aktivering
+
+Installerer gptel-pakka:
+
+#+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/packages.el
+(package! gptel :recipe (:nonrecursive t))
+#+end_src
+
+Aktiverer den i Emacs:
+
+#+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
+(use-package! gptel)
+#+end_src
+
+Binder opp ~gptel-send~ og ~gptel-menu~ til hver sin hotkey:
+
+#+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
+(map! :leader
+      "t s" #'gptel-send
+      "t m" #'gptel-menu)
+#+end_src
+
+** System prompt
+
+Ofte kalt "personalisering"-parameteren. Det er den teksten som mates inn i forkant av hver request, for å tilpasse oppførselen til AI-en.
+
+#+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
+(defvar gptel-systemmelding
+  "Please keep it short and to the point.
+
+Use bullet points when that can make complex matter easier to read.
+
+Do not start sentences with compliments and phrases like \"aha, good question\" - just reply without this emphasis.
+
+Do not engage in any form of flattery or syncophancy.
+
+Assume I misunderstand basic facts from time to time, and try to make me aware of this
+
+If I send you this and nothing else: \"foobar\", then reply only with the word \"baz\".
+
+Actively try to prove me wrong
+
+Recommend a book from time to time. Always double check that any book mentioned exists in real life
+
+Always reply in English even though I ask you questions in Norwegian, unless specifically asked to reply in Norwegian
+
+Avoid filler text. It is OK if that makes the responses look \"cold\" or detached")
+#+end_src
+
+Lager en preset i gptel-configen her:
+
+#+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
+(gptel-make-preset 'standard-test
+  :system gptel-systemmelding)
+#+end_src
+
+Setter den som standard ved boot:
+
+#+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
+(gptel--apply-preset 'standard-test)
+#+end_src
+
+Noen ganger har jeg lurt på om systemmeldingen i det hele tatt blir lest og tatt i bruk. Da har jeg byttet til ~emoji-preset~ nedenfor her som et debugging-verktøy, for da blir det ganske åpenbart om AI-en følger instruksen eller ikke
+
+#+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
+(defvar gptel-emojitest "only reply with emojis and nothing else")
+
+(gptel-make-preset 'emoji-preset
+  :system gptel-emojitest)
+#+end_src
+
+** Claude: Installering og autentisering
+Som default bruker ~gptel~ bare ChatGPT-modellene. Legger inn Anthropic sine Claude-modeller også, og setter ~claude-3-haiku~ til å være default modell i stedet for ChatGPT sin modell.
+
+API-nøkkelen til Claude har jeg lagret i en ~~/.authinfo~-fil, som oppdages automatisk av ~auth-source-pick-first-password~-funksjonen:
+
+#+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
+(gptel-make-anthropic "Claude"
+  :stream t
+  :key (auth-source-pick-first-password :host "api.anthropic.com"))
+#+end_src
+
+#+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
+(setq gptel-backend (gptel-make-anthropic "Claude"
+                 :stream t
+                 :key (auth-source-pick-first-password :host "api.anthropic.com")))
+#+end_src
+
+Setter ~haiku~-modellen til å være standardvalget, da den koster ca. 0 kroner i bruk. 
+
+#+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
+(setq gptel-model 'claude-3-haiku-20240307)
+#+end_src
+
+** Misc 
+
+Setter org-mode som standardsyntax over Markdown som er default:
+
+#+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
+(setq gptel-default-mode #'org-mode)
+#+end_src
+
+
+* Testing :noexport:
+** Skille mellom Windows og Linux
+
+En del innstillinger må tilpasses OS-et. Setter opp en global variabel for dette, sånn at jeg slipper å sjekke dette gjentatte ganger lengre ned:
+
+~system-type~ er en innebygd variabel som returnerer navnet:
+
+
+#+begin_src elisp
+(message "%s" system-type)
+#+end_src
+
+#+RESULTS:
+: gnu/linux
+
+Men på Windows kjører jeg fortsatt Emacs gjennom WSL, som betyr at jeg får returnert ~gnu-linux~ her også. For å finne ut om det er WSL kan vi lage en kjapp deteksjonsfunksjon:
+
+#+begin_src elisp
+(defconst my/is-wsl
+  (and (eq system-type 'gnu/linux)
+       (string-match "WSL" (string-trim (shell-command-to-string "uname -r")))))
+
+(cond
+ (my/is-wsl     (message "Running under WSL")))
+#+end_src
+
+#+RESULTS:
+: Running under WSL
+
+** hotkey ny headline + indentere
+
+#+begin_src emacs-lisp
+(defun my/org-insert-subheading ()
+  "Insert a new subheading below, position cursor after a space, ready for input."
+  (interactive)
+  (org-insert-heading)
+  (org-metaright)
+  (end-of-line)                 ;; go to end of heading stars
+  (insert " ")                  ;; add a space
+  (evil-insert-state))          ;; switch to insert mode
+  #+end_src
+
+
+må bli kvitt den ekstra
+** Persistent workspaces
+
+Ikke innført enda, men jeg fant denne snippet-en fra en annens config som visstnok skal funke:
+
+;; Trying to save workspaces
+(after! persp-mode
+  ;; Auto-save workspaces when Emacs exits
+  (setq persp-auto-save-opt 1)
+  ;; Save all workspace info including window configurations
+  (setq persp-set-last-persp-for-new-frames nil)
+  (setq persp-reset-windows-on-nil-window-conf nil)
+  ;; Load workspaces automatically on startup
+  (setq persp-auto-resume-time -1))
+
+** Konvertere legacy .md til .org
+
+Jeg har 4000+ gamle markdownfiler med dette headerformatet:
+
+#+begin_src markdown
+# 202406231355 En tittel
+<!-- tags: #en #to -->
+<!-- Opprettet fra: [[202406201130]] En backlink -->
+#+end_src
+
+#+begin_src org
+#+title: En tittel
+#+filetags:
+#+ROAM_REFS: [[202406201130]] En backlink
+#+end_src
+
+
+2025-06-23 Dette endte opp som en vibe-spaghetti som ikke funker lenger. Må begynne på nytt.
+
+#+begin_src emacs-lisp
+(defun my/convert-md-header-to-org ()
+  "Convert flexible ZK-style .md file to Org-roam-compatible .org file and rename it."
+  (interactive)
+  (when (string-match "\\.md$" buffer-file-name)
+    (save-excursion
+      (goto-char (point-min))
+
+      ;; Title line: "# <!-- TIMESTAMP --> Title" OR "# TIMESTAMP Title"
+      (when (looking-at "^# *\\(?:<!-- *\\([0-9]+\\) *-->\\|\\([0-9]+\\)\\) *\\(.*\\)")
+        (let ((title (match-string 3)))
+          (replace-match (format "#+title: %s" title) t t)))
+
+      ;; Tags line: replace full line
+      (goto-char (point-min))
+      (when (re-search-forward "^<!-- *tags: *\\(.*?\\) *-->" nil t)
+        (let* ((raw-tags (match-string 1))
+               (tags (mapconcat
+                      (lambda (tag)
+                        (concat ":" (string-trim-left (replace-regexp-in-string "^#" "" tag)) ":"))
+                      (split-string raw-tags) "")))
+          (replace-match (format "#+filetags: %s" tags) nil nil)))
+
+      ;; Backlink line: plain or commented
+      (goto-char (point-min))
+      (when (re-search-forward "^\\(?:<!-- *\\)?\\(Fra\\|Opprettet fra\\): *\\(\\[\\[.*?\\]\\] .*\\)\\(?: *-->\\)?$" nil t)
+        (replace-match (format "#+ROAM_REFS: %s" (match-string 2)) t t)))
+
+    ;; Normalize "## Ref", "## Kilder", etc.
+    (save-excursion
+      (goto-char (point-min))
+      (while (re-search-forward "^\\(?:## *\\)?\\(ref\\|Ref\\|kilder\\|Kilder\\)\\s-*$" nil t)
+        (replace-match "* ref")))
+
+    ;; Insert :ID: property if not already present
+    (save-excursion
+      (goto-char (point-min))
+      (unless (re-search-forward "^:PROPERTIES:" nil t)
+        (let ((uuid (org-id-uuid)))
+          (forward-line)
+          (insert ":PROPERTIES:\n:ID: " uuid "\n:END:\n\n"))))
+
+    ;; Rename file
+    (let ((new-name (concat (file-name-sans-extension buffer-file-name) ".org")))
+      (when (file-exists-p new-name)
+        (delete-file new-name))
+      (rename-visited-file new-name)
+      (message "Converted and renamed to: %s" new-name))))
+#+end_src
+
+** Dimme inaktive vinduer
+funker ikke, tror det skjedde noe galt da Emacs prøvde å klone ned dimmer.el og brukte en evighet på det
+
+
+# I tilegg dimmer jeg inaktive vinduer med ~dimmer.el~
+
+
+# #+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/packages.el
+# (package! dimmer)
+# #+end_src
+
+# Config:
+# #+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
+# (use-package! dimmer
+#   :config
+#   (dimmer-mode)
+#   (setq dimmer-fraction 0.3))  ;; 30% dim on inactive windows
+# #+end_src
+** M-x my/emoji-numpad
+
+
+#+begin_src emacs-lisp
+(defvar my/emoji-numpad-map
+  '((7 . "📁") (2 . "🍺") (6 . "👍") (5 . "🌞"))
+  "Mapping from numbers to emojis for `my/emoji-numpad'.")
+
+(defun my/emoji-numpad ()
+  "Prompt for a number; insert mapped emoji, else say 'undefined' in echo area."
+  (interactive)
+  (let* ((n (read-number "Enter a number: "))
+         (emoji (alist-get n my/emoji-numpad-map)))
+    (if emoji
+        (insert emoji)
+      (message "undefined"))))
+#+end_src
+
+oi det var lett
+neste steg kan være å få opp ei synlig liste å velge fra
+
+** Org-present
+
+Herfra: https://github.com/rlister/org-present
+
+#+begin_src emacs-lisp
+(package! org-present)
+#+end_src
+
+#+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
+(eval-after-load "org-present"
+  '(progn
+     (add-hook 'org-present-mode-hook
+               (lambda ()
+                 (org-present-big)
+                 (org-display-inline-images)
+                 (org-present-hide-cursor)
+                 (org-present-read-only)))
+     (add-hook 'org-present-mode-quit-hook
+               (lambda ()
+                 (org-present-small)
+                 (org-remove-inline-images)
+                 (org-present-show-cursor)
+                 (org-present-read-write)))))
+
+(after! org-present
+  (setq org-present-level 99))  ;; 2 = * and ** are slides
+#+end_src
+* Legacy :noexport:
+:PROPERTIES:
+:header-args:    :tangle no
+:END:
+** Deaktiver truncate lines :noexport:
+
+2025-12-09 tror jeg bare la inn denne for å fikse en hack-feil jeg rettet opp rotårsaken på senere. Det var noe gammel vibeconfig som jeg sletta. 
+
+Denne mener jeg er ~nil~ som standard, men på et tidspunkt begynte setninger å flyte ut av skjermen uten at jeg ville det. Denne setningen sikrer at linjer blir truncated
+
+#+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
+;(setq-default truncate-lines nil)
+#+end_src
+** Scratchbuffergreier
+2025-12-09 Tror dette aldri ble tatt i bruk/hadde noen innvirkning på Emacs:
+
+
+
+Scratch-bufferen bruker jeg lite, men når den brukes så er det for å leke med Lisp. Så jeg setter grunnmodusen der til ~lisp-interaction-mode~ i stedet for Fundamental
+
+
+
+#+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
+(setq initial-major-mode 'lisp-interaction-mode)
+
+(setq +scratch-default-mode 'lisp-interaction-mode)
+#+end_src
+
+;; Make the startup *scratch* buffer use lisp-interaction-mode
+
+
+** Erstatt ~ESC~ med ~nk~ for å avslutte visual/insert mode
+
+2025-12-09: Dette stammer fra da jeg prøvde å finne et bedre alternativ til ~ESC~-knappen
+
+
+Lillefingeren min liker ikke å pendle tur-retur ESC to hundre ganger hver dag. "oi" tror jeg vil funke bra fordi jeg alltid har ringfinger og langfinger hvilkende på de som standard.
+
+Jeg mapper ikke egentlig ESC til noe annet her, men jeg setter opp en hotkey som oppnår det samme som ESC oppnår når jeg er i insert mode, som er å ta meg tilbake til normal mode
+
+Installerer ~key-chord~:
+
+#+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/packages.el
+(package! key-chord)
+#+end_src
+
+Bruker ~key-chord-mode~ for å sette opp "oi" som alternativ til ESC
+
+...men har problemer med å få det til å virke konsekvent
+
+#+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
+;;(evil-escape-mode -1)
+
+(require 'key-chord)
+(key-chord-mode 1)
+;; (key-chord-define evil-insert-state-map "oi" 'evil-normal-state)
+;; (key-chord-define evil-visual-state-map "oi" 'evil-normal-state)
+(setq key-chord-two-keys-delay 0.2)
+#+end_src
+
+- ~evil-insert-state-map~ sier at følgende hotkey gjelder kun når jeg er i insert mode
+- ~'evil-normal-state~ er funksjonen som kalles når jeg taster "kj"
+  - Med andre ord, den sier "ta meg tilbake til normal mode"
+- ~key-chord-two-keys-delay~ setter max tillatt ventetid mellom de to tastene for at det skal telle som en hhttps://github.com/rnkn/olivetti?tab=readme-ov-fileotkey
+
+...og her deaktiverer jeg esc til å gå ut av insert mode, slik at jeg ikke glemmer å bruke den nye hotkey-en. kan slette denne etterhvert som jeg internaliserer ~nk~.
+
+#+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
+;; (after! evil
+;;     (define-key evil-insert-state-map (kbd "<escape>") 'ignore)
+;;     (define-key evil-visual-state-map (kbd "<escape>") 'ignore))
+#+end_src
+
+** Org-refile :noexport:
+:PROPERTIES:
+:EXPORT_TITLE: Org-refile
+:END:
+
+2025-12-11 22:42:36 :noexport: fordi jeg tror denne ikke gjør noe som helst
+
+#+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
+(setq org-refile-targets
+      '(("~/repos/notater/202111121500 Innboks jobb.org" :maxlevel . 1)
+        ("~/repos/notater/202012111337 Innboks.org" :level . 1)))
+#+end_src

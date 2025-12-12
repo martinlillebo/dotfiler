@@ -5,3 +5,6 @@
 *.ini
 /doom/flycheck_config.el
 /doom/flycheck_flycheck_config.el
+/doom/config.el
+/doom/init.el
+/doom/packages.el
