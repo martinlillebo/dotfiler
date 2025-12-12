@@ -1,6 +1,5 @@
-#+title: 2025060337 Emacs Config
+#+title: Emacs Config
 #+STARTUP: overview
-##+HTML_HEAD: <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/water.css@2/out/water.css">
 #+HTML_HEAD: <link rel="stylesheet" href="https://cdn.simplecss.org/simple.min.css">
 
 Dette er en [[https://orgmode.org/manual/Extracting-Source-Code.html][literal konfigurasjonsfil]], som betyr at all koden til ~config.el~, ~init.el~ og ~packages.el~ utgår automatisk fra denne filen.
