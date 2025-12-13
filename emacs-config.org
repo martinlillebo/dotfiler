@@ -239,6 +239,7 @@ Her ligger det småpakker som ikke har gjort seg fortjent til egne kapitler
 (package! elisp-format)
 (package! keyfreq)
 (package! verb)
+(package! keycast)
 #+end_src
 
 ~nyan-mode~ og ~rainbow-mode~ må også aktiveres i ~config.el~ slik:
@@ -1665,10 +1666,11 @@ Installerer pakken:
 (package! nerd-icons-ibuffer) 
 #+end_src
 
-Setter opp en hook som aktiverer ~nerd-icons-ibuffer-mode~ når ~ibuffer~ åpnes
+Setter opp en hook som aktiverer ~nerd-icons-ibuffer-mode~ når ~ibuffer~ åpnes. Med mindre jeg er på Emacs på Android, hvor jeg ikke har fått det til å virke. 
 
 #+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
 (use-package! nerd-icons-ibuffer
+  :unless (eq system-type 'android) 
   :hook (ibuffer-mode . nerd-icons-ibuffer-mode))
 #+end_src
 
