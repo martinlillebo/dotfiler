@@ -29,7 +29,7 @@ Dette er en [[https://orgmode.org/manual/Extracting-Source-Code.html][literal ko
 
 * Secrets
 
-Sensitiv info som passord, personlige ting og jobbrelaterte referanser som ikke passer seg på et offentlig repo legges til en ~.emacs.secrets~-fil som jeg synkroniserer privat, utenfor denne configen.
+Sensitiv info som passord, personlige notatnavn, og jobbrelaterte referanser som ikke passer seg på et offentlig repo legges til en ~.emacs.secrets~-fil som jeg synkroniserer privat, utenfor denne configen.
 
 ~when~-uttrykket på første linje passer på at Emacs ikke krasjer hvis ~.secrets~-fila skulle mangle
 
@@ -240,6 +240,7 @@ Her ligger det småpakker som ikke har gjort seg fortjent til egne kapitler
 (package! keyfreq)
 (package! verb)
 (package! keycast)
+(package! guru-mode)
 #+end_src
 
 ~nyan-mode~ og ~rainbow-mode~ må også aktiveres i ~config.el~ slik:
@@ -276,6 +277,13 @@ Fjerner også ~org-self-insert-command~, som kjøres for hvert eneste tastetrykk
 (setq keyfreq-autosave-timeout 180)
 (keyfreq-mode 1)
 (keyfreq-autosave-mode 1)
+#+end_src
+
+
+Setter på ~guru-mode~ som for å avvenne bruk av piltaster i insert mode, som en test
+
+#+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
+(guru-global-mode +1)
 #+end_src
 
 * Tema
@@ -1017,6 +1025,41 @@ Gjør headerpunkter finere. Prøvde opprinnelig ~org-modern~, men det inneholdt 
 #+end_src
 
 
+* Workspaces
+
+Setter opp et utvalg workspaces sånn at jeg raskt kan dra fram de vanligste filene jeg vil endre innenfor samme kontekst.
+
+De fleste workspace-ene inneholder delvis sensitive filnavn o.l. pga jobb, så de defineres opp i en egen ~.emacs.secrets~-fil som importeres tidligere i denne config-en. Men de følger samme mal som dette Emacs-config-workspacet:
+
+#+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
+(defun my/workspace-emacs-config ()
+  "doom-config + literalfilen de utgår fra"
+  (interactive)
+  (+workspace/new "emacs-config")
+  (find-file "~/repos/dotfiler/doom/config.el")
+  (find-file "~/repos/dotfiler/doom/init.el")
+  (find-file "~/repos/dotfiler/doom/packages.el")
+  (find-file "~/repos/dotfiler/emacs-config.org")
+  )
+#+end_src
+
+Mal:
+
+
+#+begin_src emacs-lisp 
+(defun my/workspace-NAVN ()
+  "doom-config + literalfilen de utgår fra"
+  (interactive)
+  (+workspace/new "NAVN"
+  (find-file "")
+  (find-file "")
+  (find-file "")
+  (find-file "")
+  )
+#+end_src
+
+Dette kunne vært skrevet smartere vha. makroer, parameterisering og så videre. Men det funker fint slik det står 
+
 * Writeroom
 
 #+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
@@ -1666,7 +1709,7 @@ Setter org-mode som standardsyntax over Markdown som er default:
 #+end_src
 
 
-* ibuffer :noexport:
+* ibuffer
 
 Doom Emacs-rammeverket bruker [[https://www.nerdfonts.com/][Nerd Fonts]] for å trylle fram symboler til alt mulig. Bortsett fra ~ibuffer~, som er veldig grå og trist. 
 
@@ -1678,7 +1721,7 @@ Installerer pakken:
 (package! nerd-icons-ibuffer) 
 #+end_src
 
-Setter opp en hook som aktiverer ~nerd-icons-ibuffer-mode~ når ~ibuffer~ åpnes. Med mindre jeg er på Emacs på Android, hvor jeg ikke har fått det til å virke. 
+Setter opp en hook som aktiverer ~nerd-icons-ibuffer-mode~ når ~ibuffer~ åpnes. Med mindre jeg er på Emacs på Android, hvor jeg ikke har fått det til å virke.  
 
 #+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
 (use-package! nerd-icons-ibuffer
