@@ -338,8 +338,14 @@ De er blitt tatt inn som standardtemaer i Emacs, så det er bare å sette dark-v
 ** Standardtema
 
 #+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
-(setq doom-theme 'modus-vivendi-tinted)
+(cond
+ ((and (eq system-type 'gnu/linux)
+       (getenv "WSLENV"))
+  (setq doom-theme 'modus-vivendi)
+  )
+ (setq doom-theme 'modus-vivendi-tinted))
 #+end_src
+
 
 * Velkomstskjerm :noexport:
 ; ~noexport~ fordi jeg ikke bruker velkomstskjerm for tida 
@@ -1721,11 +1727,12 @@ Installerer pakken:
 (package! nerd-icons-ibuffer) 
 #+end_src
 
-Setter opp en hook som aktiverer ~nerd-icons-ibuffer-mode~ når ~ibuffer~ åpnes. Med mindre jeg er på Emacs på Android, hvor jeg ikke har fått det til å virke.  
+Setter opp en hook som aktiverer ~nerd-icons-ibuffer-mode~ når ~ibuffer~ åpnes. Med mindre jeg er på Emacs på Android eller WSL, hvor jeg ikke har fått det til å virke.
 
 #+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
 (use-package! nerd-icons-ibuffer
-  :unless (eq system-type 'android) 
+  :unless (eq system-type 'android)
+  :unless (and (eq system-type 'gnu/linux) (getenv "WSLENV"))
   :hook (ibuffer-mode . nerd-icons-ibuffer-mode))
 #+end_src
 
