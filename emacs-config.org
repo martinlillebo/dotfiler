@@ -341,7 +341,7 @@ De er blitt tatt inn som standardtemaer i Emacs, så det er bare å sette dark-v
 (cond
  ((and (eq system-type 'gnu/linux)
        (getenv "WSLENV"))
-  (setq doom-theme 'modus-vivendi)
+  (setq doom-theme 'catppuccin)
   )
  (setq doom-theme 'modus-vivendi-tinted))
 #+end_src
