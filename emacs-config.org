@@ -38,6 +38,8 @@ Sensitiv info som passord, personlige notatnavn, og jobbrelaterte referanser som
   (load-file "~/.emacs.secrets"))
 #+end_src
 
+
+
 * init.el
 
 Dette er hele ~init.el~-fila slik den er originalt etter Doom Emacs-rammeverket. Har ikke kommet over noen god grunn til å dele den opp
@@ -612,6 +614,76 @@ Det var nå jeg måtte lære meg hva en "frame" er, i tillegg til "window" og "b
 (set-frame-parameter (selected-frame) 'alpha '(94 . 94))
 (add-to-list 'default-frame-alist '(alpha . (94 . 94)))
 #+end_src
+
+* TUI config
+Noen ganger er det best å kjøre Emacs i terminalen heller enn som GUI-applikasjon, med ~emacs -nw~. Spesielt som alternativ til å kjøre GUI-applikasjonen ut fra Windows sitt WSL-miljø. 
+
+** TUI utklippstavle
+
+Uten ekstra config er utklippstavla til TUI-er generelt uavhengig av OS-et sin tavle, som gjør det veldig keitete å kopiere og lime tekst mellom terminal og ikke-terminal-programmer
+
+Denne magiske fix-en har jeg stjålet ordrett herfra: [[https://www.rahuljuliato.com/posts/emacs-clipboard-terminal][emacs-solo-clipboard: A Minimal Clipboard Bridge]]
+
+Den setter opp en fake "pakke", finner ut om det kjøres Wayland-Linux, X11-Linux, macOS eller WSL, også tar den i bruk OS-native utklippstavleprogrammer til å fungere som bro mellom terminal og resten av maskinen. Holder macOS utkommentert da jeg ikke eier en Mac, men fin å ha der om det skulle komme en vakker dag hvor det skjer. 
+
+#+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
+(use-package emacs-solo-clipboard
+  :ensure nil
+  :no-require t
+  :defer t
+  :init
+  (cond
+   ;; macOS: use pbcopy/pbpaste
+   ;; ((eq system-type 'darwin)
+   ;;      (setq interprogram-cut-function
+   ;;      	  (lambda (text &optional _)
+   ;;      		(let ((process-connection-type nil))
+   ;;      		  (let ((proc (start-process "pbcopy" "*Messages*" "pbcopy")))
+   ;;      			(process-send-string proc text)
+   ;;      			(process-send-eof proc)))))
+   ;;      (setq interprogram-paste-function
+   ;;      	  (lambda ()
+   ;;      		(shell-command-to-string "pbpaste"))))
+
+   ;; WSL (Windows Subsystem for Linux): Use clip.exe for copy and powershell.exe for paste
+   ((and (eq system-type 'gnu/linux)
+        	 (getenv "WSLENV"))
+        (setq interprogram-cut-function
+        	  (lambda (text &optional _)
+        		(let ((process-connection-type nil))
+        		  (let ((proc (start-process "clip.exe" "*Messages*" "clip.exe")))
+        			(process-send-string proc text)
+        			(process-send-eof proc)))))
+        (setq interprogram-paste-function
+        	  (lambda ()
+        		(string-trim (shell-command-to-string "powershell.exe -command Get-Clipboard")))))
+
+   ;; Linux with wl-copy/wl-paste (Wayland)
+   ((and (eq system-type 'gnu/linux) (executable-find "wl-copy"))
+	(setq interprogram-cut-function
+		  (lambda (text &optional _)
+			(let ((process-connection-type nil))
+			  (let ((proc (start-process "wl-copy" "*Messages*" "wl-copy")))
+				(process-send-string proc text)
+				(process-send-eof proc)))))
+	(setq interprogram-paste-function
+		  (lambda ()
+			(shell-command-to-string "wl-paste -n"))))
+
+   ;; Linux with xclip (X11)
+   ((and (eq system-type 'gnu/linux) (executable-find "xclip"))
+	(setq interprogram-cut-function
+		  (lambda (text &optional _)
+			(let ((process-connection-type nil))
+			  (let ((proc (start-process "xclip" "*Messages*" "xclip" "-selection" "clipboard")))
+				(process-send-string proc text)
+				(process-send-eof proc)))))
+	(setq interprogram-paste-function
+		  (lambda ()
+			(shell-command-to-string "xclip -selection clipboard -o"))))))
+#+end_src
+
+
 
 * Utviklermiljø
 ** Parenteser
