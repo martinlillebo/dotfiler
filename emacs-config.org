@@ -6,6 +6,19 @@ Denne Emacs-konfigurasjonen baserer seg på [[https://github.com/doomemacs/doome
 
 Dette er en [[https://orgmode.org/manual/Extracting-Source-Code.html][literal konfigurasjonsfil]], som betyr at all konfigurasjon defineres i denne artikkelen, også hentes innholdet i kodeblokkene her ut til de riktige konfigfilene når man ønsker å oppdatere. Med andre ord skriver man README-en først, også utgår all konfig automatisk ut fra den. 
 
+* Profiling av oppstartstid
+
+
+Om oppstart av Emacs går treigt, pleier jeg å legge inn disse to linjene manuelt henholdsvis topp og bunn av ~config.el~. Da får man en callstack-rapport med ~M-x profiler-report~ der det står ganske tydelig hva som tar opp all tiden:
+
+#+begin_src elisp
+(profiler-start 'cpu)
+(profiler-stop)
+#+end_src
+
+
+test:
+
 * Toppnivå headere
 ** packages.el
 #+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/packages.el
@@ -242,6 +255,7 @@ Her ligger det småpakker som ikke har gjort seg fortjent til egne kapitler
 (package! keyfreq)
 (package! verb)
 (package! keycast)
+(package! esup)
 #+end_src
 
 ~nyan-mode~ og ~rainbow-mode~ må også aktiveres i ~config.el~ slik:
@@ -279,7 +293,24 @@ Fjerner også ~org-self-insert-command~, som kjøres for hvert eneste tastetrykk
 (keyfreq-mode 1)
 (keyfreq-autosave-mode 1)
 #+end_src
+* Consult (søking)
 
+[[https://github.com/minad/consult][Consult]] er ei pakke med søke- og navigeringskommandoer som følger med Doom Emacs. Den har mulighet for live preview av filer når man søker opp et ord, men for meg er det ikke aktivert som standard. Legger til live preview slik:
+
+#+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
+(after! consult
+  (consult-customize
+   +default/search-project
+   +default/search-other-project
+   +default/search-cwd
+   +default/search-other-cwd
+   consult-ripgrep
+   consult-grep
+   consult-git-grep
+   :preview-key 'any))
+#+end_src
+
+Den viktige linja her er ~:preview-key 'any~. Om jeg forstår rett, så sier den at ethvert tastetrykk skal trigge preview av valgt fil. Default-innstilling kan man se ved å slå opp verdien på ~consult--customize-alist~. Hos meg var alle søkekommandoer satt med ~:preview-key 'SPC-C'~, som betyr at jeg må eksplisitt taste SPC-C for å trigge en preview. 
 
 * Tema
 
@@ -333,12 +364,7 @@ De er blitt tatt inn som standardtemaer i Emacs, så det er bare å sette dark-v
 ** Standardtema
 
 #+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
-(cond
- ((and (eq system-type 'gnu/linux)
-       (getenv "WSLENV"))
-  (setq doom-theme 'catppuccin)
-  )
- (setq doom-theme 'modus-vivendi-tinted))
+(setq doom-theme 'modus-vivendi)
 #+end_src
 
 
@@ -1091,8 +1117,8 @@ Gjør headerpunkter finere. Prøvde opprinnelig ~org-modern~, men det inneholdt 
 #+end_src
 
 #+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
-(use-package! org-bullets
-  :hook (org-mode . org-bullets-mode))
+(after! org
+  (add-hook 'org-mode-hook #'org-bullets-mode))
 #+end_src
 
 
@@ -1111,6 +1137,10 @@ De fleste workspace-ene inneholder delvis sensitive filnavn o.l. pga jobb, så d
   (find-file "~/repos/dotfiler/doom/init.el")
   (find-file "~/repos/dotfiler/doom/packages.el")
   (find-file "~/repos/dotfiler/emacs-config.org")
+  (let ((optional-file "~/.emacs.secrets"))
+    (when (file-exists-p optional-file)
+      (find-file optional-file)))
+  (switch-to-buffer "config.el")
   )
 #+end_src
 
@@ -1449,6 +1479,7 @@ Når det er installert kan jeg be om å ta i bruk pakka, og peke på en mediaspi
 
 #+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
 (use-package emms
+  :defer t
   :config
   (emms-minimalistic)
   (setq emms-player-list '(emms-player-mpv)))
@@ -1864,75 +1895,6 @@ Ikke innført enda, men jeg fant denne snippet-en fra en annens config som visst
   (setq persp-reset-windows-on-nil-window-conf nil)
   ;; Load workspaces automatically on startup
   (setq persp-auto-resume-time -1))
-
-** Konvertere legacy .md til .org
-
-Jeg har 4000+ gamle markdownfiler med dette headerformatet:
-
-#+begin_src markdown
-# 202406231355 En tittel
-<!-- tags: #en #to -->
-<!-- Opprettet fra: [[202406201130]] En backlink -->
-#+end_src
-
-#+begin_src org
-#+title: En tittel
-#+filetags:
-#+ROAM_REFS: [[202406201130]] En backlink
-#+end_src
-
-
-2025-06-23 Dette endte opp som en vibe-spaghetti som ikke funker lenger. Må begynne på nytt.
-
-#+begin_src emacs-lisp
-(defun my/convert-md-header-to-org ()
-  "Convert flexible ZK-style .md file to Org-roam-compatible .org file and rename it."
-  (interactive)
-  (when (string-match "\\.md$" buffer-file-name)
-    (save-excursion
-      (goto-char (point-min))
-
-      ;; Title line: "# <!-- TIMESTAMP --> Title" OR "# TIMESTAMP Title"
-      (when (looking-at "^# *\\(?:<!-- *\\([0-9]+\\) *-->\\|\\([0-9]+\\)\\) *\\(.*\\)")
-        (let ((title (match-string 3)))
-          (replace-match (format "#+title: %s" title) t t)))
-
-      ;; Tags line: replace full line
-      (goto-char (point-min))
-      (when (re-search-forward "^<!-- *tags: *\\(.*?\\) *-->" nil t)
-        (let* ((raw-tags (match-string 1))
-               (tags (mapconcat
-                      (lambda (tag)
-                        (concat ":" (string-trim-left (replace-regexp-in-string "^#" "" tag)) ":"))
-                      (split-string raw-tags) "")))
-          (replace-match (format "#+filetags: %s" tags) nil nil)))
-
-      ;; Backlink line: plain or commented
-      (goto-char (point-min))
-      (when (re-search-forward "^\\(?:<!-- *\\)?\\(Fra\\|Opprettet fra\\): *\\(\\[\\[.*?\\]\\] .*\\)\\(?: *-->\\)?$" nil t)
-        (replace-match (format "#+ROAM_REFS: %s" (match-string 2)) t t)))
-
-    ;; Normalize "## Ref", "## Kilder", etc.
-    (save-excursion
-      (goto-char (point-min))
-      (while (re-search-forward "^\\(?:## *\\)?\\(ref\\|Ref\\|kilder\\|Kilder\\)\\s-*$" nil t)
-        (replace-match "* ref")))
-
-    ;; Insert :ID: property if not already present
-    (save-excursion
-      (goto-char (point-min))
-      (unless (re-search-forward "^:PROPERTIES:" nil t)
-        (let ((uuid (org-id-uuid)))
-          (forward-line)
-          (insert ":PROPERTIES:\n:ID: " uuid "\n:END:\n\n"))))
-
-    ;; Rename file
-    (let ((new-name (concat (file-name-sans-extension buffer-file-name) ".org")))
-      (when (file-exists-p new-name)
-        (delete-file new-name))
-      (rename-visited-file new-name)
-      (message "Converted and renamed to: %s" new-name))))
-#+end_src
 
 ** Dimme inaktive vinduer
 funker ikke, tror det skjedde noe galt da Emacs prøvde å klone ned dimmer.el og brukte en evighet på det
