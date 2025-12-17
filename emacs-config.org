@@ -242,7 +242,6 @@ Her ligger det småpakker som ikke har gjort seg fortjent til egne kapitler
 (package! keyfreq)
 (package! verb)
 (package! keycast)
-(package! guru-mode)
 #+end_src
 
 ~nyan-mode~ og ~rainbow-mode~ må også aktiveres i ~config.el~ slik:
@@ -281,12 +280,6 @@ Fjerner også ~org-self-insert-command~, som kjøres for hvert eneste tastetrykk
 (keyfreq-autosave-mode 1)
 #+end_src
 
-
-Setter på ~guru-mode~ som for å avvenne bruk av piltaster i insert mode, som en test
-
-#+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
-(guru-global-mode +1)
-#+end_src
 
 * Tema
 
@@ -589,7 +582,7 @@ Disse er rett ved piltastene på min laptop, og jeg kommer borti de hele tiden. 
 #+end_src
 
 uten ~with-eval-after-load~ så funker ikke ~defalias~-uttrykkene, selv om de legges helt nederst i ~config.el~
-** Garbage collection-meldinger
+** Garbage collection-meldinger :noexport:
 
 Setter på denne for å må melding i echo-area når garbage collection starter og slutter. Bare fordi det er interessant å få et inntrykk av hvor ofte det skjer: 
 
@@ -621,7 +614,7 @@ Det var nå jeg måtte lære meg hva en "frame" er, i tillegg til "window" og "b
 (add-to-list 'default-frame-alist '(alpha . (94 . 94)))
 #+end_src
 
-* TUI config
+* TUI config :noexport:
 Noen ganger er det best å kjøre Emacs i terminalen heller enn som GUI-applikasjon, med ~emacs -nw~. Spesielt som alternativ til å kjøre GUI-applikasjonen ut fra Windows sitt WSL-miljø. 
 
 ** TUI utklippstavle
