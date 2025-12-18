@@ -255,7 +255,6 @@ Her ligger det småpakker som ikke har gjort seg fortjent til egne kapitler
 (package! keyfreq)
 (package! verb)
 (package! keycast)
-(package! esup)
 #+end_src
 
 ~nyan-mode~ og ~rainbow-mode~ må også aktiveres i ~config.el~ slik:
