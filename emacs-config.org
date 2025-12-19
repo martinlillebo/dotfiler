@@ -310,7 +310,7 @@ Fjerner også ~org-self-insert-command~, som kjøres for hvert eneste tastetrykk
    :preview-key 'any))
 #+end_src
 
-Den viktige linja her er ~:preview-key 'any~. Om jeg forstår rett, så sier den at ethvert tastetrykk skal trigge preview av valgt fil. Default-innstilling kan man se ved å slå opp verdien på ~consult--customize-alist~. Hos meg var alle søkekommandoer satt med ~:preview-key 'SPC-C'~, som betyr at jeg må eksplisitt taste SPC-C for å trigge en preview. 
+Den viktige linja her er ~:preview-key 'any~. Om jeg forstår rett, så sier den at for alle søkefunksjonene som listes opp i forkant, så skal ethvert tastetrykk ("~any~") trigge preview av valgt fil. Default-innstilling kan man se ved å slå opp verdien på ~consult--customize-alist~. Hos meg var alle søkekommandoer satt med ~:preview-key 'SPC-C'~, som betyr at jeg må eksplisitt taste SPC-C for å trigge en preview. 
 
 * Tema
 
