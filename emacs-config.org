@@ -819,7 +819,7 @@ I ~Vim~ så funker ~``~ fint til å hoppe mellom ~evil-next-line~/~evil-previous
 
 Jeg brukte litt for mye tid til å prøve å vibe det til å virke, også ga jeg opp. Men jeg fant en løsning som heller bruker ~better-jumper~, som Doom har bundet til ~C-o~/~C-i~.
 
-Boilerplate-koden nedenfor her er henta fra denne [[https://www.reddit.com/r/emacs/comments/1mztz6i/share_your_tips_for_fast_movements_and_navigation/][reddittråden]] 
+Boilerplate-koden nedenfor her er henta fra denne [[https://www.reddit.com/r/emacs/comments/1mztz6i/share_your_tips_for_fast_movements_and_navigation/][reddittråden]], også har jeg lagt til noen ekstra linjer under "jump scenarios" når jeg vil ha inn flere ting til å trigge et mark
 
 #+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
 (use-package better-jumper
@@ -854,7 +854,9 @@ Boilerplate-koden nedenfor her er henta fra denne [[https://www.reddit.com/r/ema
     (advice-add 'evil-previous-line :around #'my-jump-advice)
     (advice-add 'helm-swoop :around #'my-jump-advice)
     (advice-add 'evil-goto-definition :around #'my-jump-advice)
-    (advice-add 'evil-goto-mark  :around #'my-jump-advice))
+    (advice-add 'evil-goto-mark  :around #'my-jump-advice)
+    (advice-add 'evil-avy-goto-char-2 :around #'my-jump-advice)
+    )
     ; ... whenever you want a new jump scenario just use the above pattern.
 #+end_src
 
