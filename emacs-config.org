@@ -639,6 +639,95 @@ Det var nå jeg måtte lære meg hva en "frame" er, i tillegg til "window" og "b
 (set-frame-parameter (selected-frame) 'alpha '(94 . 94))
 (add-to-list 'default-frame-alist '(alpha . (94 . 94)))
 #+end_src
+* Vim/evil og annen navigasjon
+
+Alt som har med Vim-bevegelser og navigasjon å gjøre
+
+** Fjerne uvaner
+
+Et vanlig tips for å bli flinkere i Vim er å deaktivere ting som nybegynnere ofte klamrer seg til, for å tvinge overgang til bedre vaner. En av tingene er å bruke piltastene. Egentlig i det hele tatt, men spesielt i insert mode. Starter med å fjerne de akkurat i insert mode, hvor jeg ofte havner der
+
+#+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
+(after! evil
+  (defun my/deaktivere-piltaster ()
+    (interactive)
+    (message "Piltaster deaktivert."))
+
+  (dolist (key '("<left>" "<right>" "<up>" "<down>"))
+    (define-key evil-insert-state-map (kbd key) 'my/deaktivere-piltaster)
+    (define-key evil-normal-state-map (kbd key) 'my/deaktivere-piltaster)
+    )
+  )
+#+end_src
+** Better-jumper
+
+I ~Vim~ så funker ~``~ fint til å hoppe mellom ~evil-next-line~/~evil-previous-line~ når disse kalles med et tall, f.eks. ~5j~ eller ~10k~. Men ~evil-mode~ inkluderer ikke det.
+
+Jeg brukte litt for mye tid til å prøve å vibe det til å virke, også ga jeg opp. Men jeg fant en løsning som heller bruker ~better-jumper~, som Doom har bundet til ~C-o~/~C-i~.
+
+Boilerplate-koden nedenfor her er henta fra denne [[https://www.reddit.com/r/emacs/comments/1mztz6i/share_your_tips_for_fast_movements_and_navigation/][reddittråden]], også har jeg lagt til noen ekstra linjer under "jump scenarios" når jeg vil ha inn flere ting til å trigge et mark
+
+#+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
+(use-package better-jumper
+
+    :custom
+    ; this is the key to avoiding conflict with evils jumping stuff
+    (better-jumper-use-evil-jump-advice nil)
+
+    :config
+    (better-jumper-mode 1)
+
+    ; this lets me toggle between two points. (adapted from evil-jump-backward-swap)
+    (evil-define-motion better-jumper-toggle (count)
+      (let ((pnt (point)))
+        (better-jumper-jump-backward 1)
+        (better-jumper-set-jump pnt)))
+
+    ; this is the key here. This advice makes it so you only set a jump point
+    ; if you move more than one line with whatever command you call. For example
+    ; if you add this advice around evil-next-line, you will set a jump point
+    ; if you do 10 j, but not if you just hit j. I did not write this code, I
+    ; I found it a while back and updated it to work with better-jumper.
+    (defun my-jump-advice (oldfun &rest args)
+      (let ((old-pos (point)))
+        (apply oldfun args)
+        (when (> (abs (- (line-number-at-pos old-pos) (line-number-at-pos (point))))
+                  1)
+          (better-jumper-set-jump old-pos))))
+
+    ; jump scenarios
+    (advice-add 'evil-next-line :around #'my-jump-advice)
+    (advice-add 'evil-previous-line :around #'my-jump-advice)
+    (advice-add 'helm-swoop :around #'my-jump-advice)
+    (advice-add 'evil-goto-definition :around #'my-jump-advice)
+    (advice-add 'evil-goto-mark  :around #'my-jump-advice)
+    (advice-add 'evil-avy-goto-char-2 :around #'my-jump-advice)
+    )
+    ; ... whenever you want a new jump scenario just use the above pattern.
+#+end_src
+** Hurtigtast - Markere til linjeslutt
+
+Jeg markerer veldig okte til slutten av ei linje uten å ville ta med linjeskift. Lager en hotkey for det:
+
+Med vimbindings kan man oppnå det med ~vg_~. Søkte opp hvilke funksjoner ~v~ og ~g_~ er bundet til, og la de inn i en egen funksjon nedenfor her.
+
+Denne feiler om jeg legger den for høyt i configfila. Prøvde en times tid å finne ur hvorfor, før jeg ga opp og la den nederst her:
+
+#+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
+(defun my/visual-to-line-end ()
+  (interactive)
+  (evil-visual-char)
+  (evil-last-non-blank))
+
+(map! :leader
+  (:prefix ("v" . "markering")
+    :desc "Marker til linjeslutt"
+    "g" #'my/visual-to-line-end))
+#+end_src
+
+
+
+
 
 * TUI config :noexport:
 Noen ganger er det best å kjøre Emacs i terminalen heller enn som GUI-applikasjon, med ~emacs -nw~. Spesielt som alternativ til å kjøre GUI-applikasjonen ut fra Windows sitt WSL-miljø. 
@@ -716,7 +805,7 @@ Den setter opp en fake "pakke", finner ut om det kjøres Wayland-Linux, X11-Linu
 Aktiverer ~smartparens-mode~ overalt for å lyse opp motsats-parentesen til den jeg har markøren på:
 
 #+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
-(setq show-smartparens-global-mode t)
+(show-smartparens-global-mode 1)
 #+end_src
 
 
@@ -813,54 +902,6 @@ Setter opp et advice som gjør at ~projectile-invalidate-cache~ kjøres etter hv
   (advice-add 'rename-file :after #'my/rename-file-invalidate-projectile-cache))
 #+end_src
     
-* Better-jumper
-
-I ~Vim~ så funker ~``~ fint til å hoppe mellom ~evil-next-line~/~evil-previous-line~ når disse kalles med et tall, f.eks. ~5j~ eller ~10k~. Men ~evil-mode~ inkluderer ikke det.
-
-Jeg brukte litt for mye tid til å prøve å vibe det til å virke, også ga jeg opp. Men jeg fant en løsning som heller bruker ~better-jumper~, som Doom har bundet til ~C-o~/~C-i~.
-
-Boilerplate-koden nedenfor her er henta fra denne [[https://www.reddit.com/r/emacs/comments/1mztz6i/share_your_tips_for_fast_movements_and_navigation/][reddittråden]], også har jeg lagt til noen ekstra linjer under "jump scenarios" når jeg vil ha inn flere ting til å trigge et mark
-
-#+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
-(use-package better-jumper
-
-    :custom
-    ; this is the key to avoiding conflict with evils jumping stuff
-    (better-jumper-use-evil-jump-advice nil)
-
-    :config
-    (better-jumper-mode 1)
-
-    ; this lets me toggle between two points. (adapted from evil-jump-backward-swap)
-    (evil-define-motion better-jumper-toggle (count)
-      (let ((pnt (point)))
-        (better-jumper-jump-backward 1)
-        (better-jumper-set-jump pnt)))
-
-    ; this is the key here. This advice makes it so you only set a jump point
-    ; if you move more than one line with whatever command you call. For example
-    ; if you add this advice around evil-next-line, you will set a jump point
-    ; if you do 10 j, but not if you just hit j. I did not write this code, I
-    ; I found it a while back and updated it to work with better-jumper.
-    (defun my-jump-advice (oldfun &rest args)
-      (let ((old-pos (point)))
-        (apply oldfun args)
-        (when (> (abs (- (line-number-at-pos old-pos) (line-number-at-pos (point))))
-                  1)
-          (better-jumper-set-jump old-pos))))
-
-    ; jump scenarios
-    (advice-add 'evil-next-line :around #'my-jump-advice)
-    (advice-add 'evil-previous-line :around #'my-jump-advice)
-    (advice-add 'helm-swoop :around #'my-jump-advice)
-    (advice-add 'evil-goto-definition :around #'my-jump-advice)
-    (advice-add 'evil-goto-mark  :around #'my-jump-advice)
-    (advice-add 'evil-avy-goto-char-2 :around #'my-jump-advice)
-    )
-    ; ... whenever you want a new jump scenario just use the above pattern.
-#+end_src
-
-
 * Org-mode
 ** Org-ellipsis
 
@@ -1376,26 +1417,6 @@ Resultat:
 #+RESULTS:
 : 5.000108 seconds
 #+end_quote
-
-** Huftigtast - Markere til linjeslutt
-
-Jeg markerer veldig ofte til slutten av ei linje uten å ville ta med linjeskift. Lager en hotkey for det:
-
-Med vimbindings kan man oppnå det med ~vg_~. Søkte opp hvilke funksjoner ~v~ og ~g_~ er bundet til, og la de inn i en egen funksjon nedenfor her.
-
-Denne feiler om jeg legger den for høyt i configfila. Prøvde en times tid å finne ur hvorfor, før jeg ga opp og la den nederst her:
-
-#+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
-(defun my/visual-to-line-end ()
-  (interactive)
-  (evil-visual-char)
-  (evil-last-non-blank))
-
-(map! :leader
-  (:prefix ("v" . "markering")
-    :desc "Marker til linjeslutt"
-    "g" #'my/visual-to-line-end))
-#+end_src
 
 ** Legge inn debugprint i *Messages*-bufferen
 :PROPERTIES:
@@ -2042,8 +2063,6 @@ Bruker ~key-chord-mode~ for å sette opp "oi" som alternativ til ESC
 ...men har problemer med å få det til å virke konsekvent
 
 #+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
-;;(evil-escape-mode -1)
-
 (require 'key-chord)
 (key-chord-mode 1)
 ;; (key-chord-define evil-insert-state-map "oi" 'evil-normal-state)
