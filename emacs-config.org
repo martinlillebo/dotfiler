@@ -1049,16 +1049,17 @@ Fjerner de og erstatter alt med ~" "~. SPC-tegnet gjør at jeg setter inn en bla
 
 
 
-** Agendaview for jobbsprinter
+** Agendaview for spesifikke tags
 
-Setter opp "sprint"-taggen til å kobles til et eget agendaview
+Setter opp "sprint"-taggen til å kobles til et eget agendaview, og et annet view for "idag"-tags:
 
 #+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
 (setq org-agenda-custom-commands
-      '(("j" "Jobb-sprint" tags-todo "sprint")))
-
+      '(("j" "Jobb-sprint" tags-todo "sprint")
+        ("i" "dagens oppgaver" tags-todo "idag")))
 #+end_src
 
+** Bare vise taggede headlines, ikke sub-headlines
 org-agenda har veldig lyst til å liste opp alle sub-TODOs under de jeg tagger. Fjerner alt som jeg ikke tagger eksplisitt:
 
 - ~my-skip-if-parent-has-tag~ er Claude-vibe for å gjøre akkurat det tittelen sier
@@ -1077,12 +1078,23 @@ org-agenda har veldig lyst til å liste opp alle sub-TODOs under de jeg tagger. 
 
 (setq org-agenda-custom-commands
       '(("j" "Jobb-sprint" tags-todo "sprint"
-         ((org-agenda-skip-function '(my/skip-if-parent-has-tag "sprint"))))))
+         ((org-agenda-skip-function '(my/skip-if-parent-has-tag "sprint"))))
+        ("i" "dagens oppgaver" tags-todo "idag"
+         ((org-agenda-skip-function '(my/skip-if-parent-has-tag "idag"))))))
 
 (setq org-agenda-dim-blocked-tasks nil)
 #+end_src
 
 Detaljen med ~org-agenda-dim-blocked-tasks~ må med fordi en TODO ansees angivelig som "blokkert" når jeg fjerner nedstrøms oppgaver fra visningen, og da får den dimmed farge. Kan løses med å disable dimming i agendaview med å sette denne til ~nil~.
+** Hurtigtaster
+
+Dooms default for å kalle ~org-agenda~ er ~SPC o A~, som er litt for langt. Setter den til ~SPC A~:
+
+#+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
+(map! :leader
+      "A" #'org-agenda)
+#+end_src
+
 
 * Org-babel
 ** Ansible-støtte
@@ -1319,6 +1331,35 @@ Aka "action menu super buffer". Det er den som popper opp når man har tastet en
   (browse-url "https://outlook.office.com/calendar/view/week"))
 #+end_src
 
+* Magit
+
+** Hotkey: Autocommit med Magit
+
+Jeg committer vanligvis notater med "NN " etterfulgt av my/tidsstempel-sekund.
+
+Det er fortsatt litt for mange steg på en mobiltelefon, så jeg automatiserer det fram til commitsteget her:
+
+#+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
+(defun my/notatcommit ()
+  (interactive)
+  (magit-stage-modified)
+  (magit-commit-create (list "-m" (concat "NN " (format-time-string "%Y-%m-%d %H:%M:%S")))))
+#+end_src
+
+Setter opp hotkey så den kan kjøres med ~SPC g n~:
+
+#+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
+(map! :leader
+      "g n" #'my/notatcommit)
+#+end_src
+** Hotkey: git pull 
+
+#+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
+(map! :leader
+      "g p" #'magit-pull)
+#+end_src
+
+
 * Små funksjoner og hurtigtaster
 ** Markdown-lenker -> Org-lenke
 
@@ -1370,26 +1411,6 @@ Så binder jeg de opp mot hver sin hotkey:
   (interactive)
   (let ((now (current-time)))
     (message "Uke %s" (format-time-string "%V" now))))
-#+end_src
-
-** Autocommit med Magit
-
-Jeg committer vanligvis notater med "NN " etterfulgt av my/tidsstempel-sekund.
-
-Det er fortsatt litt for mange steg på en mobiltelefon, så jeg automatiserer det fram til commitsteget her:
-
-#+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
-(defun my/notatcommit ()
-  (interactive)
-  (magit-stage-modified)
-  (magit-commit-create (list "-m" (concat "NN " (format-time-string "%Y-%m-%d %H:%M:%S")))))
-#+end_src
-
-Setter opp hotkey så den kan kjøres med ~SPC g n~:
-
-#+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
-(map! :leader
-      "g n" #'my/notatcommit)
 #+end_src
 
 ** Måle tidsbruk på evaluering
