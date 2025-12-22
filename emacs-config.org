@@ -1333,7 +1333,6 @@ Aka "action menu super buffer". Det er den som popper opp når man har tastet en
 #+end_src
 
 * Magit
-
 ** Hotkey: Autocommit med Magit
 
 Jeg committer vanligvis notater med "NN " etterfulgt av my/tidsstempel-sekund.
@@ -1353,12 +1352,22 @@ Setter opp hotkey så den kan kjøres med ~SPC g n~:
 (map! :leader
       "g n" #'my/notatcommit)
 #+end_src
-** Hotkey: git pull 
+** Hotkey: git pull & git pull
+
+pull:
 
 #+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
 (map! :leader
       "g p" #'magit-pull-from-pushremote)
 #+end_src
+
+push: 
+
+#+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
+(map! :leader
+      "g P" #'magit-push-current-to-pushremote)
+#+end_src
+
 
 
 * Små funksjoner og hurtigtaster
