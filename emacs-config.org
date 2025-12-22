@@ -243,6 +243,7 @@ Her ligger det småpakker som ikke har gjort seg fortjent til egne kapitler
 - ~rainbow-mode~ fargelegger hexnumre direkte, f.eks. #EEEE3E.
 - ~keyfreq~ gir statistikk på hvor ofte kommandoer brukes
 - ~verb~ er [[https://github.com/federicotdn/verb][herfra]]. Et alternativ til ~restclient.el~
+- ~keycast~ er veldig nyttig for å se hvilke funksjoner som kalles
 
 #+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/packages.el
 (package! nyan-mode)
@@ -1356,7 +1357,7 @@ Setter opp hotkey så den kan kjøres med ~SPC g n~:
 
 #+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
 (map! :leader
-      "g p" #'magit-pull)
+      "g p" #'magit-pull-from-pushremote)
 #+end_src
 
 
