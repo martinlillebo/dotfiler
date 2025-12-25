@@ -1111,6 +1111,16 @@ Dooms default for å kalle ~org-agenda~ er ~SPC o A~, som er litt for langt. Set
 #+end_src
 
 
+** Fjerne visning av repeterende oppgaver
+
+Man kan schedule TODO's til å repetere seg daglig, som er nyttig til sånne små morgenrutine-ting man f.eks. gjør hver morgen på jobb.
+
+Men de fyller opp agendavisningen med støy, så jeg deaktiverer visning av repetisjonene. Slik at repeterende oppgaver kun vises på neste kommende dato:
+
+#+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
+(setq org-agenda-show-future-repeats nil)
+#+end_src
+
 * Org-babel
 ** Ansible-støtte
 
