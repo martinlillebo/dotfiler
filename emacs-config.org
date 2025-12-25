@@ -89,12 +89,12 @@ Dette er hele ~init.el~-fila slik den er originalt etter Doom Emacs-rammeverket.
        (popup +defaults)   ; tame sudden yet inevitable temporary windows
        smooth-scroll     ; So smooth you won't believe it's not butter
        ;;tabs              ; a tab bar for Emacs
-       ;;treemacs          ; a project drawer, like neotree but cooler
+       treemacs          ; a project drawer, like neotree but cooler
        ;;unicode           ; extended unicode support for various languages
        (vc-gutter +pretty) ; vcs diff in the fringe
        vi-tilde-fringe   ; fringe tildes to mark beyond EOB
        ;;window-select     ; visually switch windows
-       ;;workspaces        ; tab emulation, persistence & separate workspaces
+       workspaces        ; tab emulation, persistence & separate workspaces
        zen               ; distraction-free coding or writing
 
        :editor
@@ -640,6 +640,20 @@ Det var nå jeg måtte lære meg hva en "frame" er, i tillegg til "window" og "b
 (set-frame-parameter (selected-frame) 'alpha '(94 . 94))
 (add-to-list 'default-frame-alist '(alpha . (94 . 94)))
 #+end_src
+** Avslutte med riktig kommando
+
+Jeg lukker ofte Emacs med ~SPC w q~ uten å mene det, da jeg bruker den mye for å lukke vinduer. Om det bare er ett vikdu igjen, så avsluttes Emacs. Fjerner den siste regelen slik:
+
+#+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
+(defun my/evil-quit-advice (orig-fun &rest args)
+  "Stopper evil-exit fra å lukke Emacs"
+    (if (= (length (window-list)) 1)
+          (message "Lukk Emacs med SPC q q")
+              (apply orig-fun args)))
+
+(advice-add 'evil-quit :around #'my/evil-quit-advice)
+#+end_src
+
 * Vim/evil og annen navigasjon
 
 Alt som har med Vim-bevegelser og navigasjon å gjøre
