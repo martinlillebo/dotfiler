@@ -1224,10 +1224,15 @@ De fleste workspace-ene inneholder delvis sensitive filnavn o.l. pga jobb, så d
   )
 #+end_src
 
+
+
+
+
+
 Mal:
 
 
-#+begin_src emacs-lisp 
+#+begin_src emacs-lisp
 (defun my/workspace-NAVN ()
   "doom-config + literalfilen de utgår fra"
   (interactive)
