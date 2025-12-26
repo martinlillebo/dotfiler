@@ -654,6 +654,15 @@ Jeg lukker ofte Emacs med ~SPC w q~ uten å mene det, da jeg bruker den mye for 
 (advice-add 'evil-quit :around #'my/evil-quit-advice)
 #+end_src
 
+** ultra-scroll
+
+Denne tror jeg er standard i Doom Emacs. Men den gir feilmelding ved oppstart i Android, så jeg deaktiverer den på mobil:
+
+#+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
+(when (eq system-type 'android)
+    (advice-add 'ultra-scroll-mode :override #'ignore))
+#+end_src
+
 * Vim/evil og annen navigasjon
 
 Alt som har med Vim-bevegelser og navigasjon å gjøre
