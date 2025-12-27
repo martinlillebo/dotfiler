@@ -196,7 +196,7 @@ Dette er hele ~init.el~-fila slik den er originalt etter Doom Emacs-rammeverket.
        ;;nim               ; python + lisp at the speed of c
        ;;nix               ; I hereby declare "nix geht mehr!"
        ;;ocaml             ; an objective camel
-       (org +roam2)               ; organize your plain life in plain text
+       (org +roam2 +habit)               ; organize your plain life in plain text
        ;;php               ; perl's insecure younger brother
        ;;plantuml          ; diagrams for confusing people more
        ;;graphviz          ; diagrams for confusing yourself even more
@@ -414,7 +414,7 @@ For å se størrelsen på vinduet akkurat nå, kan man evaluere denne:
 #+end_src
 
 #+RESULTS:
-: Width: 168, Height: 44
+: Width: 168, Height: 43
 
 WSL og Linux oppfører seg forskjellig, så de trenger hver sin setting:
 
@@ -428,7 +428,7 @@ WSL og Linux oppfører seg forskjellig, så de trenger hver sin setting:
  ;; --- Linux ---
  ((eq system-type 'gnu/linux)
   (add-to-list 'initial-frame-alist '(width . 83))
-  (add-to-list 'initial-frame-alist '(height . 44))))
+  (add-to-list 'initial-frame-alist '(height . 43))))
 #+end_src
 
 Ved første øyekast ser det ut som om vinduet settes til å være nesten dobbelt så bredt som det er høyt, før man skjønner at høyden oppgis i linjer, og bredden oppgis i antall characters. Det gir mening når man får høre at Emacs måler alt i tekst, og rektangelet som omslutter en bokstav på datamaskiner er mye høyere enn det er bredt.
@@ -1822,6 +1822,25 @@ Nettside: https://liveonlineradio.net/chilledcow
       (:prefix ("e" . "emms")
        :desc "ChilledCow" "x" #'my/radio-chilledcow))
 #+end_src
+** Asteroid Radio
+
+https://asteroid.radio/
+
+
+#+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
+(defun my/radio-asteroid ()
+  "Spiller av Asteroid Radio"
+  (interactive)
+  (emms-play-url "http://ice.asteroid.radio/asteroid.aac"))
+#+end_src
+
+#+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
+(map! :leader
+      (:prefix ("e" . "emms")
+       :desc "Asteroid Radio" "a" #'my/radio-asteroid))
+#+end_src
+
+
 
 * gptel
 ** Installering og aktivering
