@@ -8,7 +8,11 @@
    '("19d62171e83f2d4d6f7c31fc0a6f437e8cec4543234f0548bad5d49be8e344cd"
      "c3076fdee603e9768817cfe8dbf6253d5b3cf3bf4602cb32fa2f1df62fe70b1c" default))
  '(org-agenda-files
-   '("~/repos/notater/20250922135432-statnett_oversikt.org"
+   '("~/repos/notater/org/20250730110754-sopra_steria_oversikt.org"
+     "/data/data/com.termux/files/home/repos/notater/202506120825 Todo.org"
+     "/data/data/com.termux/files/home/repos/notater/202011200904 Dagnotater.md"
+     "/data/data/com.termux/files/home/repos/notater/org/20250531191654-todo_familie.org"
+     "/data/data/com.termux/files/home/repos/notater/20250922135432-statnett_oversikt.org"
      "/data/data/com.termux/files/home/repos/notater/202012010931 Arbeidsoppgaver.org")))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.

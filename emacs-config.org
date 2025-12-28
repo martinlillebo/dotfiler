@@ -257,6 +257,7 @@ Her ligger det småpakker som ikke har gjort seg fortjent til egne kapitler
 (package! verb)
 (package! keycast)
 (package! activities)
+(package! time-zones)
 #+end_src
 
 ~nyan-mode~ og ~rainbow-mode~ må også aktiveres i ~config.el~ slik:
@@ -1080,6 +1081,7 @@ Setter opp "sprint"-taggen til å kobles til et eget agendaview, og et annet vie
 #+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
 (setq org-agenda-custom-commands
       '(("j" "Jobb-sprint" tags-todo "sprint")
+        ("d" "daglig" tags-todo "daglig")
         ("i" "dagens oppgaver" tags-todo "idag")))
 #+end_src
 
