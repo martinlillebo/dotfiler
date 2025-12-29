@@ -1091,6 +1091,7 @@ org-agenda har veldig lyst til å liste opp alle sub-TODOs under de jeg tagger. 
 - ~my-skip-if-parent-has-tag~ er Claude-vibe for å gjøre akkurat det tittelen sier
 - Så setter jeg en ~org-agenda-custom-commands~ for å liste opp jobb-oppgaver med en gitt tag, der jeg samtidig kaller skip-funksjonen på hver entry.
 
+  original, fungerende
 #+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
 (defun my/skip-if-parent-has-tag (tag)
   "Skip entry if any ancestor has TAG."
@@ -1109,6 +1110,33 @@ org-agenda har veldig lyst til å liste opp alle sub-TODOs under de jeg tagger. 
          ((org-agenda-skip-function '(my/skip-if-parent-has-tag "idag"))))))
 
 (setq org-agenda-dim-blocked-tasks nil)
+#+end_src
+
+test temp:
+
+#+begin_src elisp
+(setq org-agenda-custom-commands
+      '(("j" "Jobb-sprint" tags-todo "sprint"
+               ((org-agenda-skip-function '(my/skip-if-parent-has-tag "sprint"))))
+                       ("i" "dagens oppgaver" tags-todo "idag"
+                                ((org-agenda-skip-function '(my/skip-if-parent-has-tag "idag"))))
+        ("w" "Jobb-agenda"
+            ((agenda ""
+                 ((org-agenda-span 'day)
+                   (org-agenda-skip-function
+                    '(org-agenda-skip-entry-if 'notregexp ":CATEGORY:.*jobb"))
+                        (org-agenda-overriding-header "Jobbkalender")))))
+                           ("p" "Personlig agenda"
+                              ((agenda ""
+                                      ((org-agenda-span 'day)
+                                          (org-agenda-skip-function
+                '(org-agenda-skip-entry-if 'notregexp ":CATEGORY:.*personlig"))
+                                                   (org-agenda-overriding-header "Personlig kalender")))))))
+
+                                                   #+end_src
+
+#+begin_src eliso
+
 #+end_src
 
 Detaljen med ~org-agenda-dim-blocked-tasks~ må med fordi en TODO ansees angivelig som "blokkert" når jeg fjerner nedstrøms oppgaver fra visningen, og da får den dimmed farge. Kan løses med å disable dimming i agendaview med å sette denne til ~nil~.
