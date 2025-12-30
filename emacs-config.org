@@ -897,6 +897,18 @@ Men på mobil er det kronglete å scrolle sidelengs, så jeg bytter til ~visual-
 (map! :leader
       "l g" #'my/android-launch-gmail)
 #+end_src
+* WSL
+
+Det er viktig å installere ~emacs-pgtk~ i stedet for ~emacs-gtk~.
+
+Hvis man bare kjører ~sudo apt install emacs~, så får man sistnevnte, så man må eksplisitt installere ~pgtk~-versjonen.
+
+Altså:
+
+#+begin_quote
+sudo apt install emacs-pgtk
+#+end_quote
+
 
 * Projectile
 
