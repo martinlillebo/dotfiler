@@ -1273,6 +1273,12 @@ Gjør headerpunkter finere. Prøvde opprinnelig ~org-modern~, men det inneholdt 
 #+end_src
 
 
+* Org-transclusion
+
+#+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/packages.el
+(package! org-transclusion)
+#+end_src
+
 * Workspaces
 
 Setter opp et utvalg workspaces sånn at jeg raskt kan dra fram de vanligste filene jeg vil endre innenfor samme kontekst.
@@ -1610,15 +1616,6 @@ Prøvde opprinnelig å få radiostasjoner inn i ~emms-streams~-lista, men jeg ga
 
 NRK-lenkene er henta herfra: https://lyd.nrk.no/. 
 
-** Hvordan hente ut stream-URLs
-Noen nettradioer skjuler stream-URL-en. Da kan man ofte få tak i den slik:
-
-1) I Firefox: Ctrl+Shift+C for å få opp developer tools
-2) Velg ~Network~
-3) Filtrer på "media" hvis det er mye støy
-4) Se etter noe som slutter på ~.mp3~, ~.aac~, ~.m3u~ eller lignende
-5) Hvis det ikke er noe, kan man skru radioen av og på for å trigge en ny GET-request
-   
 ** Installere EMMS og MPV
 
 Installerer ~emms~:
@@ -1648,6 +1645,15 @@ Mapper ~emms-stop~ til ~SPC e s~:
        :desc "Stopp EMMS" "s" #'emms-stop))
 #+end_src
 
+** Hvordan hente ut stream-URLs
+Noen nettradioer skjuler stream-URL-en. Da kan man ofte få tak i den slik:
+
+1) I Firefox: Ctrl+Shift+C for å få opp developer tools
+2) Velg ~Network~
+3) Filtrer på "media" hvis det er mye støy
+4) Se etter noe som slutter på ~.mp3~, ~.aac~, ~.m3u~ eller lignende
+5) Hvis det ikke er noe, kan man skru radioen av og på for å trigge en ny GET-request
+
 ** DEFCON
 
 [[https://somafm.com/player24/station/defcon][soma fm - DEF CON Radio]]
@@ -1667,35 +1673,6 @@ Hurtigtast:
 (map! :leader
       (:prefix ("e" . "emms")
        :desc "DEF CON" "d" #'my/radio-defcon))
-#+end_src
-
-** NRK Jazz
-
-#+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
-(defun my/radio-nrk-jazz ()
-  "Spiller av NRK Jazz"
-  (interactive)
-  (emms-play-url "https://cdn0-47115-liveicecast0.dna.contentdelivery.net/jazz_mp3_h"))
-#+end_src
-
-#+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
-(map! :leader
-      (:prefix ("e" . "emms")
-       :desc "NRK Jazz" "j" #'my/radio-nrk-jazz))
-#+end_src
-** NRK Klassisk
-
-#+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
-(defun my/radio-nrk-klassisk ()
-  "Spiller av NRK Klasisk"
-  (interactive)
-  (emms-play-url "https://cdn0-47115-liveicecast0.dna.contentdelivery.net/klassisk_mp3_h"))
-#+end_src
-
-#+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
-(map! :leader
-      (:prefix ("e" . "emms")
-       :desc "NRK Klassisk" "k" #'my/radio-nrk-klassisk))
 #+end_src
 
 ** NRK P1
@@ -1773,24 +1750,36 @@ Hurtigtast:
        :desc "NRK mP3" "m" #'my/radio-nrk-mp3))
 #+end_src
 
-** Freecodecamp radio
+** Cinemix
 
-https://coderadio.freecodecamp.org/
+Filmusikk. Herfra: https://www.cinemix.us/
 
 #+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
-(defun my/radio-freecodecamp ()
-  "Spiller av freeCodeCamp sin nettradio"
+(defun my/radio-cinemix ()
+  "Spiller av Cinemix sin nettradio - Filmmusikk"
   (interactive)
-  (emms-play-url "https://coderadio-admin-v2.freecodecamp.org/listen/coderadio/radio.mp3"))
-
+  (emms-play-url "https://kathy.torontocast.com:1190/stream"))
 #+end_src
 
 #+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
 (map! :leader
       (:prefix ("e" . "emms")
-       :desc "FreeCodeCamp" "f" #'my/radio-freecodecamp))
+       :desc "Cinemix" "c" #'my/radio-cinemix))
+#+end_src
+** NRK Jazz
+
+#+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
+(defun my/radio-nrk-jazz ()
+  "Spiller av NRK Jazz"
+  (interactive)
+  (emms-play-url "https://cdn0-47115-liveicecast0.dna.contentdelivery.net/jazz_mp3_h"))
 #+end_src
 
+#+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
+(map! :leader
+      (:prefix ("e" . "emms")
+       :desc "NRK Jazz" "j" #'my/radio-nrk-jazz))
+#+end_src
 ** Rainwave
 
 Videospillmusikk. Herfra: https://rainwave.cc//
@@ -1811,39 +1800,6 @@ De har fem ulike kanaler: Chiptune, "games", oc remix, og covers. Denne kanalen 
        :desc "Rainwave" "r" #'my/radio-rainwave))
 #+end_src
 
-** Cinemix
-
-Filmusikk. Herfra: https://www.cinemix.us/
-
-#+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
-(defun my/radio-cinemix ()
-  "Spiller av Cinemix sin nettradio - Filmmusikk"
-  (interactive)
-  (emms-play-url "https://kathy.torontocast.com:1190/stream"))
-#+end_src
-
-#+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
-(map! :leader
-      (:prefix ("e" . "emms")
-       :desc "Cinemix" "c" #'my/radio-cinemix))
-#+end_src
-** Radio Pays de Guéret
-
-Fransk [[https://www.radiopaysdegueret.fr/][nettradio]] som spiller veldig variert musikk
-
-#+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
-(defun my/radio-pays-de-gueret ()
-  "Spiller av Radio Pays de Gueret - Misc. fransk++"
-  (interactive)
-  (emms-play-url "https://radiopaysdegueret.ice.infomaniak.ch/radiopaysdegueret.mp3"))
-#+end_src
-
-#+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
-(map! :leader
-      (:prefix ("e" . "emms")
-       :desc "Pays de Guéret" "p" #'my/radio-pays-de-gueret))
-#+end_src
-
 ** ChilledCow
 
 Nettside: https://liveonlineradio.net/chilledcow
@@ -1860,6 +1816,21 @@ Nettside: https://liveonlineradio.net/chilledcow
       (:prefix ("e" . "emms")
        :desc "ChilledCow" "x" #'my/radio-chilledcow))
 #+end_src
+** NRK Klassisk
+
+#+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
+(defun my/radio-nrk-klassisk ()
+  "Spiller av NRK Klasisk"
+  (interactive)
+  (emms-play-url "https://cdn0-47115-liveicecast0.dna.contentdelivery.net/klassisk_mp3_h"))
+#+end_src
+
+#+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
+(map! :leader
+      (:prefix ("e" . "emms")
+       :desc "NRK Klassisk" "k" #'my/radio-nrk-klassisk))
+#+end_src
+
 ** Asteroid Radio
 
 https://asteroid.radio/
@@ -1879,6 +1850,41 @@ https://asteroid.radio/
 #+end_src
 
 
+
+** Freecodecamp radio
+
+https://coderadio.freecodecamp.org/
+
+#+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
+(defun my/radio-freecodecamp ()
+  "Spiller av freeCodeCamp sin nettradio"
+  (interactive)
+  (emms-play-url "https://coderadio-admin-v2.freecodecamp.org/listen/coderadio/radio.mp3"))
+
+#+end_src
+
+#+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
+(map! :leader
+      (:prefix ("e" . "emms")
+       :desc "FreeCodeCamp" "f" #'my/radio-freecodecamp))
+#+end_src
+
+** Radio Pays de Guéret
+
+Fransk [[https://www.radiopaysdegueret.fr/][nettradio]] som spiller veldig variert musikk
+
+#+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
+(defun my/radio-pays-de-gueret ()
+  "Spiller av Radio Pays de Gueret - Misc. fransk++"
+  (interactive)
+  (emms-play-url "https://radiopaysdegueret.ice.infomaniak.ch/radiopaysdegueret.mp3"))
+#+end_src
+
+#+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
+(map! :leader
+      (:prefix ("e" . "emms")
+       :desc "Pays de Guéret" "p" #'my/radio-pays-de-gueret))
+#+end_src
 
 * gptel
 ** Installering og aktivering
