@@ -1106,17 +1106,6 @@ Setter default til å bare vise dagen i dag:
 #+end_src
 
 
-** Agendaview for spesifikke tags
-
-Setter opp "sprint"-taggen til å kobles til et eget agendaview, og et annet view for "idag"-tags:
-
-#+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
-(setq org-agenda-custom-commands
-      '(("j" "Jobb-sprint" tags-todo "sprint")
-        ("d" "daglig" tags-todo "daglig")
-        ("i" "dagens oppgaver" tags-todo "idag")))
-#+end_src
-
 ** Bare vise taggede headlines, ikke sub-headlines
 org-agenda har veldig lyst til å liste opp alle sub-TODOs under de jeg tagger. Fjerner alt som jeg ikke tagger eksplisitt:
 
