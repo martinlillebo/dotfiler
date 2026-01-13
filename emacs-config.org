@@ -467,11 +467,12 @@ På Linux kan man installere Nerd Fonts med ~M-x install-nerd-fonts~, men Emacs 
 Det som er ekstra spennende, er at hele Doom Emacs-korthuset ramler sammen dramatisk hvis man prøver å sette ~doom font~ til noe som ikke fins. Så for å sikre mot det, ligger ~setq doom-font~ etter en ~when~-clause som sjekker om den fins før vi setter den
 
 #+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
-(when (find-font (font-spec :family "FantasqueSansMNerdFontMono"))
-  (setq doom-font (font-spec :family "FantasqueSansMNerdFontMono" :size 14)))
+(when (find-font (font-spec :family "FantasqueSansM Nerd Font"))
+  (setq doom-font (font-spec :family "FantasqueSansM Nerd Font" :size 14)))
 #+end_src
 
 Installasjon av nerd fonts kan gjøres sånn:
+*** Hvordan installere Nerd Fonts:
 
 1. Last ned en font-variasjon av Nerd Fonts, f.eks. ~Fantasque~, [[https://www.nerdfonts.com/font-downloads][herfra]]
    - [[https://github.com/ryanoasis/nerd-fonts/releases/download/v3.4.0/FantasqueSansMono.zip][Direktelenke til FantasqueSansMono.zip]] 
