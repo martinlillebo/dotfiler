@@ -1531,6 +1531,21 @@ For å lage luft, og se hvor noe starter og noe annet slutter
   (message "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n")
   (message "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n"))
 #+end_src
+** Blank buffer
+
+Noen ganger vil jeg bare fylle den synlige delen av bufferen med blanke linjer. Typisk når jeg vil skrible ned noe mens jeg jobber med en kollega, også vil jeg ikke ha noe annet distraherende synlig, og heller ikke bruke tid på å sette opp en blank notatfil et sted.
+
+#+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
+(defun my/fyll-buffer-med-newlines ()
+  "Fyller den synlige delen av bufferen med newlines, og legger markøren øverst med unntak for kommentarlinjer"
+  (interactive)
+  (goto-char (point-min))
+  (while (looking-at "^#")
+    (forward-line 1))
+  (let ((insert-point (point)))
+    (insert (make-string (window-body-height) ?\n))
+    (goto-char insert-point)))
+#+end_src
 
 * Dirvish
 
