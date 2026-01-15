@@ -434,11 +434,12 @@ På Linux kan man installere Nerd Fonts med ~M-x install-nerd-fonts~, men Emacs 
 Det som er ekstra spennende, er at hele Doom Emacs-korthuset ramler sammen dramatisk hvis man prøver å sette ~doom font~ til noe som ikke fins. Så for å sikre mot det, ligger ~setq doom-font~ etter en ~when~-clause som sjekker om den fins før vi setter den
 
 #+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
-(when (find-font (font-spec :family "FantasqueSansMNerdFontMono"))
-  (setq doom-font (font-spec :family "FantasqueSansMNerdFontMono" :size 14)))
+(when (find-font (font-spec :family "FantasqueSansM Nerd Font"))
+  (setq doom-font (font-spec :family "FantasqueSansM Nerd Font" :size 14)))
 #+end_src
 
 Installasjon av nerd fonts kan gjøres sånn:
+*** Hvordan installere Nerd Fonts:
 
 1. Last ned en font-variasjon av Nerd Fonts, f.eks. ~Fantasque~, [[https://www.nerdfonts.com/font-downloads][herfra]]
    - [[https://github.com/ryanoasis/nerd-fonts/releases/download/v3.4.0/FantasqueSansMono.zip][Direktelenke til FantasqueSansMono.zip]] 
@@ -1427,6 +1428,21 @@ For å lage luft, og se hvor noe starter og noe annet slutter
   (message "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n")
   (message "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n")
   (message "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n"))
+#+end_src
+** Blank buffer
+
+Noen ganger vil jeg bare fylle den synlige delen av bufferen med blanke linjer. Typisk når jeg vil skrible ned noe mens jeg jobber med en kollega, også vil jeg ikke ha noe annet distraherende synlig, og heller ikke bruke tid på å sette opp en blank notatfil et sted.
+
+#+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
+(defun my/fyll-buffer-med-newlines ()
+  "Fyller den synlige delen av bufferen med newlines, og legger markøren øverst med unntak for kommentarlinjer"
+  (interactive)
+  (goto-char (point-min))
+  (while (looking-at "^#")
+    (forward-line 1))
+  (let ((insert-point (point)))
+    (insert (make-string (window-body-height) ?\n))
+    (goto-char insert-point)))
 #+end_src
 
 * Dirvish
