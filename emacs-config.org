@@ -1337,6 +1337,27 @@ push:
 
 
 * Små funksjoner og hurtigtaster
+** Slett alle nummererte linjer
+
+Innlimt tekst fra programmer med linjenumre ender i noen tilfeller opp med alle linjenumrene kommer på egne linjer. Her er vibekodet funksjon til å slette alle sammen i markert område:
+
+
+#+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
+(defun my/slett-nummerlinjer (start end)
+  "Slett linjer som kun har et nummer i seg, i markert område"
+  (interactive "r")
+  (save-excursion
+    (save-restriction
+      (narrow-to-region start end)
+      (goto-char (point-min))
+      (while (not (eobp))
+        (if (looking-at "^[[:space:]]*[0-9]+[[:space:]]*$")
+            (delete-region (line-beginning-position)
+                          (min (1+ (line-end-position)) (point-max)))
+          (forward-line 1))))))
+#+end_src
+
+
 ** Markdown-lenker -> Org-lenke
 
 Oversetter lenker fra ~[]()~ til ~[[][]]~ med innhold
