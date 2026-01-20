@@ -241,14 +241,13 @@ Dette er hele ~init.el~-fila slik den er originalt etter Doom Emacs-rammeverket.
 Her ligger det småpakker som ikke har gjort seg fortjent til egne kapitler
 
 - ~rainbow-mode~ fargelegger hexnumre direkte, f.eks. #EEEE3E.
+  - Lar den stå avslått til vanlig
 - ~keyfreq~ gir statistikk på hvor ofte kommandoer brukes
 - ~verb~ er [[https://github.com/federicotdn/verb][herfra]]. Et alternativ til ~restclient.el~
 - ~keycast~ er veldig nyttig for å se hvilke funksjoner som kalles
 
 #+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/packages.el
-(package! nyan-mode)
 (package! fireplace)
-(package! zone-rainbow)
 (package! rainbow-mode)
 (package! vimgolf)
 (package! evil-tutor)
@@ -256,18 +255,9 @@ Her ligger det småpakker som ikke har gjort seg fortjent til egne kapitler
 (package! keyfreq)
 (package! verb)
 (package! keycast)
-(package! time-zones)
 (package! yankpad)
 #+end_src
 
-~nyan-mode~ og ~rainbow-mode~ må også aktiveres i ~config.el~ slik:
-
-#+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
-(nyan-mode 1)
-
-(after! org
-  (add-hook 'org-mode-hook #'rainbow-mode))
-#+end_src
 
 vimgolf config:
 
@@ -386,7 +376,7 @@ For å se størrelsen på vinduet akkurat nå, kan man evaluere denne:
 #+end_src
 
 #+RESULTS:
-: Width: 168, Height: 43
+: Width: 95, Height: 50
 
 WSL og Linux oppfører seg forskjellig, så de trenger hver sin setting:
 
@@ -394,8 +384,8 @@ WSL og Linux oppfører seg forskjellig, så de trenger hver sin setting:
 (cond
  ;; ---  WSL  ---
  ((and (eq system-type 'gnu/linux) (getenv "WSLENV"))
-  (add-to-list 'initial-frame-alist '(width . 90))
-  (add-to-list 'initial-frame-alist '(height . 60)))
+  (add-to-list 'initial-frame-alist '(width . 95))
+  (add-to-list 'initial-frame-alist '(height . 50)))
 
  ;; --- Linux ---
  ((eq system-type 'gnu/linux)
@@ -403,7 +393,9 @@ WSL og Linux oppfører seg forskjellig, så de trenger hver sin setting:
   (add-to-list 'initial-frame-alist '(height . 43))))
 #+end_src
 
-Ved første øyekast ser det ut som om vinduet settes til å være nesten dobbelt så bredt som det er høyt, før man skjønner at høyden oppgis i linjer, og bredden oppgis i antall characters. Det gir mening når man får høre at Emacs måler alt i tekst, og rektangelet som omslutter en bokstav på datamaskiner er mye høyere enn det er bredt.
+Ved første øyekast ser det ut som om vinduet settes til å være nesten dobbelt så bredt som det er høyt, før man skjønner at høyden oppgis i linjer, og bredden oppgis i antall characters.
+
+Det gir mening når man får høre at Emacs måler alt i tekst, og rektangelet som omslutter en bokstav på datamaskiner er mye høyere enn det er bredt.
 
 
 ** Kill ring max
@@ -435,8 +427,10 @@ Det som er ekstra spennende, er at hele Doom Emacs-korthuset ramler sammen drama
 
 #+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
 (when (find-font (font-spec :family "FantasqueSansM Nerd Font"))
-  (setq doom-font (font-spec :family "FantasqueSansM Nerd Font" :size 14)))
+  (setq doom-font (font-spec :family "FantasqueSansM Nerd Font" )))
 #+end_src
+
+(setq doom-font (font-spec :size 15 ))
 
 Installasjon av nerd fonts kan gjøres sånn:
 *** Hvordan installere Nerd Fonts:
@@ -946,19 +940,11 @@ Org-capture gjør at man kan få skrevet inn smånotater til en fil uten å måt
 toc-org het opprinnelig org-toc, men så var det noe navnekonflikter som førte til navnebytte. Men begge referanser fins fortsatt på internett, som gjør at LLM-er refererer til begge deler når man spør om hjelp.
 
 Denne linja gjør at innholdsfortegnelser tar med statuser som TODO/STRT/DONE o.l., i stedet for standardsettingen som er å ignorere de
+
 #+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
 (setq org-export-with-todo-keywords t)
 #+end_src
 
-** deaktivere element cache
-
-Når den er aktiv, så får jeg feilmeldinger på XX når jeg jobber i en buffer som er constrained med ~SPC m s n~ eller ~z n~
-
-#+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
-(setq org-element-use-cache nil)
-#+end_src
-
-Den skal gi performance-økning på filer med tusenvis av linjer eller headings. Så kan ev. aktivere den for sånne filer spesifikt.
 
 * Org-agenda
 
@@ -1337,6 +1323,27 @@ push:
 
 
 * Små funksjoner og hurtigtaster
+** Slett alle nummererte linjer
+
+Innlimt tekst fra programmer med linjenumre ender i noen tilfeller opp med alle linjenumrene kommer på egne linjer. Her er vibekodet funksjon til å slette alle sammen i markert område:
+
+
+#+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
+(defun my/slett-nummerlinjer (start end)
+  "Slett linjer som kun har et nummer i seg, i markert område"
+  (interactive "r")
+  (save-excursion
+    (save-restriction
+      (narrow-to-region start end)
+      (goto-char (point-min))
+      (while (not (eobp))
+        (if (looking-at "^[[:space:]]*[0-9]+[[:space:]]*$")
+            (delete-region (line-beginning-position)
+                          (min (1+ (line-end-position)) (point-max)))
+          (forward-line 1))))))
+#+end_src
+
+
 ** Markdown-lenker -> Org-lenke
 
 Oversetter lenker fra ~[]()~ til ~[[][]]~ med innhold
@@ -1454,6 +1461,13 @@ Skifter ut ~SPC o /~ for å åpne filutforskeren med ~SPC o o~, for å passe bed
 (map! :leader
       (:prefix ("o" . "open")
        :desc "Open Dirvish (alias SPC o /)" "o" #'dirvish))
+#+end_src
+
+Uten å være helt sikker, så tror jeg preview-funksjonen til Dirvish får SSH-sesjoner med TRAMP til å fryse Emacs. Disabler slik:
+
+#+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
+(after! dirvish
+  (setq dirvish-tramp-preview-disabled t))
 #+end_src
 
 * Blamer.el - inline git blame
