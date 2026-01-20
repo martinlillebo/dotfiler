@@ -88,3 +88,4 @@ export PYTHONPATH="${PYTHONPATH}:/home/ml/repos/tiny"
 autoload -U +X bashcompinit && bashcompinit
 complete -o nospace -C /usr/bin/terraform terraform
 
+export PATH="$HOME/.local/bin:$PATH"
