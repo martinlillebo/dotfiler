@@ -1361,15 +1361,15 @@ To funksjoner for hhv. ~YYYY-MM-DD TT:MM:SS~ og kun ~YYYY-MM-DD~:
 
 #+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
 (defun my/tidsstempel-sekund ()
-  (interactive)
   "Returnerer tidsstempel som YYYY-MM-DD TT:MM:SS"
+  (interactive)
   (insert (format-time-string "%Y-%m-%d %H:%M:%S")))
 #+end_src
 
 #+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
 (defun my/tidsstempel-dato ()
-  (interactive)
   "Returnerer tidsstempel som YYYY-MM-DD"
+  (interactive)
   (insert (format-time-string "%Y-%m-%d")))
 #+end_src
 
@@ -1428,21 +1428,6 @@ For å lage luft, og se hvor noe starter og noe annet slutter
   (message "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n")
   (message "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n")
   (message "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n"))
-#+end_src
-** Blank buffer
-
-Noen ganger vil jeg bare fylle den synlige delen av bufferen med blanke linjer. Typisk når jeg vil skrible ned noe mens jeg jobber med en kollega, også vil jeg ikke ha noe annet distraherende synlig, og heller ikke bruke tid på å sette opp en blank notatfil et sted.
-
-#+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
-(defun my/fyll-buffer-med-newlines ()
-  "Fyller den synlige delen av bufferen med newlines, og legger markøren øverst med unntak for kommentarlinjer"
-  (interactive)
-  (goto-char (point-min))
-  (while (looking-at "^#")
-    (forward-line 1))
-  (let ((insert-point (point)))
-    (insert (make-string (window-body-height) ?\n))
-    (goto-char insert-point)))
 #+end_src
 
 * Dirvish
