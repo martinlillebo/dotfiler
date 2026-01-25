@@ -947,6 +947,9 @@ Denne linja gjør at innholdsfortegnelser tar med statuser som TODO/STRT/DONE o.
 
 
 * Org-agenda
+** Sortering
+
+[[https://orgmode.org/manual/Sorting-of-agenda-items.html][Standard sortering]] er at schedules med klokkeslett kommer aller først, deretter listes TODO-ene i grupper etter hvilken fil ("category") de kommer fra. Innad i hver kategori brukes priority cookies, og til slutt hvorvidt ting er forsinka eller har en deadline som er utgått
 
 ** Global agendaconfig
 Fjerner visning av tags og filnavn
@@ -979,16 +982,19 @@ Fjerner de og erstatter alt med ~" "~. SPC-tegnet gjør at jeg setter inn en bla
 #+end_src
 ** Visning av antall dager og startdag
 
-Default er å vise 10 dager, med oppstart for tre dager siden.
+Default er å vise 10 dager med ~org-agenda-span~, med oppstart for tre dager siden vha. ~org-agenda-start-day~, slik at man ser tre dager  bak og syv dager fram. 
 
 Setter default til å bare vise dagen i dag: 
 
 #+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
 (after! org-agenda
+  (setq org-agenda-start-day nil)
   (setq org-agenda-span 1)
-  (setq org-agenda-start-day nil))
+  (setq calendar-week-start-day 1)
+  )
 #+end_src
 
+~calendar-week-start-day~ gjelder visningen av kalender i f.eks. ~org-schedule~, som starter på søndag isf. mandag om man ikke setter den til ~1~
 
 ** Bare vise taggede headlines, ikke sub-headlines
 org-agenda har veldig lyst til å liste opp alle sub-TODOs under de jeg tagger. Fjerner alt som jeg ikke tagger eksplisitt:
@@ -1017,32 +1023,7 @@ org-agenda har veldig lyst til å liste opp alle sub-TODOs under de jeg tagger. 
 (setq org-agenda-dim-blocked-tasks nil)
 #+end_src
 
-test temp:
-
-#+begin_src elisp
-(setq org-agenda-custom-commands
-      '(("j" "Jobb-sprint" tags-todo "sprint"
-               ((org-agenda-skip-function '(my/skip-if-parent-has-tag "sprint"))))
-                       ("i" "dagens oppgaver" tags-todo "idag"
-                                ((org-agenda-skip-function '(my/skip-if-parent-has-tag "idag"))))
-        ("w" "Jobb-agenda"
-            ((agenda ""
-                 ((org-agenda-span 'day)
-                   (org-agenda-skip-function
-                    '(org-agenda-skip-entry-if 'notregexp ":CATEGORY:.*jobb"))
-                        (org-agenda-overriding-header "Jobbkalender")))))
-                           ("p" "Personlig agenda"
-                              ((agenda ""
-                                      ((org-agenda-span 'day)
-                                          (org-agenda-skip-function
-                '(org-agenda-skip-entry-if 'notregexp ":CATEGORY:.*personlig"))
-                                                   (org-agenda-overriding-header "Personlig kalender")))))))
-
-                                                   #+end_src
-
-#+begin_src eliso
-
-#+end_src
+#+RESULTS:
 
 Detaljen med ~org-agenda-dim-blocked-tasks~ må med fordi en TODO ansees angivelig som "blokkert" når jeg fjerner nedstrøms oppgaver fra visningen, og da får den dimmed farge. Kan løses med å disable dimming i agendaview med å sette denne til ~nil~.
 ** Hurtigtaster
