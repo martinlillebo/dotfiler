@@ -1014,17 +1014,41 @@ org-agenda har veldig lyst til å liste opp alle sub-TODOs under de jeg tagger. 
         subtree-end
       nil)))
 
-(setq org-agenda-custom-commands
-      '(("j" "Jobb-sprint" tags-todo "sprint"
-         ((org-agenda-skip-function '(my/skip-if-parent-has-tag "sprint"))))
-        ("i" "dagens oppgaver" tags-todo "idag"
-         ((org-agenda-skip-function '(my/skip-if-parent-has-tag "idag"))))))
-
 (setq org-agenda-dim-blocked-tasks nil)
 #+end_src
 
-#+RESULTS:
 
+#+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
+(defun my/skip-recurring ()
+  "Skip entries with repeating timestamps."
+  (let ((subtree-end (save-excursion (org-end-of-subtree t))))
+    (if (save-excursion
+          (re-search-forward "<[^>]*\\+[0-9]+[dwmy][^>]*>" subtree-end t))
+        subtree-end
+      nil)))
+
+(defun my/skip-non-recurring ()
+  "Skip entries WITHOUT repeating timestamps."
+  (let ((subtree-end (save-excursion (org-end-of-subtree t))))
+    (if (save-excursion
+          (re-search-forward "<[^>]*\\+[0-9]+[dwmy][^>]*>" subtree-end t))
+        nil
+      subtree-end)))
+
+
+(setq org-agenda-custom-commands
+      '(
+        ("d" "Daily"
+         ((agenda ""
+                  ((org-agenda-span 'day)
+                   (org-agenda-skip-function '(my/skip-recurring))
+                   (org-agenda-overriding-header " ")))
+          (agenda ""
+                  ((org-agenda-span 'day)
+                   (org-agenda-skip-function '(my/skip-non-recurring))
+                   (org-agenda-overriding-header "\nDaglig")))))))
+
+                   #+end_src
 Detaljen med ~org-agenda-dim-blocked-tasks~ må med fordi en TODO ansees angivelig som "blokkert" når jeg fjerner nedstrøms oppgaver fra visningen, og da får den dimmed farge. Kan løses med å disable dimming i agendaview med å sette denne til ~nil~.
 ** Hurtigtaster
 
