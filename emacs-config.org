@@ -996,27 +996,11 @@ Setter default til å bare vise dagen i dag:
 
 ~calendar-week-start-day~ gjelder visningen av kalender i f.eks. ~org-schedule~, som starter på søndag isf. mandag om man ikke setter den til ~1~
 
-** Bare vise taggede headlines, ikke sub-headlines
-org-agenda har veldig lyst til å liste opp alle sub-TODOs under de jeg tagger. Fjerner alt som jeg ikke tagger eksplisitt:
+** Separere daglig repeterende oppgaver fra alt annet 
 
-- ~my-skip-if-parent-has-tag~ er Claude-vibe for å gjøre akkurat det tittelen sier
-- Så setter jeg en ~org-agenda-custom-commands~ for å liste opp jobb-oppgaver med en gitt tag, der jeg samtidig kaller skip-funksjonen på hver entry.
+Jeg har en liste med daglige småting jeg vil få gjort, og det er fint å få den skilt ut fra de større, viktigere oppgavene jeg setter opp til egne dager.
 
-  original, fungerende
-#+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
-(defun my/skip-if-parent-has-tag (tag)
-  "Skip entry if any ancestor has TAG."
-  (let ((subtree-end (save-excursion (org-end-of-subtree t))))
-    (if (save-excursion
-          (while (and (org-up-heading-safe)
-                      (not (member tag (org-get-tags)))))
-          (member tag (org-get-tags)))
-        subtree-end
-      nil)))
-
-(setq org-agenda-dim-blocked-tasks nil)
-#+end_src
-
+Her er et stykke vibekode fra Claude som setter opp to filterfunksjoner + et agenda-view som bruker de. Da får jeg to agendaer over hverandre - en for repeterende TODOs og en for ikke-repeterende. 
 
 #+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
 (defun my/skip-recurring ()
@@ -1048,8 +1032,7 @@ org-agenda har veldig lyst til å liste opp alle sub-TODOs under de jeg tagger. 
                    (org-agenda-skip-function '(my/skip-non-recurring))
                    (org-agenda-overriding-header "\nDaglig")))))))
 
-                   #+end_src
-Detaljen med ~org-agenda-dim-blocked-tasks~ må med fordi en TODO ansees angivelig som "blokkert" når jeg fjerner nedstrøms oppgaver fra visningen, og da får den dimmed farge. Kan løses med å disable dimming i agendaview med å sette denne til ~nil~.
+#+end_src
 ** Hurtigtaster
 
 Dooms default for å kalle ~org-agenda~ er ~SPC o A~, som er litt for langt. Setter den til ~SPC A~:
