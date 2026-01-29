@@ -12,7 +12,7 @@ ZSH_THEME="robbyrussell" # set by `omz`
 
 # Aliaser, skrevet selv
 alias emacs-config="vim .config/doom/config.el"
-alias e="emacs"
+alias e="emacs &"
 alias tf="terraform"
 alias ggg="git pull origin master"
 alias lagre="zsh lagre.zsh"                # ZK-autocommit/push

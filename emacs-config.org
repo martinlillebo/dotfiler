@@ -1307,6 +1307,15 @@ push:
 (map! :leader
       "g P" #'magit-push-current-to-pushremote)
 #+end_src
+** Legger til authinfo-login
+Noen steder må jeg bruke HTTPS i stedet for SSH-autentisering. Da kan jeg legge GitHub-token-et til ~.authinfo~-filen jeg har separat, og peke Magit til den slik for å slippe å måtte oppgi token hver gang:
+
+
+#+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
+(after! magit
+  (add-hook 'magit-process-find-password-functions
+            'magit-process-password-auth-source))
+#+end_src
 
 
 
