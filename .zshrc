@@ -1,7 +1,3 @@
-# Temp til CPP EMS installering
-#export LD_LIBRARY_PATH=/home/ml/repos/ems-cpp/3rd-party/lib/x86:
-#export LD_LIBRARY_PATH=/home/ml/repos/ems-cpp/3rd-party/x86/lib:/home/ml/repos/ems-cpp/build/x86/lib:
-
 
 # PATH
 export PATH="$HOME/.config/emacs/bin:$PATH"
@@ -12,7 +8,7 @@ ZSH_THEME="robbyrussell" # set by `omz`
 
 # Aliaser, skrevet selv
 alias emacs-config="vim .config/doom/config.el"
-alias e="emacs &"
+alias e="clear && emacs &"
 alias tf="terraform"
 alias ggg="git pull origin master"
 alias lagre="zsh lagre.zsh"                # ZK-autocommit/push
@@ -89,3 +85,9 @@ autoload -U +X bashcompinit && bashcompinit
 complete -o nospace -C /usr/bin/terraform terraform
 
 export PATH="$HOME/.local/bin:$PATH"
+
+# Legge inn lokale endringer som ikke skal på nett:
+if [[ -f "$HOME/.zsh_secrets.zsh" ]]; then
+  source "$HOME/.zsh_secrets.zsh"
+fi
+
