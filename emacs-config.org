@@ -1433,6 +1433,19 @@ For å lage luft, og se hvor noe starter og noe annet slutter
   (message "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n")
   (message "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n"))
 #+end_src
+** my/todo-i-dag
+
+
+
+#+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
+(defun my/todo-i-dag (title)
+  "Insert a new TODO heading scheduled for today."
+  (interactive "sTODO title: ")
+  (org-insert-heading)
+  (insert "TODO " title)
+  (org-schedule nil (format-time-string "%Y-%m-%d")))
+#+end_src
+
 
 * Dirvish
 
