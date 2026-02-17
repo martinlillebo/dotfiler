@@ -1052,6 +1052,13 @@ Men de fyller opp agendavisningen med støy, så jeg deaktiverer visning av repe
 #+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
 (setq org-agenda-show-future-repeats nil)
 #+end_src
+** Fjern dimming av "blokkerte" oppgaver
+
+#+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
+(setq org-agenda-dim-blocked-tasks nil)
+#+end_src
+
+En TODO ansees angivelig som "blokkert" når jeg fjerner nedstrøms oppgaver fra visningen, og da får den dimmed farge. Det vil jeg ikke, og det kan løses med å disable dimming i agendaview med å sette denne til ~nil~.
 
 * Org-babel
 ** Ansible-støtte
