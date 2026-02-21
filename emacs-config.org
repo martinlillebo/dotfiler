@@ -929,20 +929,14 @@ Org-capture gjør at man kan få skrevet inn smånotater til en fil uten å måt
 (after! org
   (setq org-capture-templates
         '(
-
-          ("1" "Innboks" plain
+          ("1" "Innboks" entry
            (file "~/repos/notater/202012111337 Innboks.org")
            "%?\n" :prepend t)
-          ("2" "Hodepine" entry
-           (file "~/repos/notater/202205082206 Hodepinelogg.org")
-           "%?\n" :prepend t))))
+          ("2" "Hodepine" plain
+           (file+headline "~/repos/notater/202205082206 Hodepinelogg.org" "Logg")
+           "%<%Y-%m-%d %H:%M:%S %a>\n" :prepend t :immediate-finish t))))
 #+end_src
 
-#+RESULTS:
-|        1 | Innboks  | entry | (file ~/repos/notater/202012111337 Innboks.org)      | %? |
-| :prepend | t        |       |                                                      |    |
-|        2 | Hodepine | entry | (file ~/repos/notater/202205082206 Hodepinelogg.org) | %? |
-| :prepend | t        |       |                                                      |    |
 
 ** toc-org
 
