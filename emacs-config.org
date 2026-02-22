@@ -1149,6 +1149,18 @@ Gjør headerpunkter finere. Prøvde opprinnelig ~org-modern~, men det inneholdt 
 #+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/packages.el
 (package! org-transclusion)
 #+end_src
+* Yasnippet
+
+Yasnippet har en tendens til å indentere den siste linja for å matche indentering i kodeblokken som wrappes. Det gjør at ~end_src~ ender opp slik:
+
+Fant et råd i et gammelt [[https://github.com/syl20bnr/spacemacs/issues/9822#issuecomment-730284330][GitHub-issue]] at jeg kan fjerne den oppførselen med å sette ~yas-indent-line~ til ~fixed~:
+
+#+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
+(add-hook 'org-mode-hook
+          (lambda () (setq-local yas-indent-line 'fixed)))
+#+end_src
+
+
 * Markdown
 
 Her er noen kodeblokker for å gjøre visning av markdownfiler mye bedre. Alt her er stjålet rett fra Reddit-tråden [[https://www.reddit.com/r/emacs/comments/10h9jf0/beautify_markdown_on_emacs/][Beautify markdown on emacs]]:
