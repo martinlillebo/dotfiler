@@ -1160,7 +1160,6 @@ Fant et råd i et gammelt [[https://github.com/syl20bnr/spacemacs/issues/9822#is
           (lambda () (setq-local yas-indent-line 'fixed)))
 #+end_src
 
-
 * Markdown
 
 Her er noen kodeblokker for å gjøre visning av markdownfiler mye bedre. Alt her er stjålet rett fra Reddit-tråden [[https://www.reddit.com/r/emacs/comments/10h9jf0/beautify_markdown_on_emacs/][Beautify markdown on emacs]]:
@@ -1353,6 +1352,31 @@ Aka "action menu super buffer". Det er den som popper opp når man har tastet en
 #+end_src
 
 * Magit
+** ~magit-list-repositories~
+
+Dette er dashboardet som viser alle repoer i en felles visning.
+
+Før den kan brukes, må man sette en path til hvor alle repoene ligger. Jeg bruker:
+
+#+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
+(setq magit-repository-directories
+      '(("~/repos/" . 1)))
+#+end_src
+
+Så setter jeg config for kolonnene som skal vises. Dette her er standardkolonnene + ~Flag~ og ~Branch~ som viser status på staged/unstaged, og branch-navnet
+
+#+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
+(setq magit-repolist-columns
+      '(("Name"    25 magit-repolist-column-ident nil)
+        ("B<U"      3 magit-repolist-column-unpulled-from-upstream nil)
+        ("B>U"      3 magit-repolist-column-unpushed-to-upstream nil)
+        ("Flag"     4 magit-repolist-column-flag nil)
+        ("Branch"  20 magit-repolist-column-branch nil)
+        ("Path"    99 magit-repolist-column-path nil)))
+#+end_src
+
+
+
 ** Hotkey: Autocommit med Magit
 
 Jeg committer vanligvis notater med "NN " etterfulgt av my/tidsstempel-sekund.
