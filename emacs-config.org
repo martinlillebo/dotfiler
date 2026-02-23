@@ -307,6 +307,14 @@ Consult har mulighet for live preview av filer når man søker opp et ord, men f
 Den viktige linja her er ~:preview-key 'any~. Om jeg forstår rett, så sier den at for alle søkefunksjonene som listes opp i forkant, så skal ethvert tastetrykk ("~any~") trigge preview av valgt fil.
 
 Default-innstilling kan man se ved å slå opp verdien på ~consult--customize-alist~. Hos meg var alle søkekommandoer satt med ~:preview-key 'SPC-C'~, som betyr at jeg måtte eksplisitt taste SPC-C for å trigge en preview før jeg la til denne konfigurasjonen
+** Søke gjennom alle repoer
+
+#+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
+(map! :leader
+      :desc "Search all repos"
+      "S P" (lambda () (interactive)
+              (consult-ripgrep "~/repos/")))
+#+end_src
 
 * Tema
 
