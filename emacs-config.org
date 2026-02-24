@@ -1604,7 +1604,7 @@ For å lage luft, og se hvor noe starter og noe annet slutter
 
 
 * Dirvish
-
+** Hotkeys
 Dirvish sin hurtigmeny er bedre enn bookmarks-funksjonen til Emacs, så jeg overstyrer ~SPC RET~ hurtigtasten for det her:
 
 #+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
@@ -1613,12 +1613,11 @@ Dirvish sin hurtigmeny er bedre enn bookmarks-funksjonen til Emacs, så jeg over
       "RET" #'dirvish-quick-access)
 #+end_src
 
-I ~dirvish-quick-access-entries~ kan man liste opp snarveier til filer man bruker ofte, også kan man hente de raskt ut med ~SPC RET .~. Lista mi inneholder referanser til jobb og fritid, så selve lista er definert i ~.emacs.secrets~ og importeres hit under [[*Secrets][Secrets]]-headeren. Også binder denne elisp-snutten lista opp mot Dirvish
+Har ikke funnet noen hotkey for å hoppe til home. Lager den selv og binder den til tilde:
 
 #+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
-(after! dirvish
-  (when (boundp 'my/dirvish-snarveier)
-    (setq dirvish-quick-access-entries my/dirvish-snarveier)))
+(map! :map dirvish-mode-map
+      :n "~" (lambda () (interactive) (dired "~/")))
 #+end_src
 
 Skifter ut ~SPC o /~ for å åpne filutforskeren med ~SPC o o~, for å passe bedre med norsk tastatur:
@@ -1629,12 +1628,24 @@ Skifter ut ~SPC o /~ for å åpne filutforskeren med ~SPC o o~, for å passe bed
        :desc "Open Dirvish (alias SPC o /)" "o" #'dirvish))
 #+end_src
 
+** ~dirvish-quick-access-entries~
+I ~dirvish-quick-access-entries~ kan man liste opp snarveier til filer man bruker ofte, også kan man hente de raskt ut med ~SPC RET .~. Lista mi inneholder referanser til jobb og fritid, så selve lista er definert i ~.emacs.secrets~ og importeres hit under [[*Secrets][Secrets]]-headeren. Også binder denne elisp-snutten lista opp mot Dirvish
+
+#+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
+(after! dirvish
+  (when (boundp 'my/dirvish-snarveier)
+    (setq dirvish-quick-access-entries my/dirvish-snarveier)))
+#+end_src
+
+** TRAMP-tilpasning
 Uten å være helt sikker, så tror jeg preview-funksjonen til Dirvish får SSH-sesjoner med TRAMP til å fryse Emacs. Disabler slik:
 
 #+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
 (after! dirvish
   (setq dirvish-tramp-preview-disabled t))
 #+end_src
+
+
 
 * Blamer.el - inline git blame
 
