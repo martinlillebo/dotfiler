@@ -935,16 +935,35 @@ Org-capture gjør at man kan få skrevet inn smånotater til en fil uten å måt
 
 #+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
 (after! org
-  (setq org-capture-templates
-        '(
-          ("1" "Innboks" entry
-           (file "~/repos/notater/202012111337 Innboks.org")
-           "%?\n" :prepend t)
-          ("2" "Hodepine" plain
-           (file+headline "~/repos/notater/202205082206 Hodepinelogg.org" "Logg")
-           "%<%Y-%m-%d %H:%M:%S %a>\n" :prepend t :immediate-finish t))))
-#+end_src
+  (let ((innboks    "~/repos/notater/202012111337 Innboks.org")
+        (hodepine   "~/repos/notater/202205082206 Hodepinelogg.org")
+        (familie    "~/repos/notater/org/20250531191654-todo_familie.org")
+        (personlig  "~/repos/notater/202506120825 Todo.org"))
+    
+    (setq org-capture-templates
+          `(("1" "Innboks" plain
+             (file ,innboks)
+             "%^{Notat}\n" :prepend t :immediate-finish t)
+            ("2" "Hodepine" plain
+             (file+headline ,hodepine "Logg")
+             "%<%Y-%m-%d %H:%M:%S %a> - %^{Intensitet (1-10)}\n" :prepend t :immediate-finish t)
+            ("3" "Familie" entry
+             (file+headline ,familie "Senere")
+             "** TODO %^{Oppgave}\n" :prepend t :immediate-finish t)
+            ("4" "Familie i dag" entry
+             (file+headline ,familie "På gang")
+             "** TODO %^{Oppgave}\nSCHEDULED: %t\n" :prepend t :immediate-finish t)
+            ("5" "Personlig" entry
+             (file+headline ,personlig "Senere")
+             "** TODO %^{Oppgave}\n" :prepend t :immediate-finish t)
+            ("6" "Personlig i dag" entry
+             (file+headline ,personlig "På gang")
+             "** TODO %^{Oppgave}\nSCHEDULED: %t\n" :prepend t :immediate-finish t)))))
 
+#+end_src
+- ~:immediate-finish t~ gjør at teksten bare lagres i buffer uten at man blir bedt om å dobbeltsjekke resultatet i en visningbuffer
+- ~file+headline~ sier at teksten skal skrives inn i filen som oppgis først, og under headline-en som oppgis etterpå. F.eks. ~Logg~ her
+- 
 
 ** toc-org
 
