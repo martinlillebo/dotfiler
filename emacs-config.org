@@ -899,6 +899,7 @@ Standard-fargene er ikke helt topp, så her er noen endringer:
   (setq org-todo-keyword-faces
         '(;;("TODO" . (:foreground "#ffff00" :weight bold))
           ("STRT" . (:foreground "#ffff00" :weight bold))
+          ("NEXT" . (:foreground "#ffffe0" :weight bold))
           ("KILL" . (:foreground "#595e60" :weight bold))
           ("WAIT" . (:foreground "#B4F8C8" :weight bold))
           ("HOLD" . (:foreground "#B4F8C8" :weight bold))
@@ -992,7 +993,20 @@ Denne linja gjør at innholdsfortegnelser tar med statuser som TODO/STRT/DONE o.
 #+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
 (setq org-export-with-todo-keywords t)
 #+end_src
+** ~NEXT~-status 
 
+Legger til en ~NEXT~-status oppå Doom sine defaults:
+
+#+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
+(after! org
+  (setq org-todo-keywords
+        '((sequence "TODO(t)" "NEXT(n)" "PROJ(p)" "LOOP(r)" "STRT(s)" "WAIT(w)" "HOLD(h)" "IDEA(i)"
+                    "|" "DONE(d)" "KILL(k)")
+          (sequence "[ ](T)" "[-](S)" "[?](W)" "|" "[X](D)")
+          (sequence "|" "OKAY(o)" "YES(y)" "NO(N)"))))
+#+end_src
+
+Inspirert av Bastien Guerry sin [[https://bzg.fr/en/the-zen-of-task-management-with-org/][The Zen of Task Management with Org]]
 
 * Org-agenda
 ** Sortering
