@@ -307,7 +307,9 @@ Consult har mulighet for live preview av filer når man søker opp et ord, men f
 Den viktige linja her er ~:preview-key 'any~. Om jeg forstår rett, så sier den at for alle søkefunksjonene som listes opp i forkant, så skal ethvert tastetrykk ("~any~") trigge preview av valgt fil.
 
 Default-innstilling kan man se ved å slå opp verdien på ~consult--customize-alist~. Hos meg var alle søkekommandoer satt med ~:preview-key 'SPC-C'~, som betyr at jeg måtte eksplisitt taste SPC-C for å trigge en preview før jeg la til denne konfigurasjonen
-** Søke gjennom alle repoer etter tekst
+** Søke gjennom alle repoer etter tekststring
+
+Projectile søker fint gjennom enkeltstående prosjekter, dvs. enkeltstående gitrepoer. Setter opp en hotkey for toppnivå-søking gjennom alle repoer:
 
 #+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
 (map! :leader
@@ -317,11 +319,13 @@ Default-innstilling kan man se ved å slå opp verdien på ~consult--customize-a
                (if arg "~/repos/jobb/" "~/repos/"))))
 #+end_src
 
-Kort fortalt vil ~SPC S P~ gjøre et tekstsøk gjennom alle filer i alle repoer under ~~/repos~.  Om jeg legger til såkalt prefixargument vil jeg heller søke gjennom ~~/repos/jobb~. 
+Kort fortalt vil ~SPC S P~ gjøre et tekstsøk gjennom alle filer i alle repoer under ~~/repos~.  Om jeg legger til såkalt prefixargument vil jeg heller søke gjennom ~~/repos/jobb~.
 
 ~(interactive "P")~ gjør at funksjonen kan ta inn et valgfritt prefixargument, som i praksis er at man slår ~SPC u~ i Doom Emacs. Standard er ~C-u~, men det brukes ikke for meg.
 
 ** Søke gjennom alle repoer etter filnavn
+
+Samme som over, men for filnavn i stedet for tekstsøk:
 
 #+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
 (map! :leader
@@ -331,8 +335,6 @@ Kort fortalt vil ~SPC S P~ gjøre et tekstsøk gjennom alle filer i alle repoer 
                (if arg "~/repos/jobb/" "~/repos/"))))
 #+end_src
 
-#+RESULTS:
-: #[(arg) ((consult-ripgrep (if arg "~/repos/jobb/" "~/repos/"))) nil nil nil "P"]
 
 * Tema
 
