@@ -344,6 +344,8 @@ Definerer en sentral variabel for søkestien, slik at jeg slipper å hardkode ~~
 
 ** Søke gjennom alle repoer etter filnavn
 
+Samme som over, men for filnavn i stedet for tekstsøk:
+
 #+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
 (map! :leader
       :desc "Søke etter filnavn i alle repoer"
@@ -351,6 +353,10 @@ Definerer en sentral variabel for søkestien, slik at jeg slipper å hardkode ~~
               (consult-find my/søkesti)))
 #+end_src
 
+<<<<<<< HEAD
+=======
+
+>>>>>>> 92e4920f422bf016088a3e72196fc5f13d622068
 * Tema
 
 Dette er temaer jeg har lagt til i tillegg til alle som fins i Emacs fra før.
