@@ -323,12 +323,17 @@ Sentral pathvariabel:
   "Rotsti for consult-søk. Veksle med my/toggle-jobb-fritid.")
 #+end_src
 
-Indikator til modeline:
+Oppretter en indikator til modeline-en, og legger den til modelineconfig:
 
 #+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
 (defvar my/søkesti-indikator "[F]"
   "Modeline-indikator for gjeldende søkesti.")
+
+(add-to-list 'global-mode-string '(:eval my/søkesti-indikator) t)
 #+end_src
+
+- ~global-mode-string~ er ei liste over ekstra ting som legges til modeline-en. Her legger vi til indikatoren som sier hvorvidt vi er i jobb- eller fritidsmodus. 
+- ~:eval~ og den fnutten i forkant gjør at ~my/søkesti-indikator~ evalueres hver gang modeline blir bedt om å oppdateres, som den blir bedt om hver gang ~my/toggle-jobb-fritid~ kjøres
 
 Togglefunksjonen:
 
@@ -348,9 +353,18 @@ Togglefunksjonen:
           "[F]"))
   (force-mode-line-update t)
   (message "Søkesti: %s" my/søkesti))
-
-(add-to-list 'global-mode-string '(:eval my/søkesti-indikator) t)
 #+end_src
+
+- ~force-mode-line-update t~ sier at modeline-innholdet skal oppdateres 
+
+Legger til en hotkey for togglefunksjonen: 
+
+#+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
+(map! :leader
+      :desc "kjører my/toggle-jobb-fritid"
+      "t t" #'my/toggle-jobb-fritid)
+#+end_src
+
 
 
 ** Søke gjennom alle repoer etter tekst
