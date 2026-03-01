@@ -310,12 +310,29 @@ Default-innstilling kan man se ved å slå opp verdien på ~consult--customize-a
 
 ** Søkesti-variabel
 
-Definerer en sentral variabel for søkestien, slik at jeg slipper å hardkode ~~/repos/~ og ~~/repos/jobb/~ overalt:
+Noen funksjoner brukes både på jobb og fritid, og avhenger av en path til et par repoer. Typisk søke- og versjonskontrollfunksjoner, som vil si ~Consult~ og ~Magit~ her.
+
+For å unngå to versjoner av alle de funksjonene, har jeg heller en toggle som bytter en sentral pathvariabel, også referer alle funksjonene til den variabelen.
+
+Til slutt er det en indikator i modeline-en som sier om jeg er i fritid- eller jobbmodus akkurat nå 
+
+Sentral pathvariabel:
 
 #+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
 (defvar my/søkesti "~/repos/"
   "Rotsti for consult-søk. Veksle med my/toggle-jobb-fritid.")
+#+end_src
 
+Indikator til modeline:
+
+#+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
+(defvar my/søkesti-indikator "[F]"
+  "Modeline-indikator for gjeldende søkesti.")
+#+end_src
+
+Togglefunksjonen:
+
+#+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
 (defun my/toggle-jobb-fritid ()
   "Veksler my/søkesti mellom jobb og fritid."
   (interactive)
@@ -325,11 +342,16 @@ Definerer en sentral variabel for søkestien, slik at jeg slipper å hardkode ~~
           "~/repos/jobb/"))
   (setq magit-repository-directories
         `((,my/søkesti . 1)))
+  (setq my/søkesti-indikator
+        (if (string= my/søkesti "~/repos/jobb/")
+            "[J]"
+          "[F]"))
+  (force-mode-line-update t)
   (message "Søkesti: %s" my/søkesti))
+
+(add-to-list 'global-mode-string '(:eval my/søkesti-indikator) t)
 #+end_src
 
-#+RESULTS:
-: my/toggle-jobb-fritid
 
 ** Søke gjennom alle repoer etter tekst
 
