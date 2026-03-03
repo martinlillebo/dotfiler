@@ -389,10 +389,6 @@ Samme som over, men for filnavn i stedet for tekstsøk:
               (consult-find my/søkesti)))
 #+end_src
 
-<<<<<<< HEAD
-=======
-
->>>>>>> 92e4920f422bf016088a3e72196fc5f13d622068
 * Tema
 
 Dette er temaer jeg har lagt til i tillegg til alle som fins i Emacs fra før.
@@ -721,6 +717,7 @@ Denne tror jeg er standard i Doom Emacs. Men den gir feilmelding ved oppstart i 
 (when (eq system-type 'android)
     (advice-add 'ultra-scroll-mode :override #'ignore))
 #+end_src
+* Modeline
 
 * Vim/evil og annen navigasjon
 
@@ -1021,7 +1018,7 @@ Org-capture gjør at man kan få skrevet inn smånotater til en fil uten å måt
     (setq org-capture-templates
           `(("1" "Innboks" plain
              (file ,innboks)
-             "%^{Notat}\n" :prepend t :immediate-finish t)
+             "%^{Notat}\n" :prepend t :immediate-finish t :empty-lines 1)
             ("2" "Hodepine" plain
              (file+headline ,hodepine "Logg")
              "%<%Y-%m-%d %H:%M:%S %a> - %^{Intensitet (1-10)}\n" :prepend t :immediate-finish t)
