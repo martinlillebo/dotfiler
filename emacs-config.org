@@ -717,7 +717,15 @@ Denne tror jeg er standard i Doom Emacs. Men den gir feilmelding ved oppstart i 
 (when (eq system-type 'android)
     (advice-add 'ultra-scroll-mode :override #'ignore))
 #+end_src
-* Modeline
+* Doom modeline
+
+Mesteparten av modeline-en går med til å vise filnavnet. Men det står allerede i vindusteksten, så jeg fjerner den:
+
+#+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
+(setq doom-modeline-buffer-name nil)
+#+end_src
+
+
 
 * Vim/evil og annen navigasjon
 
@@ -1010,18 +1018,20 @@ Org-capture gjør at man kan få skrevet inn smånotater til en fil uten å måt
 
 #+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
 (after! org
-  (let ((innboks    "~/repos/notater/202012111337 Innboks.org")
-        (hodepine   "~/repos/notater/202205082206 Hodepinelogg.org")
-        (familie    "~/repos/notater/org/20250531191654-todo_familie.org")
-        (personlig  "~/repos/notater/202506120825 Todo.org"))
-    
+  (let ((innboks      "~/repos/notater/202012111337 Innboks.org")
+        (innboks-jobb "~/repos/notater/202111121500 Innboks jobb.org")
+        (hodepine     "~/repos/notater/202205082206 Hodepinelogg.org")
+        (familie      "~/repos/notater/org/20250531191654-todo_familie.org")
+        (personlig    "~/repos/notater/202506120825 Todo.org"))
+
     (setq org-capture-templates
-          `(("1" "Innboks" plain
+          `(
+            ("1" "Innboks" plain
              (file ,innboks)
              "%^{Notat}\n" :prepend t :immediate-finish t :empty-lines 1)
-            ("2" "Hodepine" plain
-             (file+headline ,hodepine "Logg")
-             "%<%Y-%m-%d %H:%M:%S %a> - %^{Intensitet (1-10)}\n" :prepend t :immediate-finish t)
+            ("2" "Innboks-jobb" plain
+             (file ,innboks-jobb)
+             "%^{Notat}\n" :prepend t :immediate-finish t :empty-lines 1)
             ("3" "Familie" entry
              (file+headline ,familie "Senere")
              "** TODO %^{Oppgave}\n" :prepend t :immediate-finish t)
@@ -1033,7 +1043,11 @@ Org-capture gjør at man kan få skrevet inn smånotater til en fil uten å måt
              "** TODO %^{Oppgave}\n" :prepend t :immediate-finish t)
             ("6" "Personlig i dag" entry
              (file+headline ,personlig "På gang")
-             "** TODO %^{Oppgave}\nSCHEDULED: %t\n" :prepend t :immediate-finish t)))))
+             "** TODO %^{Oppgave}\nSCHEDULED: %t\n" :prepend t :immediate-finish t)
+            ("7" "Hodepine" plain
+             (file+headline ,hodepine "Logg")
+             "%<%Y-%m-%d %H:%M:%S %a> - %^{Intensitet (1-10)}\n" :prepend t :immediate-finish t)
+            ))))
 
 #+end_src
 - ~:immediate-finish t~ gjør at teksten bare lagres i buffer uten at man blir bedt om å dobbeltsjekke resultatet i en visningbuffer
