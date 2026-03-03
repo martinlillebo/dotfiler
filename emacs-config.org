@@ -717,6 +717,15 @@ Denne tror jeg er standard i Doom Emacs. Men den gir feilmelding ved oppstart i 
 (when (eq system-type 'android)
     (advice-add 'ultra-scroll-mode :override #'ignore))
 #+end_src
+* Doom modeline
+
+Mesteparten av modeline-en går med til å vise filnavnet. Men det står allerede i vindusteksten, så jeg fjerner den:
+
+#+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
+(setq doom-modeline-buffer-name nil)
+#+end_src
+
+
 
 * Vim/evil og annen navigasjon
 
