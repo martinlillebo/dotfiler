@@ -543,12 +543,22 @@ Så jeg setter de eksplisitt her:
 
 Dette er linja helt på toppen av hele Emacs-GUI-et
 
-Default fra Doom-config er filnavn + "". Fjerner sistnevnte med å redefinere ~frame-title-format~ til å bare inneholde buffernavnet
+Default fra Doom-config er filnavn + "". Endrer den til å være blank
 
 #+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
-(setq frame-title-format '("%b"))
+(setq frame-title-format nil)
 #+end_src
 
+Lager også en enkel toggle så jeg kan endre til å skrive full path etter behov:
+
+#+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
+(defun my/toggle-vindustekst ()
+  (interactive)
+  (setq frame-title-format
+        (if frame-title-format nil '("%f"))))
+#+end_src
+
+        
 ** Fjerne "are you sure you want to close Emacs? (y/n)"
 Sånn:
 
@@ -725,6 +735,26 @@ Mesteparten av modeline-en går med til å vise filnavnet. Men det står allered
 (setq doom-modeline-buffer-name nil)
 #+end_src
 
+Fjerner linje- og kolonnenummer: 
+#+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
+(setq doom-modeline-position-column-line-format nil)
+#+end_src
+
+Fjerner ikonet for visual/insert/normal state. Samme info står i echo area når man er utenfor normal mode, så den tilfører ingen ny info:
+
+#+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
+(setq doom-modeline-modal nil)
+#+end_src
+
+
+Fjerner bufferstørrelsen i kilobytes, nede til venstre:
+
+#+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
+(after! doom-modeline
+  (remove-hook 'doom-modeline-mode-hook #'size-indication-mode))
+#+end_src
+
+Jeg prøvde først å bare sette ~(size-indication-mode -1)~, som fungerer fint om den evalueres direkte. Men under oppstart settes den tilbake i drift. Og derfor ble enden på visa å fjerne hook-en som ser ut til å kalle den slik det står ovenfor her. 
 
 
 * Vim/evil og annen navigasjon
