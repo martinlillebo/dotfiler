@@ -641,6 +641,7 @@ Relative linjenumre gjør det mulig å hoppe til riktig linje med vim motions
 
 Det fins også et valg som heter ~'relative~, men da får man bufferlinjer i stedet for skjermlinjer. Da slutter Vim-referanser å virke så fort man har en innsnevring i bufferen.
 
+
 ** Fargelegge linjenumre
 Standardfargen for linjenumrene er litt for mørke, som er upraktisk når man ofte refererer til de med vimbindings
 
@@ -702,9 +703,13 @@ Alle kule utviklere har delvis gjennomsiktig bakgrunn
 Det var nå jeg måtte lære meg hva en "frame" er, i tillegg til "window" og "buffer" 
 
 #+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
-(set-frame-parameter (selected-frame) 'alpha '(94 . 94))
-(add-to-list 'default-frame-alist '(alpha . (94 . 94)))
+(set-frame-parameter (selected-frame) 'alpha '(95 . 95))
+(add-to-list 'default-frame-alist '(alpha . (95 . 95)))
 #+end_src
+
+#+RESULTS:
+: ((alpha 96 . 96) (buffer-predicate . doom-buffer-frame-predicate) (right-divider-width . 1) (bottom-divider-width . 1) (alpha 94 . 94) (vertical-scroll-bars) (tool-bar-lines . 0) (menu-bar-lines . 0) (left-fringe . 8) (right-fringe . 8))
+
 ** Avslutte med riktig kommando
 
 Jeg lukker ofte Emacs med ~SPC w q~ uten å mene det, da jeg bruker den mye for å lukke vinduer. Om det bare er ett vikdu igjen, så avsluttes Emacs. Fjerner den siste regelen slik:
