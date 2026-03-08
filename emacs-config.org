@@ -968,6 +968,23 @@ Setter opp et advice som gjør at ~projectile-invalidate-cache~ kjøres etter hv
 #+end_src
     
 * Org-mode
+** Org-eksport
+
+Setter noen verdier for å tilpasse info som inngår i eksport til HTML, PDF og lignende. Dette gir et minimum som er det jeg vanligvis trenger for å lime inn HTML til eposter og andre samarbeidsverktøy på jobb.
+
+Også setter jeg ting som tittel, dato, TOC og lignende som ~#+OPTIONS~-verdier i hver enkelt fil om jeg faktisk skal lage en ekte artikkel som skal publiseres noe sted
+
+#+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
+(setq org-export-with-date nil)
+(setq org-export-with-author nil)
+(setq org-export-with-title nil)
+(setq org-export-with-toc nil)
+(setq org-export-with-section-numbers nil)
+(setq org-html-postamble nil) 
+#+end_src
+
+- ~org-html-postamble~ setter en blokk nederst i eksporten, med litt ulik info. Standarden er "author:/created:/validation:", basert på hva som fins av info. Fjerner hele greia med å sette den til ~nil~. 
+
 ** Org-ellipsis
 
 ~org~ viser i utgangspunktet fram ~[...]~ når tekst skjules under en headline. Gjør den litt mer minimal slik:
@@ -1245,7 +1262,7 @@ En TODO ansees angivelig som "blokkert" når jeg fjerner nedstrøms oppgaver fra
 #+end_src
 
 ** Eksport til HTML
-Hjemmesnekra alternativ til ~org-export-to-html~, som eksporterer til ~/tmp~ i stedet for den versjonskontrollerte mappa jeg vanligvis er i. Også åpner den automatisk fila i nettleser
+Hjemmesnekra alternativ til ~org-export-to-html~, som eksporterer til ~/tmp~ i stedet for den versjonskontrollerte mappa jeg vanligvis er i. Også åpner den automatisk fila i nettleser. Den sender samtidig hele output-et rett til utklippstavla
 
 ~browse-url~ har jeg moddet [[*Åpne URL-er i Firefox på alle plattformer][her]], sånn at den åpner i nettleser på tvers av WSL, Linux og Android
 
@@ -1256,12 +1273,20 @@ Hjemmesnekra alternativ til ~org-export-to-html~, som eksporterer til ~/tmp~ i s
                          (file-name-base (or (buffer-file-name)
                                              (buffer-name)))
                          ".html")))
+    ;; Eksporterer til HTML til en outfile-variabel
     (org-export-to-file 'html outfile nil nil nil nil nil)
+    ;; Kopierer til utklippstavla
+    (call-process-shell-command
+     (format "xclip -selection clipboard -t text/html < %s"
+             (shell-quote-argument outfile)))
+    ;; Åpner i nettleser
     (browse-url (if (and (eq system-type 'gnu/linux)
                          (getenv "WSLENV"))
                     (concat "\\\\wsl.localhost\\Ubuntu" outfile)
                   outfile))))
 #+end_src
+
+
 ** Eksport til PDF
 
 Dette er den vanlige eksportfunksjonen ~org-latex-export-to-pdf~, pluss...
@@ -1733,11 +1758,13 @@ For å lage luft, og se hvor noe starter og noe annet slutter
             (goto-char end)
             (end-of-line)
             (delete-region (point) (cdr bounds))
-            (insert "\n#+end_src\n")
+            (insert "\n#+end_src\n\n")
             (goto-char beg)
             (delete-region (car bounds) beg)
-            (insert "#+begin_src conf\n")))))))
+            (insert "\n#+begin_src conf\n")))))))
 #+end_src
+
+
 
 
 * Dirvish
