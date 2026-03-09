@@ -346,7 +346,7 @@ Togglefunksjonen:
             "~/repos/"
           "~/repos/jobb/"))
   (setq magit-repository-directories
-        `((,my/søkesti . 1)))
+        `((,my/søkesti . 3)))
   (setq my/søkesti-indikator
         (if (string= my/søkesti "~/repos/jobb/")
             "[J]"
@@ -354,6 +354,9 @@ Togglefunksjonen:
   (force-mode-line-update t)
   (message "Søkesti: %s" my/søkesti))
 #+end_src
+
+#+RESULTS:
+: my/toggle-jobb-fritid
 
 - ~force-mode-line-update t~ sier at modeline-innholdet skal oppdateres 
 
