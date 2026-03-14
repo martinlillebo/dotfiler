@@ -1853,8 +1853,10 @@ Så lenge jeg bruker Doom Emacs, så er ~initial-buffer-choice~ satt til symbole
 
 #+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
 (unless (stringp initial-buffer-choice)
-  (setq initial-buffer-choice "~/repos/notater/202012111337 Innboks.org"))
+  (setq initial-buffer-choice (lambda () (org-agenda nil "d") (current-buffer))))
 #+end_src
+
+
 
 * Nettradio med EMMS
 
