@@ -1767,7 +1767,21 @@ For å lage luft, og se hvor noe starter og noe annet slutter
             (delete-region (car bounds) beg)
             (insert "\n#+begin_src conf\n")))))))
 #+end_src
+** my/sjekkboks
 
+#+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
+(defun my/sjekkboks ()
+  "Skriver - [ ] "
+  (interactive)
+  (insert "- [ ] "))
+#+end_src
+
+Hotkey:
+
+#+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
+(map! :leader
+      "-" #'my/sjekkboks)
+#+end_src
 
 
 
