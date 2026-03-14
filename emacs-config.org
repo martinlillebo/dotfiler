@@ -1082,30 +1082,31 @@ Org-capture gjør at man kan få skrevet inn smånotater til en fil uten å måt
 
     (setq org-capture-templates
           `(
-            ("1" "Innboks" plain
+            ("i" "Innboks" plain
              (file ,innboks)
              "%^{Notat}\n" :prepend t :immediate-finish t :empty-lines 1)
-            ("2" "Innboks-jobb" plain
+            ("j" "Innboks-jobb" plain
              (file ,innboks-jobb)
              "%^{Notat}\n" :prepend t :immediate-finish t :empty-lines 1)
-            ("3" "Familie" entry
+            ("f" "Todo familie" entry
              (file+headline ,familie "Senere")
              "** TODO %^{Oppgave}\n" :prepend t :immediate-finish t)
-            ("4" "Familie i dag" entry
+            ("4" "Todo familie i dag" entry
              (file+headline ,familie "På gang")
              "** TODO %^{Oppgave}\nSCHEDULED: %t\n" :prepend t :immediate-finish t)
             ("5" "Personlig" entry
              (file+headline ,personlig "Senere")
              "** TODO %^{Oppgave}\n" :prepend t :immediate-finish t)
-            ("6" "Personlig i dag" entry
+            ("t" "Todo personlig i dag" entry
              (file+headline ,personlig "På gang")
              "** TODO %^{Oppgave}\nSCHEDULED: %t\n" :prepend t :immediate-finish t)
-            ("7" "Hodepine" plain
+            ("h" "Hodepine" plain
              (file+headline ,hodepine "Logg")
              "%<%Y-%m-%d %H:%M:%S %a> - %^{Intensitet (1-10)}\n" :prepend t :immediate-finish t)
             ))))
-
 #+end_src
+
+
 - ~:immediate-finish t~ gjør at teksten bare lagres i buffer uten at man blir bedt om å dobbeltsjekke resultatet i en visningbuffer
 - ~file+headline~ sier at teksten skal skrives inn i filen som oppgis først, og under headline-en som oppgis etterpå. F.eks. ~Logg~ her
 - 
