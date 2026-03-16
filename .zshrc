@@ -1,4 +1,7 @@
 
+# Deaktiver ansible-lint
+export SKIP=ansible-lint
+
 # PATH
 export PATH="$HOME/.config/emacs/bin:$PATH"
 export PATH=$PATH:/usr/sbin 
