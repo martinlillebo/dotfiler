@@ -1767,29 +1767,32 @@ For å lage luft, og se hvor noe starter og noe annet slutter
 
 ** my/wrap-med-src-conf
 
+Jeg rammer veldig ofte inn kode- og config-blokker i en ~begin_src conf~-blokk, så dette gjør det automagisk med ett funksjonskall. Og flytter markøren til å ligge to newlines under blokken, som er der jeg vanligvis vil fortsette fra:
+
 #+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
 (defun my/wrap-med-src-conf ()
   "Rammer inn tekstblokk i en #+begin_src conf block"
   (interactive)
   (let ((bounds (bounds-of-thing-at-point 'paragraph)))
     (when bounds
-      (save-excursion
-        ;; Trim trailing blank lines
-        (goto-char (cdr bounds))
-        (skip-chars-backward " \t\n" (car bounds))
-        (let ((end (point)))
-          ;; Trim leading blank lines
-          (goto-char (car bounds))
-          (skip-chars-forward " \t\n" end)
-          (let ((beg (line-beginning-position)))
-            (goto-char end)
-            (end-of-line)
-            (delete-region (point) (cdr bounds))
-            (insert "\n#+end_src\n\n")
+      (goto-char (cdr bounds))
+      (skip-chars-backward " \t\n" (car bounds))
+      (let ((end (point)))
+        (goto-char (car bounds))
+        (skip-chars-forward " \t\n" end)
+        (let ((beg (line-beginning-position)))
+          (goto-char end)
+          (end-of-line)
+          (delete-region (point) (cdr bounds))
+          (insert "\n#+end_src\n\n")
+          (let ((target (point-marker)))
             (goto-char beg)
             (delete-region (car bounds) beg)
-            (insert "\n#+begin_src conf\n")))))))
+            (insert "\n#+begin_src conf\n")
+            (goto-char target)
+            (set-marker target nil)))))))
 #+end_src
+
 ** my/sjekkboks
 
 #+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
