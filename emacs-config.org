@@ -366,7 +366,7 @@ Togglefunksjonen:
             "~/repos/"
           "~/repos/jobb/"))
   (setq magit-repository-directories
-        `((,my/søkesti . 3)))
+        `((,my/søkesti . 5)))
   (setq my/søkesti-indikator
         (if (string= my/søkesti "~/repos/jobb/")
             "[J]"
@@ -378,7 +378,8 @@ Togglefunksjonen:
 #+RESULTS:
 : my/toggle-jobb-fritid
 
-- ~force-mode-line-update t~ sier at modeline-innholdet skal oppdateres 
+- ~force-mode-line-update t~ sier at modeline-innholdet skal oppdateres
+- referanser til "git-depth" er det tallet nedenfor ~magit-repository-directories~, som sier hvor mange subdirectories nedover man skal lete etter git-repoer
 
 Legger til en hotkey for togglefunksjonen: 
 
