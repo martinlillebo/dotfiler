@@ -1294,7 +1294,7 @@ Hjemmesnekra alternativ til ~org-export-to-html~, som eksporterer til ~/tmp~ i s
 ~browse-url~ har jeg moddet [[*Åpne URL-er i Firefox på alle plattformer][her]], sånn at den åpner i nettleser på tvers av WSL, Linux og Android
 
 #+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
-(defun my/org-export-to-tmp-html ()
+(defun my/org-eksport-to-tmp-html ()
   (interactive)
   (let ((outfile (concat "/tmp/"
                          (file-name-base (or (buffer-file-name)
@@ -1311,6 +1311,11 @@ Hjemmesnekra alternativ til ~org-export-to-html~, som eksporterer til ~/tmp~ i s
                          (getenv "WSLENV"))
                     (concat "\\\\wsl.localhost\\Ubuntu" outfile)
                   outfile))))
+#+end_src
+
+#+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
+(map! :leader
+      "e h" #'my/org-eksport-to-tmp-html)
 #+end_src
 
 
@@ -1793,11 +1798,18 @@ Jeg rammer veldig ofte inn kode- og config-blokker i en ~begin_src conf~-blokk, 
             (set-marker target nil)))))))
 #+end_src
 
+Hotkey:
+
+#+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
+(map! :leader
+      "i w" #'my/wrap-med-src-conf)
+#+end_src
+
 ** my/sjekkboks
 
 #+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
 (defun my/sjekkboks ()
-  "Skriver - [ ] "
+  ""
   (interactive)
   (insert "- [ ] "))
 #+end_src
