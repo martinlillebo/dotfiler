@@ -1273,6 +1273,14 @@ Men de fyller opp agendavisningen med støy, så jeg deaktiverer visning av repe
 En TODO ansees angivelig som "blokkert" når jeg fjerner nedstrøms oppgaver fra visningen, og da får den dimmed farge. Det vil jeg ikke, og det kan løses med å disable dimming i agendaview med å sette denne til ~nil~.
 
 * Org-babel
+** Generelle eksport-innstillinger
+
+~_~-tegn i URL-er kan finne på å gjøre at lenker blir eksportert feil, med alt etter ~_~ som subscript. Denne linja fjerner subscript i all eksport, som sannsynligvis er overkill. Men fungerer fint enn så lenge:
+
+#+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
+(setq org-export-with-sub-superscripts nil)
+#+end_src
+
 ** Ansible-støtte
 
 ~org-babel~ støtter ikke Ansible-kode ut fra boksen, men det kan legges til med ~ob-ansible.el~. Jeg klarte ikke finne på en smart måte å legge den til, så jeg lasta ned ob-ansible fra Github og kopierte kildekoden rett inn i ~/dotfiler/doom/lokal/ob-ansible.el~, og ~require~-er den inn derfra. Så jeg har en frossen kopi av akkurat denne pakka. Antar jeg la til den ´add-load-path´-setningen først for å få Emacs til å lete etter ~ob-ansible~ i riktig mappe
