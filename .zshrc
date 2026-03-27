@@ -5,6 +5,7 @@ export SKIP=ansible-lint
 # PATH
 export PATH="$HOME/.config/emacs/bin:$PATH"
 export PATH=$PATH:/usr/sbin 
+export PATH="$HOME/go/bin:$PATH"
 
 # Tema. Har alltid bare brukt det originale
 ZSH_THEME="robbyrussell" # set by `omz`
