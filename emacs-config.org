@@ -1842,11 +1842,15 @@ Hotkey:
 
 ** my/sjekkboks
 
+Legger inn sjekkboks i starten av aktiv linje:
+
 #+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
 (defun my/sjekkboks ()
   ""
   (interactive)
-  (insert "- [ ] "))
+  (save-excursion
+    (beginning-of-line)
+    (insert "- [ ] ")))
 #+end_src
 
 Hotkey:
