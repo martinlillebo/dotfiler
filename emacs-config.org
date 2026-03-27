@@ -1275,13 +1275,15 @@ En TODO ansees angivelig som "blokkert" når jeg fjerner nedstrøms oppgaver fra
 * Org-babel
 ** Generelle eksport-innstillinger
 
+*** rette opp ~_~ i URL-er
 ~_~-tegn i URL-er kan finne på å gjøre at lenker blir eksportert feil, med alt etter ~_~ som subscript. Denne linja fjerner subscript i all eksport, som sannsynligvis er overkill. Men fungerer fint enn så lenge:
 
 #+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
 (setq org-export-with-sub-superscripts nil)
 #+end_src
 
-Inkludere linjeskift: Org og Markdown er glade i å ignorere enkle linjeskift, sånn at eksempelvis
+*** Inkludere enkle linjeskift
+Org og Markdown er glade i å ignorere enkle linjeskift, sånn at eksempelvis
 
 #+begin_src conf
 Linje 1
@@ -1304,6 +1306,16 @@ Om man vil ha det tilbake i enkeltfiler, så kan man legge til:
 
 #+begin_src org
 #+OPTIONS: \n:t
+#+end_src
+
+*** Eksportere knekte lenker
+
+Standard for eksport er at det feiler hvis en URL ikke går noe sted. Men det passer typisk veldig dårlig å fikse det akkurat når jeg vil eksportere det
+
+Dette styres av ~org-export-with-broken-links~. Setter den til ~'mark~ foreløpig, som flagger lenken som "BROKEN". Som ikke ser bra ut, men det er bedre enn å fjerne den helt
+
+#+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
+(setq org-export-with-broken-links 'mark)
 #+end_src
 
 
