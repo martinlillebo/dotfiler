@@ -759,6 +759,7 @@ Denne tror jeg er standard i Doom Emacs. Men den gir feilmelding ved oppstart i 
     (advice-add 'ultra-scroll-mode :override #'ignore))
 #+end_src
 * Doom modeline
+** Fjerner defaults
 
 Mesteparten av modeline-en går med til å vise filnavnet. Men det står allerede i vindusteksten, så jeg fjerner den:
 
@@ -766,7 +767,7 @@ Mesteparten av modeline-en går med til å vise filnavnet. Men det står allered
 (setq doom-modeline-buffer-name nil)
 #+end_src
 
-Fjerner linje- og kolonnenummer: 
+Doom Emacs sin default viser linje- og kolonnenummer til aktiv linje. Fjerner kolonnenummer: 
 #+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
 (setq doom-modeline-position-column-line-format '("%l"))
 ;; (setq doom-modeline-position-column-line-format nil)
@@ -778,7 +779,6 @@ Fjerner ikonet for visual/insert/normal state. Samme info står i echo area når
 (setq doom-modeline-modal nil)
 #+end_src
 
-
 Fjerner bufferstørrelsen i kilobytes, nede til venstre:
 
 #+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
@@ -787,6 +787,21 @@ Fjerner bufferstørrelsen i kilobytes, nede til venstre:
 #+end_src
 
 Jeg prøvde først å bare sette ~(size-indication-mode -1)~, som fungerer fint om den evalueres direkte. Men under oppstart settes den tilbake i drift. Og derfor ble enden på visa å fjerne hook-en som ser ut til å kalle den slik det står ovenfor her. 
+
+Fjerner bufferposisjon i prosent, da linjenummer-tallene sier det samme
+
+#+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
+(setq doom-modeline-percent-position nil)
+#+end_src
+
+** Legger til nye ting
+
+Legger til totalt antall linjer, sånn at det man ser i hjørnet er "linjenummer/tot.antall linjer":
+
+#+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
+(setq doom-modeline-total-line-number t)
+#+end_src
+
 
 
 * Vim/evil og annen navigasjon
@@ -798,16 +813,17 @@ Alt som har med Vim-bevegelser og navigasjon å gjøre
 Et vanlig tips for å bli flinkere i Vim er å deaktivere ting som nybegynnere ofte klamrer seg til, for å tvinge overgang til bedre vaner. En av tingene er å bruke piltastene. Egentlig i det hele tatt, men spesielt i insert mode. Starter med å fjerne de akkurat i insert mode, hvor jeg ofte havner der
 
 #+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
-(after! evil
-  (defun my/deaktivere-piltaster ()
-    (interactive)
-    (message "Piltaster deaktivert."))
+;; 2026-03-28 Tror jeg er avvent nå. Deaktiverer midlertidig
+;; (after! evil
+;;   (defun my/deaktivere-piltaster ()
+;;     (interactive)
+;;     (message "Piltaster deaktivert."))
 
-  (dolist (key '("<left>" "<right>" "<up>" "<down>"))
-    (define-key evil-insert-state-map (kbd key) 'my/deaktivere-piltaster)
-    (define-key evil-normal-state-map (kbd key) 'my/deaktivere-piltaster)
-    )
-  )
+;;   (dolist (key '("<left>" "<right>" "<up>" "<down>"))
+;;     (define-key evil-insert-state-map (kbd key) 'my/deaktivere-piltaster)
+;;     (define-key evil-normal-state-map (kbd key) 'my/deaktivere-piltaster)
+;;     )
+;;   )
 #+end_src
 ** Better-jumper
 
