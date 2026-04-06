@@ -1891,6 +1891,7 @@ Hotkey:
 
 
 * Dirvish
+Dired/Dirvish config
 ** Hotkeys
 Dirvish sin hurtigmeny er bedre enn bookmarks-funksjonen til Emacs, så jeg overstyrer ~SPC RET~ hurtigtasten for det her:
 
