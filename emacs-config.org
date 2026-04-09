@@ -1876,9 +1876,8 @@ Legger inn sjekkboks i starten av aktiv linje:
 (defun my/sjekkboks ()
   ""
   (interactive)
-  (save-excursion
     (beginning-of-line)
-    (insert "- [ ] ")))
+    (insert "- [ ] "))
 #+end_src
 
 Hotkey:
