@@ -801,6 +801,35 @@ Legger til totalt antall linjer, sånn at det man ser i hjørnet er "linjenummer
 #+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
 (setq doom-modeline-total-line-number t)
 #+end_src
+** Indikatorer for workspaces
+
+Veldig vibekodet. Men her er noen detaljer:
+- Farger: ~'doom-modeline-info~ og ~'shadow~ angir hhv. grønn- og gråfargen for aktiv og ikke-aktive workspaces
+
+#+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
+(after! doom-modeline
+  (doom-modeline-def-segment all-workspaces
+    "Show all workspaces, highlighting the current one."
+    (when (and (bound-and-true-p persp-mode)
+               (not (string= (+workspace-current-name) persp-nil-name)))
+      (let* ((current (+workspace-current-name))
+             (names (+workspace-list-names)))
+        (concat
+         (doom-modeline-spc)
+         (mapconcat
+          (lambda (name)
+            (propertize name 'face
+                        (if (string= name current)
+                            'doom-modeline-info
+                          'shadow)))
+          names
+          "  ")
+         (doom-modeline-spc)))))
+
+  (doom-modeline-def-modeline 'main
+    '(" " modals matches buffer-info remote-host buffer-position parrot selection-info)
+    '(all-workspaces misc-info minor-modes input-method buffer-encoding major-mode process vcs check)))
+#+end_src
 
 
 
@@ -1505,6 +1534,34 @@ Til slutt en hook for å aktivere alle funksjonene ovenfor når jeg er i en Mark
 
 * Workspaces
 
+** Default navn på første workspace
+
+Default-navnet er originalt "main", som er litt dumt, siden det også ofte er navnet på git-branchen jeg er på, som også listes opp ved siden av. Endrer det til noe annet, artigere: 
+
+#+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
+(setq +workspaces-main "ʕ•ᴥ•ʔ")
+#+end_src
+** Sette første ekstra-workspace til å hete "#2"
+
+Upraktisk at workspace nr 2 får navnet ~#1~, og nr 3 heter ~#2~, og så videre.
+
+Vibekode for å sette første ekstra-navn til å være ~#2~. Deretter inkrementerer det som normalt uten noe ekstra elisp: 
+
+#+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
+(defadvice! +workspace/new-start-from-2-a (fn &optional name clone-p)
+  :around #'+workspace/new
+  (funcall fn
+           (or name
+               (format "#%d"
+                       (or (cl-loop for n in (+workspace-list-names)
+                                    when (string-match-p "^#[0-9]+$" n)
+                                    maximize (1+ (string-to-number (substring n 1))))
+                           2)))
+           clone-p))
+
+#+end_src
+
+** Ikke i bruk
 Setter opp et utvalg workspaces sånn at jeg raskt kan dra fram de vanligste filene jeg vil endre innenfor samme kontekst.
 
 De fleste workspace-ene inneholder delvis sensitive filnavn o.l. pga jobb, så de defineres opp i en egen ~.emacs.secrets~-fil som importeres tidligere i denne config-en. Men de følger samme mal som dette Emacs-config-workspacet:
@@ -1546,6 +1603,8 @@ Mal:
 #+end_src
 
 Dette kunne vært skrevet smartere vha. makroer, parameterisering og så videre. Men det funker fint slik det står
+
+
 * Flycheck
 Alt av lintere og formatter-config
 
