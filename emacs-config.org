@@ -1545,8 +1545,18 @@ Mal:
   )
 #+end_src
 
-Dette kunne vært skrevet smartere vha. makroer, parameterisering og så videre. Men det funker fint slik det står 
+Dette kunne vært skrevet smartere vha. makroer, parameterisering og så videre. Men det funker fint slik det står
+* Flycheck
+Alt av lintere og formatter-config
 
+** Markdown
+Midlertidig fix for å ignore ~MD013~-varsler om at linjer er for lange
+
+
+#+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
+(after! flycheck
+  (setq flycheck-markdown-markdownlint-cli-disable-rules '("MD013")))
+#+end_src
 * Writeroom
 
 #+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
