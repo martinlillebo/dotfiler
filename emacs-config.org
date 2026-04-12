@@ -1608,17 +1608,9 @@ Dette kunne vært skrevet smartere vha. makroer, parameterisering og så videre.
 * Flycheck
 Alt av lintere og formatter-config
 
-** Markdown
+Enn så lenge er det bare standardsettings for Flycheck. Så installeres lintere og configfiler uavhengig av Flycheck/Emacs
 
-Setter flycheck til å bruke
-
-Midlertidig fix for å ignore ~MD013~-varsler om at linjer er for lange
-
-#+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
-(after! flycheck
-  (setq flycheck-markdown-markdownlint-cli-disable-rules '("MD013")))
-#+end_src
-
+F.eks. er ~markdownlint-cli2~ installert via ~npm~, og configfilen ligger i ~/dotfiler~-repoet
 
 
 * Writeroom
