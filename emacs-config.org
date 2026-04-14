@@ -2334,14 +2334,6 @@ Aktiverer den i Emacs:
 (use-package! gptel)
 #+end_src
 
-Binder opp ~gptel-send~ og ~gptel-menu~ til hver sin hotkey:
-
-#+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
-;; (map! :leader
-;;       "t s" #'gptel-send
-;;       "t m" #'gptel-menu)
-#+end_src
-
 ** System prompt
 
 Ofte kalt "personalisering"-parameteren. Det er den teksten som mates inn i forkant av hver request, for å tilpasse oppførselen til AI-en.
