@@ -2337,9 +2337,9 @@ Aktiverer den i Emacs:
 Binder opp ~gptel-send~ og ~gptel-menu~ til hver sin hotkey:
 
 #+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
-(map! :leader
-      "t s" #'gptel-send
-      "t m" #'gptel-menu)
+;; (map! :leader
+;;       "t s" #'gptel-send
+;;       "t m" #'gptel-menu)
 #+end_src
 
 ** System prompt
