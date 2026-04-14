@@ -1719,13 +1719,16 @@ Dette er config for kolonnene som skal vises, som er standard-kolonnene pluss ~F
 
 #+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
 (setq magit-repolist-columns
-      '(("Name"    25 magit-repolist-column-ident nil)
+      '(("Name"    35 magit-repolist-column-ident nil)
         ("B<U"      3 magit-repolist-column-unpulled-from-upstream nil)
         ("B>U"      3 magit-repolist-column-unpushed-to-upstream nil)
+        ("Upstream" 14 magit-repolist-column-upstream nil)
         ("Flag"     4 magit-repolist-column-flag nil)
-        ("Branch"  20 magit-repolist-column-branch nil)
+        ("Branch"  15 magit-repolist-column-branch nil)
         ("Path"    99 magit-repolist-column-path nil)))
 #+end_src
+
+- tallene i hver linje angir kolonnebredde i characters
 
 ** Hotkey: Autocommit med Magit
 
