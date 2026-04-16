@@ -1531,6 +1531,9 @@ Til slutt en hook for å aktivere alle funksjonene ovenfor når jeg er i en Mark
  (add-hook 'markdown-mode-hook #'nb/markdown-unhighlight)
 #+end_src
 
+#+RESULTS:
+| nb/markdown-unhighlight | evil-markdown-mode | +corfu-add-cape-elisp-block-h |
+
 
 * Workspaces
 
