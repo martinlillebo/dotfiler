@@ -1,0 +1,10 @@
+[user]
+    email = lillebomartin@gmail.com
+    name = Martin Lillebo
+    signingkey = /home/ml/.ssh/id_ed25519.pub
+
+[push]
+    autoSetupRemote = true
+
+[pull]
+    rebase = true
