@@ -1903,28 +1903,35 @@ For å lage luft, og se hvor noe starter og noe annet slutter
 
 Jeg rammer veldig ofte inn kode- og config-blokker i en ~begin_src conf~-blokk, så dette gjør det automagisk med ett funksjonskall. Og flytter markøren til å ligge to newlines under blokken, som er der jeg vanligvis vil fortsette fra:
 
+Dette starta som noe jeg forstod hvordan funker, men nå er den vibe-utvidet tre ganger for å ta hensyn til markørplassering, newlines over og under, og til slutt skille mellom å wrap-e en valgt region vs. å bare finne ut selv hva som er grensene for en paragraf basert på hvor markøren står. Men det virker. 
+
 #+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
 (defun my/wrap-med-src-conf ()
-  "Rammer inn tekstblokk i en #+begin_src conf block"
+  "Rammer inn region eller paragraf i en #+begin_src conf block."
   (interactive)
-  (let ((bounds (bounds-of-thing-at-point 'paragraph)))
-    (when bounds
-      (goto-char (cdr bounds))
-      (skip-chars-backward " \t\n" (car bounds))
+  (let* ((region (use-region-p))
+         (beg-raw (if region (region-beginning)
+                    (car (bounds-of-thing-at-point 'paragraph))))
+         (end-raw (if region (region-end)
+                    (cdr (bounds-of-thing-at-point 'paragraph)))))
+    (when (and beg-raw end-raw)
+      (goto-char end-raw)
+      (skip-chars-backward " \t\n" beg-raw)
       (let ((end (point)))
-        (goto-char (car bounds))
+        (goto-char beg-raw)
         (skip-chars-forward " \t\n" end)
         (let ((beg (line-beginning-position)))
           (goto-char end)
           (end-of-line)
-          (delete-region (point) (cdr bounds))
+          (delete-region (point) end-raw)
           (insert "\n#+end_src\n\n")
           (let ((target (point-marker)))
             (goto-char beg)
-            (delete-region (car bounds) beg)
+            (delete-region beg-raw beg)
             (insert "\n#+begin_src conf\n")
             (goto-char target)
-            (set-marker target nil)))))))
+            (set-marker target nil)
+            (deactivate-mark)))))))
 #+end_src
 
 Hotkey:
@@ -1952,7 +1959,44 @@ Hotkey:
 (map! :leader
       "-" #'my/sjekkboks)
 #+end_src
+** my/en-linje-per-setning
 
+Funksjon som bryter opp en paragraf til å legge hver setning på sin egen linje. 
+
+Ref. [[https://nick.groenen.me/notes/one-sentence-per-line/][masse]] [[https://sive.rs/1s][ulike]] [[https://news.ycombinator.com/item?id=31808093][tips]] og tilmed markdown-stilguider som ønsker seg tekst på det formatet
+
+Først en liste over norske forkortelser som ikke skal tolkes som slutten på en setning:
+
+#+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
+(defvar my/no-abbreviations
+  '("bl.a" "f.eks" "m.m" "osv" "jf" "dvs" "ca" "pga" "iht" "mht" "ev")
+  "Norwegian abbreviations to protect from sentence splitting.")
+#+end_src
+
+Deretter en blokk med vibekode:
+
+#+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
+(defun my/en-linje-per-setning (start end)
+  "Skriver om en markert paragraf til å bruke en linje per setning"
+  (interactive "r")
+  (let ((text (buffer-substring-no-properties start end))
+        (placeholder-map nil))
+    ;; Protect abbreviations
+    (dolist (abbr my/no-abbreviations)
+      (let ((placeholder (format "\0%s\0" abbr)))
+        (push (cons placeholder (concat abbr ".")) placeholder-map)
+        (setq text (replace-regexp-in-string
+                    (concat (regexp-quote abbr) "\\.")
+                    placeholder text t t))))
+    ;; Split on sentence endings
+    (setq text (replace-regexp-in-string "\\([.!?]\\) +" "\\1\n" text))
+    ;; Restore abbreviations
+    (dolist (pair placeholder-map)
+      (setq text (replace-regexp-in-string
+                  (regexp-quote (car pair)) (cdr pair) text t t)))
+    (delete-region start end)
+    (insert text)))
+#+end_src
 
 
 * Dirvish
@@ -2087,7 +2131,8 @@ Noen nettradioer skjuler stream-URL-en. Da kan man ofte få tak i den slik:
 4) Se etter noe som slutter på ~.mp3~, ~.aac~, ~.m3u~ eller lignende
 5) Hvis det ikke er noe, kan man skru radioen av og på for å trigge en ny GET-request
 
-** DEFCON
+** Radiostasjoner
+*** DEFCON
 
 [[https://somafm.com/player24/station/defcon][soma fm - DEF CON Radio]]
 
@@ -2108,7 +2153,7 @@ Hurtigtast:
        :desc "DEF CON" "d" #'my/radio-defcon))
 #+end_src
 
-** NRK P1
+*** NRK P1
 
 #+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
 (defun my/radio-nrk-p1 ()
@@ -2123,7 +2168,7 @@ Hurtigtast:
        :desc "NRK P1" "1" #'my/radio-nrk-p1))
 #+end_src
 
-** NRK P2
+*** NRK P2
 
 #+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
 (defun my/radio-nrk-p2 ()
@@ -2138,7 +2183,7 @@ Hurtigtast:
        :desc "NRK P2" "2" #'my/radio-nrk-p2))
 #+end_src
 
-** NRK P3
+*** NRK P3
 
 #+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
 (defun my/radio-nrk-p3 ()
@@ -2153,7 +2198,7 @@ Hurtigtast:
        :desc "NRK P3" "3" #'my/radio-nrk-p3))
 #+end_src
 
-** NRK P13
+*** NRK P13
 
 #+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
 (defun my/radio-nrk-p13 ()
@@ -2168,7 +2213,7 @@ Hurtigtast:
        :desc "NRK P13" "t" #'my/radio-nrk-p13))
 #+end_src
 
-** NRK mP3
+*** NRK mP3
 
 #+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
 (defun my/radio-nrk-mp3 ()
@@ -2183,23 +2228,7 @@ Hurtigtast:
        :desc "NRK mP3" "m" #'my/radio-nrk-mp3))
 #+end_src
 
-** Cinemix
-
-Filmusikk. Herfra: https://www.cinemix.us/
-
-#+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
-(defun my/radio-cinemix ()
-  "Spiller av Cinemix sin nettradio - Filmmusikk"
-  (interactive)
-  (emms-play-url "https://kathy.torontocast.com:1190/stream"))
-#+end_src
-
-#+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
-(map! :leader
-      (:prefix ("e" . "emms")
-       :desc "Cinemix" "c" #'my/radio-cinemix))
-#+end_src
-** NRK Jazz
+*** NRK Jazz
 
 #+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
 (defun my/radio-nrk-jazz ()
@@ -2213,27 +2242,7 @@ Filmusikk. Herfra: https://www.cinemix.us/
       (:prefix ("e" . "emms")
        :desc "NRK Jazz" "j" #'my/radio-nrk-jazz))
 #+end_src
-** Rainwave
-
-Videospillmusikk. Herfra: https://rainwave.cc//
-
-De har fem ulike kanaler: Chiptune, "games", oc remix, og covers. Denne kanalen er "all", som henter litt fra alle fire
-
-#+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
-(defun my/radio-rainwave ()
-  "Spiller av Rainwave.cc sin nettradio - Videospillmusikk"
-  (interactive)
-  (emms-play-url "https://relay.rainwave.cc/all.mp3"))
-
-#+end_src
-
-#+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
-(map! :leader
-      (:prefix ("e" . "emms")
-       :desc "Rainwave" "r" #'my/radio-rainwave))
-#+end_src
-
-** ChilledCow
+*** ChilledCow
 
 Nettside: https://liveonlineradio.net/chilledcow
 
@@ -2249,7 +2258,7 @@ Nettside: https://liveonlineradio.net/chilledcow
       (:prefix ("e" . "emms")
        :desc "ChilledCow" "x" #'my/radio-chilledcow))
 #+end_src
-** NRK Klassisk
+*** NRK Klassisk
 
 #+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
 (defun my/radio-nrk-klassisk ()
@@ -2264,27 +2273,7 @@ Nettside: https://liveonlineradio.net/chilledcow
        :desc "NRK Klassisk" "k" #'my/radio-nrk-klassisk))
 #+end_src
 
-** Asteroid Radio
-
-https://asteroid.radio/
-
-
-#+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
-(defun my/radio-asteroid ()
-  "Spiller av Asteroid Radio"
-  (interactive)
-  (emms-play-url "http://ice.asteroid.radio/asteroid.aac"))
-#+end_src
-
-#+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
-(map! :leader
-      (:prefix ("e" . "emms")
-       :desc "Asteroid Radio" "a" #'my/radio-asteroid))
-#+end_src
-
-
-
-** Freecodecamp radio
+*** Freecodecamp radio
 
 https://coderadio.freecodecamp.org/
 
@@ -2302,7 +2291,7 @@ https://coderadio.freecodecamp.org/
        :desc "FreeCodeCamp" "f" #'my/radio-freecodecamp))
 #+end_src
 
-** Radio Pays de Guéret
+*** Radio Pays de Guéret
 
 Fransk [[https://www.radiopaysdegueret.fr/][nettradio]] som spiller veldig variert musikk
 
@@ -2317,6 +2306,66 @@ Fransk [[https://www.radiopaysdegueret.fr/][nettradio]] som spiller veldig varie
 (map! :leader
       (:prefix ("e" . "emms")
        :desc "Pays de Guéret" "p" #'my/radio-pays-de-gueret))
+#+end_src
+** "Now playing"
+Vil ofte vite hvilken sang som spilles
+
+Disse funksjonene er 100 % vibekode rett fra Claude 4.7
+
+*** DEFCON
+
+#+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
+(defun my/now-playing-defcon (&optional channel)
+  "Show currently playing song on a SomaFM channel in the echo area.
+CHANNEL defaults to \"defcon\"."
+  (interactive)
+  (let* ((channel (or channel "defcon"))
+         (url (format "https://somafm.com/songs/%s.json" channel))
+         (url-request-method "GET"))
+    (url-retrieve
+     url
+     (lambda (status)
+       (if (plist-get status :error)
+           (message "SomaFM: fetch failed: %S" (plist-get status :error))
+         (goto-char (point-min))
+         (re-search-forward "\n\n")  ; skip HTTP headers
+         (condition-case err
+             (let* ((json-object-type 'alist)
+                    (json-array-type 'list)
+                    (data (json-read))
+                    (songs (alist-get 'songs data))
+                    (current (car songs))
+                    (artist (alist-get 'artist current))
+                    (title (alist-get 'title current)))
+               (message "♪ %s — %s" artist title))
+           (error (message "SomaFM: parse failed: %S" err)))))
+     nil t t)))
+#+end_src
+*** Freecodecamp radio
+
+#+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
+(defun my/now-playing-freecodecamp ()
+  "Show currently playing song on freeCodeCamp radio in the echo area."
+  (interactive)
+  (let ((url "https://coderadio-admin-v2.freecodecamp.org/api/nowplaying/coderadio"))
+    (url-retrieve
+     url
+     (lambda (status)
+       (if (plist-get status :error)
+           (message "freeCodeCamp: fetch failed: %S" (plist-get status :error))
+         (goto-char (point-min))
+         (re-search-forward "\n\n")
+         (condition-case err
+             (let* ((json-object-type 'alist)
+                    (json-array-type 'list)
+                    (data (json-read))
+                    (now-playing (alist-get 'now_playing data))
+                    (song (alist-get 'song now-playing))
+                    (artist (alist-get 'artist song))
+                    (title (alist-get 'title song)))
+               (message "♪ %s — %s" artist title))
+           (error (message "freeCodeCamp: parse failed: %S" err)))))
+     nil t t)))
 #+end_src
 
 * gptel
