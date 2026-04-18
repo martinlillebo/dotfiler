@@ -471,6 +471,26 @@ De er blitt tatt inn som standardtemaer i Emacs, så det er bare å sette dark-v
 #+end_src
 
 
+* Utklippstavle / Kill ring
+
+** Kill ring max
+Emacs' lagrer utklippstavlen over tid, men standard maxlengde for historikken er 120 entries, som ikke er så mye. Øker denne en del:
+
+#+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
+(setq kill-ring-max 1000)
+#+end_src
+** Lagre utklippstavla før kill
+
+Tips jeg lærte [[https://emacsredux.com/blog/2026/04/07/stealing-from-the-best-emacs-configs/][herfra]]: Når man kopierer noe fra utenfor Emacs, også deretter endrer noe inni Emacs, så overskrives kopitavla (slik den skal), uten at kill ring beholder det man hadde der fra før, og det har skjedd støtt og stadig det året jeg har brukt Emacs, fram til jeg så at det fins en enkel fix.
+
+Lagrer eksisterende utklippstavle-innhold til kill ring før man appender kill ring:
+
+#+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
+(setq save-interprogram-paste-before-kill t)
+#+end_src
+
+
+
 * Generell Emacs config
 ** Størrelse på vinduet ved oppstart
 
@@ -504,13 +524,6 @@ Ved første øyekast ser det ut som om vinduet settes til å være nesten dobbel
 
 Det gir mening når man får høre at Emacs måler alt i tekst, og rektangelet som omslutter en bokstav på datamaskiner er mye høyere enn det er bredt.
 
-
-** Kill ring max
-Emacs' lagrer utklippstavlen over tid, men standard maxlengde for historikken er 120 entries, som ikke er så mye. Øker denne en del:
-
-#+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
-(setq kill-ring-max 1000)
-#+end_src
 
 ** Fjern word wrap
 
@@ -1975,7 +1988,7 @@ Først en liste over norske forkortelser som ikke skal tolkes som slutten på en
 
 #+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
 (defvar my/no-abbreviations
-  '("bl.a" "f.eks" "m.m" "osv" "jf" "dvs" "ca" "pga" "iht" "mht" "ev")
+  '("bl.a" "vs" "f.eks" "m.m" "osv" "jf" "dvs" "ca" "pga" "iht" "mht" "ev")
   "Norwegian abbreviations to protect from sentence splitting.")
 #+end_src
 
@@ -2094,7 +2107,7 @@ Så lenge jeg bruker Doom Emacs, så er ~initial-buffer-choice~ satt til symbole
 
 
 * Nettradio med EMMS
-
+** Intro
 Prøvde opprinnelig å få radiostasjoner inn i ~emms-streams~-lista, men jeg ga opp. Jeg endte opp med å vibe-kode en egen måte å legge inn radiostasjoner på. Det har fungert fint å bare sette opp en egen funksjon for hver radiokanal, sånn at jeg kan starte hver radio med ~M-x kanalnavn~ eller en hotkey. 
 
 NRK-lenkene er henta herfra: https://lyd.nrk.no/. 
@@ -2117,15 +2130,6 @@ Når det er installert kan jeg be om å ta i bruk pakka, og peke på en mediaspi
   :config
   (emms-minimalistic)
   (setq emms-player-list '(emms-player-mpv)))
-#+end_src
-
-** Hurtigtast: Stoppe radioen
-Mapper ~emms-stop~ til ~SPC e s~:
-
-#+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
-(map! :leader
-      (:prefix ("e" . "emms")
-       :desc "Stopp EMMS" "s" #'emms-stop))
 #+end_src
 
 ** Hvordan hente ut stream-URLs
@@ -2313,6 +2317,31 @@ Fransk [[https://www.radiopaysdegueret.fr/][nettradio]] som spiller veldig varie
       (:prefix ("e" . "emms")
        :desc "Pays de Guéret" "p" #'my/radio-pays-de-gueret))
 #+end_src
+*** P11 Dance
+
+Fra [[https://www.lydenavnorge.no/p11/][P4]]
+
+#+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
+(defun my/p11-dance ()
+  "Spiller av P11 Dance"
+  (interactive)
+  (emms-play-url "https://p4.p4groupaudio.com/P04_AM"))
+#+end_src
+
+#+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
+(map! :leader
+      (:prefix ("e" . "emms")
+       :desc "P11 Dance" "a" #'my/p11-dance))
+#+end_src
+** Hurtigtast: Stoppe radioen
+Mapper ~emms-stop~ til ~SPC e s~:
+
+#+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
+(map! :leader
+      (:prefix ("e" . "emms")
+       :desc "Stopp EMMS" "s" #'emms-stop))
+#+end_src
+
 ** "Now playing"
 Vil ofte vite hvilken sang som spilles
 
