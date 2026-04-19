@@ -932,10 +932,14 @@ Denne feiler om jeg legger den for høyt i configfila. Prøvde en times tid å f
     :desc "Marker til linjeslutt"
     "g" #'my/visual-to-line-end))
 #+end_src
+** evil-numbers
 
+Setter hotkeys for ~evil-numbers~ som øker/senker tallet man har markøren på:
 
-
-
+#+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
+(map! :n "g +" #'evil-numbers/inc-at-pt
+      :n "g -" #'evil-numbers/dec-at-pt)
+#+end_src
 
 * Utviklermiljø
 ** Parenteser
