@@ -2020,6 +2020,97 @@ Deretter en blokk med vibekode:
     (delete-region start end)
     (insert text)))
 #+end_src
+** my/joggemodus aka my/shadow-play
+
+work in progress
+
+funksjon(er) for å spille av en radiopodcast med korte pauser innimellom. Bruker det for å lære tysk: Hører på noen setninger, også pauses sendingen mens jeg prøver å gjenta det selv, også hører jeg videre. Osv.
+
+#+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
+;;; Shadow-play an audio URL: X sec play, Y sec pause, repeat.
+
+(defvar my/shadow--process nil)
+(defvar my/shadow--socket nil)
+(defvar my/shadow--timer nil)
+(defvar my/shadow--sock-path nil)
+
+(defun my/shadow--send (cmd-vector)
+  "Send CMD-VECTOR to mpv over IPC. Silently no-op if socket is dead."
+  (when (process-live-p my/shadow--socket)
+    (process-send-string
+     my/shadow--socket
+     (concat (json-serialize `((command . ,cmd-vector))) "\n"))))
+
+(defun my/shadow--tick (play-secs pause-secs playing?)
+  "Timer callback. Flip pause state and reschedule."
+  (if playing?
+      (progn
+        (my/shadow--send ["set_property" "pause" t])
+        (setq my/shadow--timer
+              (run-at-time pause-secs nil
+                           #'my/shadow--tick play-secs pause-secs nil)))
+    (my/shadow--send ["set_property" "pause" :false])
+    (setq my/shadow--timer
+          (run-at-time play-secs nil
+                       #'my/shadow--tick play-secs pause-secs t))))
+
+(defun my/shadow-stop ()
+  "Stop shadow playback, clean up mpv and socket."
+  (interactive)
+  (when (timerp my/shadow--timer) (cancel-timer my/shadow--timer))
+  (my/shadow--send ["quit"])
+  (when (process-live-p my/shadow--socket) (delete-process my/shadow--socket))
+  (when (process-live-p my/shadow--process) (delete-process my/shadow--process))
+  (when (and my/shadow--sock-path (file-exists-p my/shadow--sock-path))
+    (ignore-errors (delete-file my/shadow--sock-path)))
+  (setq my/shadow--timer nil
+        my/shadow--socket nil
+        my/shadow--process nil
+        my/shadow--sock-path nil)
+  (message "Shadow stopped."))
+
+(defun my/shadow-play (url play-secs pause-secs)
+  "Stream URL with mpv, alternating PLAY-SECS playback and PAUSE-SECS silence.
+Call `my/shadow-stop' to end."
+  (interactive
+   (list (read-string "Audio URL: ")
+         (read-number "Play seconds: " 3)
+         (read-number "Pause seconds: " 5)))
+  (my/shadow-stop)
+  (let ((sock (format "/tmp/shadow-mpv-%d.sock" (emacs-pid))))
+    (ignore-errors (delete-file sock))
+    (setq my/shadow--sock-path sock
+          my/shadow--process
+          (start-process "shadow-mpv" nil "mpv"
+                         "--no-video" "--really-quiet" "--idle=no"
+                         (format "--input-ipc-server=%s" sock)
+                         url))
+    (set-process-sentinel
+     my/shadow--process
+     (lambda (_p event)
+       (when (string-match-p "\\(finished\\|exited\\|killed\\|signal\\)" event)
+         (my/shadow-stop))))
+    ;; Retry socket connect until mpv creates it.
+    (let ((tries 40))
+      (while (and (> tries 0)
+                  (not (ignore-errors
+                         (setq my/shadow--socket
+                               (make-network-process
+                                :name "shadow-mpv-ipc"
+                                :family 'local
+                                :service sock
+                                :noquery t)))))
+        (sleep-for 0.1)
+        (setq tries (1- tries))))
+    (unless my/shadow--socket
+      (my/shadow-stop)
+      (error "Could not connect to mpv IPC at %s" sock)))
+  (setq my/shadow--timer
+        (run-at-time play-secs nil
+                     #'my/shadow--tick play-secs pause-secs t))
+  (message "Shadowing %ds play / %ds pause. M-x my/shadow-stop to end."
+           play-secs pause-secs))
+#+end_src
 
 
 * Dirvish
