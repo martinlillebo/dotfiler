@@ -2022,12 +2022,16 @@ Deretter en blokk med vibekode:
 #+end_src
 ** my/joggemodus aka my/shadow-play
 
-work in progress
+130 linjer spaghetti-vibe som gjør dette:
+- Spiller av en podcast-URL
+- Hopper fram til et tilfeldig tidspunkt
+- Spiller X sekunder, pauser i Y sekunder, om og om igjen
 
-funksjon(er) for å spille av en radiopodcast med korte pauser innimellom. Bruker det for å lære tysk: Hører på noen setninger, også pauses sendingen mens jeg prøver å gjenta det selv, også hører jeg videre. Osv.
+Bruker dette til å høre på tysk podcast mens jeg er på gåtur/løpetur ute, også øver jeg på å snakke etter hva de nettopp sa for hver gang det er pause
 
 #+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
 ;;; Shadow-play an audio URL: X sec play, Y sec pause, repeat.
+(require 'cl-lib)
 
 (defvar my/shadow--process nil)
 (defvar my/shadow--socket nil)
@@ -2040,6 +2044,35 @@ funksjon(er) for å spille av en radiopodcast med korte pauser innimellom. Bruke
     (process-send-string
      my/shadow--socket
      (concat (json-serialize `((command . ,cmd-vector))) "\n"))))
+
+(defun my/shadow--ipc-filter (_proc str)
+  "Capture IPC replies into ` *shadow-mpv-ipc*' for later reading."
+  (with-current-buffer (get-buffer-create " *shadow-mpv-ipc*")
+    (goto-char (point-max))
+    (insert str)))
+
+(defun my/shadow--random-seek (&optional min-frac max-frac)
+  "Seek mpv to a random point between MIN-FRAC and MAX-FRAC of duration.
+Defaults: 5% to 90%, to skip intro jingles and outro music."
+  (let ((min-frac (or min-frac 0.05))
+        (max-frac (or max-frac 0.90)))
+    (with-current-buffer (get-buffer-create " *shadow-mpv-ipc*")
+      (erase-buffer))
+    (process-send-string
+     my/shadow--socket
+     (concat (json-serialize
+              '((command . ["get_property" "duration"])
+                (request_id . 1)))
+             "\n"))
+    (accept-process-output my/shadow--socket 0.5)
+    (with-current-buffer " *shadow-mpv-ipc*"
+      (goto-char (point-min))
+      (if (re-search-forward "\"data\":\\([0-9.]+\\)" nil t)
+          (let* ((dur (string-to-number (match-string 1)))
+                 (target (* (+ min-frac (cl-random (- max-frac min-frac))) dur)))
+            (my/shadow--send `["seek" ,target "absolute"])
+            (message "Seeked to %.0fs of %.0fs" target dur))
+        (message "Could not determine duration; staying at start.")))))
 
 (defun my/shadow--tick (play-secs pause-secs playing?)
   "Timer callback. Flip pause state and reschedule."
@@ -2063,6 +2096,8 @@ funksjon(er) for å spille av en radiopodcast med korte pauser innimellom. Bruke
   (when (process-live-p my/shadow--process) (delete-process my/shadow--process))
   (when (and my/shadow--sock-path (file-exists-p my/shadow--sock-path))
     (ignore-errors (delete-file my/shadow--sock-path)))
+  (when (get-buffer " *shadow-mpv-ipc*")
+    (kill-buffer " *shadow-mpv-ipc*"))
   (setq my/shadow--timer nil
         my/shadow--socket nil
         my/shadow--process nil
@@ -2071,13 +2106,22 @@ funksjon(er) for å spille av en radiopodcast med korte pauser innimellom. Bruke
 
 (defun my/shadow-play (url play-secs pause-secs)
   "Stream URL with mpv, alternating PLAY-SECS playback and PAUSE-SECS silence.
-Call `my/shadow-stop' to end."
+Starts at a random point in the episode. Call `my/shadow-stop' to end."
   (interactive
-   (list (read-string "Audio URL: ")
+   (list (let ((input (read-string "Audio URL (RET for default): ")))
+           (if (string-empty-p input)
+               "https://d3ctxlq1ktw2nl.cloudfront.net/staging/2024-0-6/2154506c-3e1a-e5a3-4c52-44fc3a6e061e.mp3"
+             input))
          (read-number "Play seconds: " 3)
          (read-number "Pause seconds: " 5)))
   (my/shadow-stop)
-  (let ((sock (format "/tmp/shadow-mpv-%d.sock" (emacs-pid))))
+  (let* ((dir (or (getenv "XDG_RUNTIME_DIR")
+                  (getenv "TMPDIR")
+                  (expand-file-name "~/.cache")))
+         (sock (expand-file-name
+                (format "shadow-mpv-%d.sock" (emacs-pid))
+                dir)))
+    (make-directory dir t)
     (ignore-errors (delete-file sock))
     (setq my/shadow--sock-path sock
           my/shadow--process
@@ -2099,19 +2143,37 @@ Call `my/shadow-stop' to end."
                                 :name "shadow-mpv-ipc"
                                 :family 'local
                                 :service sock
-                                :noquery t)))))
+                                :noquery t
+                                :filter #'my/shadow--ipc-filter)))))
         (sleep-for 0.1)
         (setq tries (1- tries))))
     (unless my/shadow--socket
       (my/shadow-stop)
       (error "Could not connect to mpv IPC at %s" sock)))
+  ;; Give mpv time to parse the stream header, then seek randomly.
+  (run-at-time 1.5 nil #'my/shadow--random-seek)
+  ;; Start the play/pause cycle shortly after the seek lands.
   (setq my/shadow--timer
-        (run-at-time play-secs nil
+        (run-at-time (+ 2.0 play-secs) nil
                      #'my/shadow--tick play-secs pause-secs t))
   (message "Shadowing %ds play / %ds pause. M-x my/shadow-stop to end."
            play-secs pause-secs))
 #+end_src
 
+Hotkeys for å starte/stopp raskt:
+
+#+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
+(map! :leader
+      :desc "shadow-play"
+      "j" "p" #'my/shadow-play)
+#+end_src
+
+#+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
+(map! :leader
+      (:prefix ("t" . "shadow")
+       :desc "play" "p" #'my/shadow-play
+       :desc "stop" "s" #'my/shadow-stop))
+#+end_src
 
 * Dirvish
 Dired/Dirvish config
