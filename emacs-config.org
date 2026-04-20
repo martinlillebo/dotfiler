@@ -2164,12 +2164,6 @@ Hotkeys for å starte/stopp raskt:
 
 #+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
 (map! :leader
-      :desc "shadow-play"
-      "j" "p" #'my/shadow-play)
-#+end_src
-
-#+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
-(map! :leader
       (:prefix ("t" . "shadow")
        :desc "play" "p" #'my/shadow-play
        :desc "stop" "s" #'my/shadow-stop))
