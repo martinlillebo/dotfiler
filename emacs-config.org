@@ -1057,6 +1057,14 @@ Setter opp et advice som gjør at ~projectile-invalidate-cache~ kjøres etter hv
 #+end_src
     
 * Org-mode
+** Småting
+
+Setter ~org-log-into-drawer~ fra default ~nil~ til ~t~. Det gjør at notater som skrives med ~org-add-note~ havner inni en dedikert ~:PROPERTIES:~-skuff, i stedet for å legges rett innunder headeren som plaintekst: 
+
+#+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
+(setq org-log-into-drawer t)
+#+end_src
+
 ** Org-eksport
 
 Setter noen verdier for å tilpasse info som inngår i eksport til HTML, PDF og lignende. Dette gir et minimum som er det jeg vanligvis trenger for å lime inn HTML til eposter og andre samarbeidsverktøy på jobb.
