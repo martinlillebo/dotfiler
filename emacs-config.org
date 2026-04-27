@@ -2561,6 +2561,150 @@ CHANNEL defaults to \"defcon\"."
            (error (message "freeCodeCamp: parse failed: %S" err)))))
      nil t t)))
 #+end_src
+** Kode til styring av DIY nettradio
+
+Gir ikke veldig mening å legge dette til personlig emacs-config, men for moro skyld holder jeg på å bygge om en Tivoli-DAB-radio hjemme til en internettradio.
+Og når jeg allerede har satt opp en måte å spille av nettradio via Emacs, så er det morsomt å bare kjøre den samme Emacs-configen på en Raspberry Pi som kobler seg på høyttaleren til radioen, og tar imot hotkeys via et eller annet fysisk medium jeg ikke har ordnet ennå
+
+*** Workaround som er overflødig med nyere ~emms~-versjon
+
+Jeg har ikke ~emms-volume-mpv-method~ tilgjengelig, som hinter om at ~emms~-pakka er utdatert. Klarte ikke oppdatere den på Pi-en
+
+(Doom pinner pakkeversjonen, så doom sync -u oppdaterer den ikke uten videre)
+
+Vibekode for å bytte ut backend-en til ~emms-volume-raise~/-~lower~, fordi standardbackend-en (ao-volume) ikke fungerer på Pi-en:
+
+#+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
+(defun my/emms-mpv-volume-change (amount)
+     "Change mpv's native (software) volume by AMOUNT."
+     (emms-player-mpv-ipc-req-send
+      '(get_property volume)
+      (lambda (vol err)
+        (if err
+            (message "mpv volume get failed: %s" err)
+          (let ((new (max 0 (min 130 (+ vol amount)))))
+            (emms-player-mpv-ipc-req-send
+             `(set_property volume ,new)
+             (lambda (_ _err) (message "mpv volume: %d%%" new))))))))
+
+   (setq emms-volume-change-function #'my/emms-mpv-volume-change)
+#+end_src
+
+note to self om hva ~ao-volume~ er: ~ao-volume~ er én av to måter mpv kan styre volum på. Den ene måten er å justere lyden inni mpv selv (volume). Den andre er å be operativsystemet skru ned hovedvolumet (ao-volume). På Raspberry Pi 4 virker den siste dårlig, fordi lyd-systemet (ALSA) ikke alltid svarer når mpv spør. Derfor bruker vi den første.
+
+emms-volume inkrementer med 2 %, som er litt lite. Setter til 5 % med:
+
+#+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
+(setq emms-volume-change-amount 5)
+#+end_src
+*** Major mode *radio*
+
+Veldig vibekode per nå, men dette setter opp en major-mode som heter *Radio*, som lister opp alle radiokanaler jeg har satt opp tidligere. Poenget er at alt kan styres med en trådløs numpad som fungerer som fjernkontroll
+
+
+#+begin_src emacs-lisp :tangle ~/.config/doom/lisp/radio-mode.el :mkdirp yes
+;;; radio-mode.el --- Numpad radio control -*- lexical-binding: t; -*-
+
+(defun radio--kp-key (key)
+  "Translate logical KEY (a single-char string) to its numpad keysym."
+  (pcase key
+    ("." "<kp-decimal>")
+    ("," "<kp-decimal>")   ; Norsk numpad
+    ("/" "<kp-divide>")
+    ("*" "<kp-multiply>")
+    ("+" "<kp-add>")
+    ("-" "<kp-subtract>")
+    (_   (format "<kp-%s>" key))))
+
+(defvar radio-stations
+  '(("1" "NRK P1"          my/radio-nrk-p1)
+    ("2" "NRK P2"          my/radio-nrk-p2)
+    ("3" "NRK P3"          my/radio-nrk-p3)
+    ("4" "NRK P13"         my/radio-nrk-p13)
+    ("5" "NRK MP3"         my/radio-nrk-mp3)
+    ("6" "NRK Klassisk"    my/radio-nrk-klassisk)
+    ("7" "NRK Jazz"        my/radio-nrk-jazz)
+    ("8" "ChilledCow"      my/radio-chilledcow)
+    ("0" "Defcon"          my/radio-defcon)
+    ("," "freeCodeCamp"    my/radio-freecodecamp)
+    ("/" "Pays de Guéret"  my/radio-pays-de-gueret))
+  "Stations: (KEY LABEL COMMAND).
+KEY is the logical numpad key; the numpad keysym is derived via
+`radio--kp-key'.  For digits, the plain key is also bound to shadow
+`special-mode-map''s `digit-argument'.")
+
+(defvar radio--current-station nil
+  "Label of the currently-playing station, or nil.
+Placeholder for the upcoming now-playing display.")
+
+(defvar radio-mode-map
+  (let ((map (make-sparse-keymap)))
+    (define-key map (kbd "q")             #'quit-window)
+    (define-key map (kbd "g")             #'radio-refresh)
+    (define-key map (kbd "<kp-9>")        #'emms-stop)
+    (define-key map (kbd "9")             #'emms-stop)
+    (define-key map (kbd "<kp-add>")      #'emms-volume-raise)
+    (define-key map (kbd "+")             #'emms-volume-raise)
+    (define-key map (kbd "<kp-subtract>") #'emms-volume-lower)
+    (define-key map (kbd "-")             #'emms-volume-lower)
+    (dolist (entry radio-stations)
+  (let* ((key (nth 0 entry))
+         (cmd (nth 2 entry)))
+    (define-key map (kbd (radio--kp-key key)) cmd)
+    (define-key map (kbd key)                 cmd)))
+    map)
+  "Keymap for `radio-mode'. Built from `radio-stations'.")
+
+(defun radio--render ()
+  "Redraw the radio buffer from `radio-stations' and current state."
+  (let ((inhibit-read-only t))
+    (erase-buffer)
+    (insert (propertize "Radio\n" 'face 'bold))
+    (insert "=====\n\n")
+    (when radio--current-station
+      (insert (format "  Now playing: %s\n\n" radio--current-station)))
+    (dolist (entry radio-stations)
+      (insert (format "  [%s]  %s\n" (nth 0 entry) (nth 1 entry))))
+    (insert "\n")
+    (insert "  [9] stop   [+/-] volume   [g] refresh   [q] quit\n")))
+
+(defun radio-refresh ()
+  "Re-render the radio buffer if it exists."
+  (interactive)
+  (when-let ((buf (get-buffer "*Radio*")))
+    (with-current-buffer buf
+      (when (derived-mode-p 'radio-mode)
+        (radio--render)))))
+
+(define-derived-mode radio-mode special-mode "Radio"
+  "Major mode for controlling radio playback via numpad."
+  (setq-local cursor-type nil)
+  (radio--render))
+
+(with-eval-after-load 'evil
+  (evil-set-initial-state 'radio-mode 'emacs))
+
+(defun radio ()
+  "Open the radio control buffer."
+  (interactive)
+  (let ((buf (get-buffer-create "*Radio*")))
+    (with-current-buffer buf
+      (if (derived-mode-p 'radio-mode)
+          (radio--render)
+        (radio-mode)))
+    (switch-to-buffer buf)))
+
+(provide 'radio-mode)
+#+end_src
+
+~:mkdirp yes~ sier at ~/lisp~-mappa skal opprettes om den ikke fins allerede
+
+også laster vi inn major-mode-koden ved oppstart av Emacs slik:
+
+#+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
+(load! "lisp/radio-mode")
+#+end_src
+
 
 * gptel
 ** Installering og aktivering
