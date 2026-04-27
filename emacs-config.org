@@ -2601,7 +2601,6 @@ emms-volume inkrementer med 2 %, som er litt lite. Setter til 5 % med:
 
 Veldig vibekode per nå, men dette setter opp en major-mode som heter *Radio*, som lister opp alle radiokanaler jeg har satt opp tidligere. Poenget er at alt kan styres med en trådløs numpad som fungerer som fjernkontroll
 
-
 #+begin_src emacs-lisp :tangle ~/.config/doom/lisp/radio-mode.el :mkdirp yes
 ;;; radio-mode.el --- Numpad radio control -*- lexical-binding: t; -*-
 
