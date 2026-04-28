@@ -1,7 +1,5 @@
 ;;; radio-mode.el --- Numpad radio control -*- lexical-binding: t; -*-
 
-;;; Code:
-
 (defun radio--kp-key (key)
   "Translate logical KEY (a single-char string) to its numpad keysym."
   (pcase key
@@ -81,7 +79,6 @@ Placeholder for the upcoming now-playing display.")
 (with-eval-after-load 'evil
   (evil-set-initial-state 'radio-mode 'emacs))
 
-;;;###autoload
 (defun radio ()
   "Open the radio control buffer."
   (interactive)
@@ -93,4 +90,3 @@ Placeholder for the upcoming now-playing display.")
     (switch-to-buffer buf)))
 
 (provide 'radio-mode)
-;;; radio-mode.el ends here

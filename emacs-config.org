@@ -2492,6 +2492,60 @@ Fra [[https://www.lydenavnorge.no/p11/][P4]]
       (:prefix ("e" . "emms")
        :desc "P11 Dance" "a" #'my/p11-dance))
 #+end_src
+
+*** Deutschlandfunk
+
+[[https://www.deutschlandfunk.de/livestream-100.html][Unsere Livestreams - Deutschlandfunk live hören]]
+
+#+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
+(defun my/radio-deutschlandfunk ()
+  "Spiller av Deutschlandfunk"
+  (interactive)
+  (emms-play-url "https://st01.sslstream.dlf.de/dlf/01/high/opus/stream.opus"))
+#+end_src
+
+*** WDR 1Live
+
+WDR er Westdeutschen Rundfunks fra Köln
+
+Musikkfordelingen er ~90 % engelsk, ~10 % tysk. Tyskspråklige programmer imellom sangene
+
+https://www1.wdr.de/radio/1live/index.html
+
+#+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
+(defun my/radio-wdr-1live ()
+  "Spiller av WDR 1Live"
+  (interactive)
+  (emms-play-url "https://wdr-1live-live.icecastssl.wdr.de/wdr/1live/live/mp3/128/stream.mp3"))
+#+end_src
+
+*** laut.fm 100 DeutschPop
+
+100 % tysk pop uten avbrudd mellom sangene
+
+https://laut.fm/100deutschpop
+
+#+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
+(defun my/radio-100-deutschpop ()
+  "Spiller av 100 DEUTSCHPOP"
+  (interactive)
+  (emms-play-url "https://stream.laut.fm/100deutschpop"))
+#+end_src
+*** RPR1 100% Deutsch-Pop
+
+Reklamefinansiert tyskpop-kanal fra Rheinland-Pfalz
+
+https://www.rpr1.de/webradio/100-deutsch-pop
+
+#+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
+(defun my/radio-rpr1-deutschpop ()
+  "Spiller av RPR1 Deutschpop"
+  (interactive)
+  (emms-play-url "https://stream.rpr1.de/deutschpop/mp3-128/stream.rpr1.de/"))
+#+end_src
+
+
+
 ** Hurtigtast: Stoppe radioen
 Mapper ~emms-stop~ til ~SPC e s~:
 
