@@ -2416,8 +2416,8 @@ Hurtigtast:
 Nettside: https://liveonlineradio.net/chilledcow
 
 #+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
-(defun my/radio-chilledcow ()
-  "Spiller av ChilledCow radio"
+(defun my/radio-ilovechillhop ()
+  "Spiller av ilovechillhop radio"
   (interactive)
   (emms-play-url "https://ilm.stream35.radiohost.de/ilm_ilovechillhop_mp3-192"))
 #+end_src
@@ -2425,7 +2425,7 @@ Nettside: https://liveonlineradio.net/chilledcow
 #+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
 (map! :leader
       (:prefix ("e" . "emms")
-       :desc "ChilledCow" "x" #'my/radio-chilledcow))
+       :desc "ChilledCow" "x" #'my/radio-ilovechillhop))
 #+end_src
 *** NRK Klassisk
 
@@ -2678,7 +2678,7 @@ Veldig vibekode per nå, men dette setter opp en major-mode som heter *Radio*, s
      ("5" "NRK MP3"         my/radio-nrk-mp3)
      ("6" "NRK Klassisk"    my/radio-nrk-klassisk)
      ("7" "NRK Jazz"        my/radio-nrk-jazz)
-     ("8" "ChilledCow"      my/radio-chilledcow)
+     ("8" "ilovechillhop"      my/radio-ilovechillhop)
      ("0" "Defcon"          my/radio-defcon)
      ("," "freeCodeCamp"    my/radio-freecodecamp)
      ("/" "Pays de Guéret"  my/radio-pays-de-gueret))

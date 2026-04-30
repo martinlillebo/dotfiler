@@ -10,3 +10,4 @@
 /doom/packages.el
 /doom/custom.el
 /doom/flycheck_custom.el
+/doom/lisp/*
