@@ -1195,7 +1195,7 @@ Org-capture gjør at man kan få skrevet inn smånotater til en fil uten å måt
              "** TODO %^{Oppgave}\nSCHEDULED: %t\n" :prepend t :immediate-finish t)
             ("h" "Hodepine" plain
              (file+headline ,hodepine "Logg")
-             "%<%Y-%m-%d %H:%M:%S %a> - %^{Intensitet (1-10)}\n" :prepend t :immediate-finish t)
+             "%<%Y-%m-%d %H:%M:%S %a> - %^{Intensitet (1-10)} - %^{Kontekst: }\n" :prepend t :immediate-finish t)
             ))))
 #+end_src
 
