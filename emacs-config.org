@@ -2546,15 +2546,6 @@ https://www.rpr1.de/webradio/100-deutsch-pop
 
 
 
-** Hurtigtast: Stoppe radioen
-Mapper ~emms-stop~ til ~SPC e s~:
-
-#+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
-(map! :leader
-      (:prefix ("e" . "emms")
-       :desc "Stopp EMMS" "s" #'emms-stop))
-#+end_src
-
 ** "Now playing"
 Vil ofte vite hvilken sang som spilles
 
@@ -2589,6 +2580,7 @@ CHANNEL defaults to \"defcon\"."
            (error (message "SomaFM: parse failed: %S" err)))))
      nil t t)))
 #+end_src
+
 *** Freecodecamp radio
 
 #+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
@@ -2615,10 +2607,47 @@ CHANNEL defaults to \"defcon\"."
            (error (message "freeCodeCamp: parse failed: %S" err)))))
      nil t t)))
 #+end_src
+
+*** 100-deutschpop
+
+#+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
+(defun my/now-playing-100-deutschpop ()
+  "Show currently playing song on laut.fm 100 DeutschPop in the echo area."
+  (interactive)
+  (let ((url "https://api.laut.fm/station/100deutschpop/current_song"))
+    (url-retrieve
+     url
+     (lambda (status)
+       (if (plist-get status :error)
+           (message "100 DeutschPop: fetch failed: %S" (plist-get status :error))
+         (goto-char (point-min))
+         (re-search-forward "\n\n")
+         (condition-case err
+             (let* ((json-object-type 'alist)
+                    (json-array-type 'list)
+                    (data (json-read))
+                    (title (alist-get 'title data))
+                    (artist (alist-get 'name (alist-get 'artist data))))
+               (message "♪ %s — %s" artist title))
+           (error (message "100 DeutschPop: parse failed: %S" err)))))
+     nil t t)))
+#+end_src
+
+** Hurtigtast: Stoppe radioen
+Mapper ~emms-stop~ til ~SPC e s~:
+
+#+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
+(map! :leader
+      (:prefix ("e" . "emms")
+       :desc "Stopp EMMS" "s" #'emms-stop))
+#+end_src
+
 ** Kode til styring av DIY nettradio
 
-Gir ikke veldig mening å legge dette til personlig emacs-config, men for moro skyld holder jeg på å bygge om en Tivoli-DAB-radio hjemme til en internettradio.
-Og når jeg allerede har satt opp en måte å spille av nettradio via Emacs, så er det morsomt å bare kjøre den samme Emacs-configen på en Raspberry Pi som kobler seg på høyttaleren til radioen, og tar imot hotkeys via et eller annet fysisk medium jeg ikke har ordnet ennå
+Det gir ikke veldig mening å legge dette til personlig emacs-config, men for moro skyld holder jeg på å bygge om en Tivoli-DAB-radio hjemme til en internettradio.
+Siden jeg allerede har en måte å spille av nettradio via Emacs, så er det morsomt å bare kjøre den config-en på en Raspberry Pi som kobler seg på høyttaleren til radioen.
+
+Stasjoner spilles av med en dedikert major mode som gir et forenklet hotkey-oppsett for å velge stasjon
 
 *** Workaround som er overflødig med nyere ~emms~-versjon
 
@@ -2653,7 +2682,9 @@ emms-volume inkrementer med 2 %, som er litt lite. Setter til 5 % med:
 #+end_src
 *** Major mode *radio*
 
-Veldig vibekode per nå, men dette setter opp en major-mode som heter *Radio*, som lister opp alle radiokanaler jeg har satt opp tidligere. Poenget er at alt kan styres med en trådløs numpad som fungerer som fjernkontroll
+Veldig vibekode per nå, men dette setter opp en major-mode som heter *Radio*.
+Den lister opp alle radiokanaler jeg har satt opp tidligere.
+Poenget er at alt kan styres med en trådløs numpad som fungerer som fjernkontroll
 
 #+begin_src emacs-lisp :tangle ~/.config/doom/lisp/radio-mode.el :mkdirp yes
 ;;; radio-mode.el --- Numpad radio control -*- lexical-binding: t; -*-
