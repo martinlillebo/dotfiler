@@ -16,9 +16,6 @@ Om oppstart av Emacs går treigt, pleier jeg å legge inn disse to linjene manue
 (profiler-stop)
 #+end_src
 
-
-test:
-
 * Toppnivå headere
 ** packages.el
 #+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/packages.el
@@ -50,8 +47,6 @@ Sensitiv info som passord, personlige notatnavn, og jobbrelaterte referanser som
 (when (file-exists-p "~/.emacs.secrets")
   (load-file "~/.emacs.secrets"))
 #+end_src
-
-
 
 * init.el
 
