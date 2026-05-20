@@ -1806,6 +1806,7 @@ Setter opp hotkey så den kan kjøres med ~SPC g n~:
 (map! :leader
       "g n" #'my/notatcommit)
 #+end_src
+
 ** Hotkey: git pull & git pull
 
 pull:
@@ -1830,8 +1831,6 @@ Noen steder må jeg bruke HTTPS i stedet for SSH-autentisering. Da kan jeg legge
   (add-hook 'magit-process-find-password-functions
             'magit-process-password-auth-source))
 #+end_src
-
-
 
 * Små funksjoner og hurtigtaster
 ** my/narrow-dwim
