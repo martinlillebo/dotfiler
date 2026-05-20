@@ -1227,6 +1227,18 @@ Legger til en ~NEXT~-status oppå Doom sine defaults:
 #+end_src
 
 Inspirert av Bastien Guerry sin [[https://bzg.fr/en/the-zen-of-task-management-with-org/][The Zen of Task Management with Org]]
+** Beholde "å" i filnavn med org-roam
+
+Når man oppretter en ny fil med ~org-roam-node-insert~, så bygges filnavnet ut fra en tittel-kjerne som lages av ~org-roam-node-slug~.
+Sistnevnte funksjon tillater bare ASCII-tegn, som gjør at f.eks. "Å" omgjøres til "A". Unngår det slik:
+
+#+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
+(after! org-roam
+  (cl-defmethod org-roam-node-slug ((node org-roam-node))
+    "Beholde ikke-ASCII-bokstaver (æ, ø, å) i slug-delen av filnavn"
+    (downcase (replace-regexp-in-string "[^[:alnum:]]+" "_"
+                                        (org-roam-node-title node)))))
+#+end_src
 
 * Org-agenda
 ** Sortering
@@ -1353,6 +1365,9 @@ En TODO ansees angivelig som "blokkert" når jeg fjerner nedstrøms oppgaver fra
 #+end_src
 
 *** Inkludere enkle linjeskift
+
+2026-05-20 - Holder den deaktivert, som er hvorfor funksjonen er kommentert ut. Har begynt å skrive [[https://sive.rs/1s][en setning per linje]], og da trenger man at denne funksjonen er deaktivert, som er default i Emacs. 
+
 Org og Markdown er glade i å ignorere enkle linjeskift, sånn at eksempelvis
 
 #+begin_src conf
@@ -1369,8 +1384,9 @@ Linje 1Linje 2
 For meg er det naturlig å beholde slike linjeskift i all eksport, så jeg setter den endringen slik:
 
 #+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
-(setq org-export-preserve-breaks t)
+;; (setq org-export-preserve-breaks t)
 #+end_src
+
 
 Om man vil ha det tilbake i enkeltfiler, så kan man legge til:
 
@@ -1500,60 +1516,78 @@ Fant et råd i et gammelt [[https://github.com/syl20bnr/spacemacs/issues/9822#is
 
 * Markdown
 
+** ~markdown-view-mode~ når ~evil-insert~
+
+Utkast som fungerer.
+Nå aktiveres ~markdown-view-mode~ når jeg er i ~evil-insert~-mode, også deaktiveres den når jeg er tilbake i normal mode.
+Men jeg må taste ESC en ekstra gang for å faktisk trigge ~markdown-view-mode~.
+Lever med det foreløpig.
+
+#+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
+(map! :map markdown-view-mode-map
+      :n "i" (cmd! (markdown-mode) (evil-insert-state)))
+
+(map! :map markdown-mode-map
+      :n "<escape>" (cmd! (evil-force-normal-state) (markdown-view-mode)))
+
+#+end_src
+
+** gammelt, skal slettes
+
 Her er noen kodeblokker for å gjøre visning av markdownfiler mye bedre. Alt her er stjålet rett fra Reddit-tråden [[https://www.reddit.com/r/emacs/comments/10h9jf0/beautify_markdown_on_emacs/][Beautify markdown on emacs]]:
 
 Først noen linjer for å gjøre headerne større og mer utprega: 
 
 #+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
-(custom-set-faces!
-  '(markdown-header-delimiter-face :foreground "#616161" :height 0.9)
-  '(markdown-header-face-1 :height 1.8 :foreground "#A3BE8C" :weight extra-bold :inherit markdown-header-face)
-  '(markdown-header-face-2 :height 1.4 :foreground "#EBCB8B" :weight extra-bold :inherit markdown-header-face)
-  '(markdown-header-face-3 :height 1.2 :foreground "#D08770" :weight extra-bold :inherit markdown-header-face)
-  '(markdown-header-face-4 :height 1.15 :foreground "#BF616A" :weight bold :inherit markdown-header-face)
-  '(markdown-header-face-5 :height 1.1 :foreground "#b48ead" :weight bold :inherit markdown-header-face)
-  '(markdown-header-face-6 :height 1.05 :foreground "#5e81ac" :weight semi-bold :inherit markdown-header-face))
+;; (custom-set-faces!
+;;   '(markdown-header-delimiter-face :foreground "#616161" :height 0.9)
+;;   '(markdown-header-face-1 :height 1.8 :foreground "#A3BE8C" :weight extra-bold :inherit markdown-header-face)
+;;   '(markdown-header-face-2 :height 1.4 :foreground "#EBCB8B" :weight extra-bold :inherit markdown-header-face)
+;;   '(markdown-header-face-3 :height 1.2 :foreground "#D08770" :weight extra-bold :inherit markdown-header-face)
+;;   '(markdown-header-face-4 :height 1.15 :foreground "#BF616A" :weight bold :inherit markdown-header-face)
+;;   '(markdown-header-face-5 :height 1.1 :foreground "#b48ead" :weight bold :inherit markdown-header-face)
+;;   '(markdown-header-face-6 :height 1.05 :foreground "#5e81ac" :weight semi-bold :inherit markdown-header-face))
 #+end_src
 
 Så er det en håndfull elispfunksjoner som disabler den markdown-rendering på akkurat den linja man er på, sånn at det fortsatt er lett å redigere markupen
 
 #+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
- (defvar nb/current-line '(0 . 0)
-   "(start . end) of current line in current buffer")
- (make-variable-buffer-local 'nb/current-line)
+ ;; (defvar nb/current-line '(0 . 0)
+ ;;   "(start . end) of current line in current buffer")
+ ;; (make-variable-buffer-local 'nb/current-line)
 
- (defun nb/unhide-current-line (limit)
-   "Font-lock function"
-   (let ((start (max (point) (car nb/current-line)))
-         (end (min limit (cdr nb/current-line))))
-     (when (< start end)
-       (remove-text-properties start end
-                       '(invisible t display "" composition ""))
-       (goto-char limit)
-       t)))
+ ;; (defun nb/unhide-current-line (limit)
+ ;;   "Font-lock function"
+ ;;   (let ((start (max (point) (car nb/current-line)))
+ ;;         (end (min limit (cdr nb/current-line))))
+ ;;     (when (< start end)
+ ;;       (remove-text-properties start end
+ ;;                       '(invisible t display "" composition ""))
+ ;;       (goto-char limit)
+ ;;       t)))
 
- (defun nb/refontify-on-linemove ()
-   "Post-command-hook"
-   (let* ((start (line-beginning-position))
-          (end (line-beginning-position 2))
-          (needs-update (not (equal start (car nb/current-line)))))
-     (setq nb/current-line (cons start end))
-     (when needs-update
-       (font-lock-fontify-block 3))))
+ ;; (defun nb/refontify-on-linemove ()
+ ;;   "Post-command-hook"
+ ;;   (let* ((start (line-beginning-position))
+ ;;          (end (line-beginning-position 2))
+ ;;          (needs-update (not (equal start (car nb/current-line)))))
+ ;;     (setq nb/current-line (cons start end))
+ ;;     (when needs-update
+ ;;       (font-lock-fontify-block 3))))
 
- (defun nb/markdown-unhighlight ()
-   "Enable markdown concealling"
-   (interactive)
-   (markdown-toggle-markup-hiding 'toggle)
-   (font-lock-add-keywords nil '((nb/unhide-current-line)) t)
-   (add-hook 'post-command-hook #'nb/refontify-on-linemove nil t))
+ ;; (defun nb/markdown-unhighlight ()
+ ;;   "Enable markdown concealling"
+ ;;   (interactive)
+ ;;   (markdown-toggle-markup-hiding 'toggle)
+ ;;   (font-lock-add-keywords nil '((nb/unhide-current-line)) t)
+ ;;   (add-hook 'post-command-hook #'nb/refontify-on-linemove nil t))
 
 #+end_src
 
 Til slutt en hook for å aktivere alle funksjonene ovenfor når jeg er i en Markdown-fil:
 
 #+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
- (add-hook 'markdown-mode-hook #'nb/markdown-unhighlight)
+ ;; (add-hook 'markdown-mode-hook #'nb/markdown-unhighlight)
 #+end_src
 
 #+RESULTS:
@@ -1805,6 +1839,26 @@ Noen steder må jeg bruke HTTPS i stedet for SSH-autentisering. Da kan jeg legge
 
 
 * Små funksjoner og hurtigtaster
+** my/narrow-dwim
+
+"dwim" = "do what I mean".
+Brukes løst for funksjoner som gjør litt forskjellige ting avhengig av kontekst.
+Denne her snevrer inn bufferen mot en markert region hvis jeg har markert noe.
+Hvis ikke snevrer den kun inn mot aktiv linje: 
+
+#+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
+(defun my/narrow-dwim ()
+  "Hurtigtast for å narrow-e til region eller linje"
+  (interactive)
+  (if (use-region-p)
+      (narrow-to-region (region-beginning) (region-end))
+    (narrow-to-region (line-beginning-position) (line-end-position))))
+
+(map! :leader
+      :desc "Narrow (dwim)" "v v" #'my/narrow-dwim
+      :desc "Widen"         "v w" #'widen)
+#+end_src
+
 ** Slett alle nummererte linjer
 
 Innlimt tekst fra programmer med linjenumre ender i noen tilfeller opp med alle linjenumrene kommer på egne linjer. Her er vibekodet funksjon til å slette alle sammen i markert område:
@@ -2547,9 +2601,10 @@ https://www.rpr1.de/webradio/100-deutsch-pop
 
 
 ** "Now playing"
-Vil ofte vite hvilken sang som spilles
 
-Disse funksjonene er 100 % vibekode rett fra Claude 4.7
+Sier fra i echo area om hvilken sang som spilles av fra en gitt radiokanal
+
+Det meste av funksjonene her er 100 % vibekode rett fra Claude 4.7
 
 *** DEFCON
 
@@ -2631,6 +2686,39 @@ CHANNEL defaults to \"defcon\"."
                (message "♪ %s — %s" artist title))
            (error (message "100 DeutschPop: parse failed: %S" err)))))
      nil t t)))
+#+end_src
+*** ilovechillhop
+
+#+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
+(defun my/now-playing-ilovechillhop ()
+  "Show currently playing song on I Love Chillhop in the echo area."
+  (interactive)
+  (let ((url "https://ilovemusic.de/typo3conf/ext/ep_channel/Scripts/playlist.php"))
+    (url-retrieve
+     url
+     (lambda (status)
+       (if (plist-get status :error)
+           (message "I Love Chillhop: fetch failed: %S" (plist-get status :error))
+         (goto-char (point-min))
+         (re-search-forward "\n\n")
+         (condition-case err
+             (let* ((json-object-type 'alist)
+                    (json-array-type 'list)
+                    (data (json-read))
+                    (entry (seq-find
+                            (lambda (kv)
+                              (equal (alist-get 'segmentname (cdr kv))
+                                     "ilovechillhop"))
+                            data))
+                    (song (cdr entry))
+                    (artist (alist-get 'artist song))
+                    (title (alist-get 'title song)))
+               (if entry
+                   (message "♪ %s — %s" artist title)
+                 (message "I Love Chillhop: channel not found")))
+           (error (message "I Love Chillhop: parse failed: %S" err)))))
+     nil t t)))
+
 #+end_src
 
 ** Hurtigtast: Stoppe radioen
