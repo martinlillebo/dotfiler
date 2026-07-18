@@ -643,6 +643,7 @@ Bruker denne veldig ofte
 (map! :leader
       "y k" #'yank-from-kill-ring)
 #+end_src
+
 *** ~SPC v s~ for å markere som kode 
 
 jeg ~markerer~ ofte et helt ord og wrapper det i ~tilde~. Da må man skrive "viWS~", som er både blanding av case og et tildesymbol. På et norsk tastatur krever det 9 tastetrykk. Får denne ned til 3 trykk slik:
@@ -665,6 +666,13 @@ Lager i tillegg en versjon som bare kjører "S ~" når jeg har markert tekst, sl
       (execute-kbd-macro (kbd "S ~"))
       (goto-char (+ end-pos 1)))))
 #+end_src
+*** ~SPC i c~ for ~insert-char~
+
+#+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
+(map! :leader
+      "i c" #'insert-char)
+#+end_src
+
 
 ** Relative linjenumre
 Relative linjenumre gjør det mulig å hoppe til riktig linje med vim motions
@@ -1925,12 +1933,16 @@ To funksjoner for hhv. ~YYYY-MM-DD TT:MM:SS~ og kun ~YYYY-MM-DD~:
   (insert (format-time-string "%Y-%m-%d")))
 #+end_src
 
-Så binder jeg de opp mot hver sin hotkey:
+Så binder jeg de opp mot hotkeys:
+
+For å skrive inn der markøren står:
 
 #+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
 (map! "<S-delete>" #'my/tidsstempel-dato)
 (map! "<C-S-delete>" #'my/tidsstempel-sekund)
 #+end_src
+
+
 
 ** Ukenummer til echo area
 
@@ -1941,13 +1953,20 @@ Så binder jeg de opp mot hver sin hotkey:
     (message "Uke %s" (format-time-string "%V" now))))
 #+end_src
 
+Hurtigtast:
+
+#+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
+(map! :leader
+      "i u" #'my/ukenummer)
+#+end_src
+
 ** Måle tidsbruk på evaluering
 
 Denne er stjålet [[https://github.com/cloudstreet-dev/Emacs-for-Goodness-Sake/blob/main/04-configuration.md][herfra]]. 
 
 #+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
 (defmacro measure-time (&rest body)
-  "Measure the time it takes to evaluate BODY."
+  ""
   `(let ((time (current-time)))
      ,@body
      (message "%.06f seconds"
