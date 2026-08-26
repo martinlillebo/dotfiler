@@ -672,7 +672,19 @@ Lager i tillegg en versjon som bare kjører "S ~" når jeg har markert tekst, sl
 (map! :leader
       "i c" #'insert-char)
 #+end_src
+*** ~SPC 1~ for insert mode i innboks
 
+Brukes mye på mobilen - vil ofte gå til et sentralt innboksnotat, og bare rable ned en setning til senere
+
+#+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
+(map! :n "SPC 1"
+      (lambda ()
+        (interactive)
+        (find-file "~/repos/notater/202012111337 Innboks.org")
+        (goto-char (point-max))
+        (newline)
+        (evil-insert-state)))
+#+end_src
 
 ** Relative linjenumre
 Relative linjenumre gjør det mulig å hoppe til riktig linje med vim motions
@@ -1545,6 +1557,82 @@ Lever med det foreløpig.
       :n "<escape>" (cmd! (evil-force-normal-state) (markdown-view-mode)))
 
 #+end_src
+** Patch for å forstå legacy syntax for lenker mellom filer
+
+I den forrige editoren min lenket jeg sammen noen tusen Markdown-filer med ~[[YYYYMMDDHHMM]]~-ID-er. For eksempel slik:
+
+#+begin_src conf
+- [[202101031354]] Syltet rødløk
+- [[202101072239]] Solbærtrekt persillerot
+- [[202103172122]] Hjemmelaget ketchup
+- [[202103211929]] Anes gulrot- og ingefærpaste
+- [[202103261746]] Refried beans
+#+end_src
+
+Konfigurerer Emacs til å gjøre ID-ene klikkbare, og åpne opp filen som har samme ID-en i filnavnet sitt i en ny buffer:
+
+
+
+#+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
+;; Åpne fila som starter med ID i samme mappe som gjeldende fil
+(defun my/zettel-åpne-id (id)
+  "Finn og åpne fil i prosjektmappa med filnavn som starter med ID."
+  (let ((treff (car (directory-files default-directory t
+                                     (concat "^" (regexp-quote id))))))
+    (if treff
+        (find-file treff)
+      (message "Fant ingen fil som starter med %s" id))))
+
+(defun my/zettel-følg-lenke (&optional event)
+  "Følg zettelkasten-lenke under punkt eller museklikk."
+  (interactive (list last-input-event))
+  (when (and event (mouse-event-p event))
+    (mouse-set-point event))
+  (save-excursion
+    (let ((linjestart (line-beginning-position)))
+      ;; søk bakover etter [[ på samme linje, så matche framover
+      (when (or (looking-at "\\[\\[\\([0-9]\\{12\\}\\)\\]\\]")
+                (and (search-backward "[[" linjestart t)
+                     (looking-at "\\[\\[\\([0-9]\\{12\\}\\)\\]\\]")))
+        (my/zettel-åpne-id (match-string-no-properties 1))))))
+
+(defvar my/zettel-lenke-keymap
+  (let ((map (make-sparse-keymap)))
+    (define-key map [mouse-1] #'my/zettel-følg-lenke)
+    (define-key map (kbd "RET") #'my/zettel-følg-lenke)
+    map))
+
+(font-lock-add-keywords
+ 'markdown-mode
+ `(("\\[\\[\\([0-9]\\{12\\}\\)\\]\\]"
+    (1 `(face (:foreground "#5e81ac" :underline t)
+         mouse-face highlight
+         keymap ,my/zettel-lenke-keymap
+         help-echo "Åpne zettel")
+       prepend))))
+
+(add-hook 'markdown-mode-hook
+          (lambda ()
+            (setq-local font-lock-extra-managed-props
+                        (append '(keymap mouse-face help-echo)
+                                font-lock-extra-managed-props))))
+#+end_src
+
+Dette får markdownfiler til å lenke riktig til markdownfiler. Men alt jeg skriver nå er i org-mode. Noen av disse org-filene var opprinnelig markdownfiler, og inneholder masse gamle markdownlenker.
+
+Gjør disse markdownlenkene klikkbare også i org-mode:
+
+#+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
+(defun my/org-åpne-zettel-lenke (lenke)
+  "Åpne markdown-zettel hvis LENKE er en 12-sifret ID.
+Returnerer t når lenka er handtert, så org ikke leter etter headings."
+  (when (string-match-p "\\`[0-9]\\{12\\}\\'" lenke)
+    (my/zettel-åpne-id lenke)
+    t))
+
+(after! org
+  (add-hook 'org-open-link-functions #'my/org-åpne-zettel-lenke))
+#+end_src
 
 ** gammelt, skal slettes
 
@@ -2086,6 +2174,9 @@ Først en liste over norske forkortelser som ikke skal tolkes som slutten på en
   "Norwegian abbreviations to protect from sentence splitting.")
 #+end_src
 
+#+RESULTS:
+: my/no-abbreviations
+
 Deretter en blokk med vibekode:
 
 #+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
@@ -2499,6 +2590,24 @@ Hurtigtast:
       (:prefix ("r" . "emms")
        :desc "NRK Jazz" "j" #'my/radio-nrk-jazz))
 #+end_src
+*** NRK Super
+
+- [ ] straem URL
+- [ ] 
+
+#+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
+(defun my/radio-nrk-super ()
+  "Spiller av NRK Super"
+  (interactive)
+  (emms-play-url "https://cdn0-47115-liveicecast0.dna.contentdelivery.net/radio_super_mp3_h"))
+#+end_src
+
+#+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
+(map! :leader
+      (:prefix ("r" . "emms")
+       :desc "NRK Super" "s" #'my/radio-nrk-super))
+#+end_src
+
 *** Ilovechillhop
 
 Nettside: https://liveonlineradio.net/chilledcow
@@ -2758,12 +2867,12 @@ CHANNEL defaults to \"defcon\"."
 #+end_src
 
 ** Hurtigtast: Stoppe radioen
-Mapper ~emms-stop~ til ~SPC e s~:
+Mapper ~emms-stop~ til ~SPC r DEL~:
 
 #+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
 (map! :leader
       (:prefix ("r" . "emms")
-       :desc "Stopp EMMS" "s" #'emms-stop))
+       :desc "Stopp EMMS" "DEL" #'emms-stop))
 #+end_src
 
 ** Kode til styring av DIY nettradio
