@@ -686,6 +686,19 @@ Brukes mye på mobilen - vil ofte gå til et sentralt innboksnotat, og bare rabl
         (evil-insert-state)))
 #+end_src
 
+*** ~SPC 2~ for insert mode i jobb-innboks
+
+#+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
+(map! :n "SPC 2"
+      (lambda ()
+        (interactive)
+        (find-file "~/repos/notater/202111121500 Innboks jobb.org")
+        (goto-char (point-max))
+        (newline)
+        (evil-insert-state)))
+#+end_src
+
+
 ** Relative linjenumre
 Relative linjenumre gjør det mulig å hoppe til riktig linje med vim motions
 
@@ -786,6 +799,59 @@ Denne tror jeg er standard i Doom Emacs. Men den gir feilmelding ved oppstart i 
 (when (eq system-type 'android)
     (advice-add 'ultra-scroll-mode :override #'ignore))
 #+end_src
+** Muliggjøre flytting av linjer som ikke er strukturelle elementer
+
+Målet med blokken nedenfor er:
+- Hvis jeg er i en punktliste: Behold original konfigurasjon og la ~M-j~ og ~M-k~ flytte punkter ned/opp slik evil/org-mode og markdown-mode gjør ut av boksen
+- Hvis jeg er på en helt vanlig linje: La ~M-j~ og ~M-k~ flytte linja èn linje ned/opp, i stedet for å gjøre ingenting.
+  
+#+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
+(defun my/--org-structure-p ()
+  (and (derived-mode-p 'org-mode)
+       (or (org-at-heading-p) (org-at-item-p) (org-at-table-p))))
+
+(defun my/--md-structure-p ()
+  (and (derived-mode-p 'markdown-mode)
+       (or (markdown-heading-at-point) (markdown-list-item-at-point-p))))
+
+(defun my/move-line-down ()
+  (interactive)
+  (cond ((my/--org-structure-p) (org-metadown))
+        ((my/--md-structure-p) (markdown-move-down))
+        (t (let ((col (current-column)))
+             (forward-line 1)
+             (transpose-lines 1)
+             (forward-line -1)
+             (move-to-column col)))))
+
+(defun my/move-line-up ()
+  (interactive)
+  (cond ((my/--org-structure-p) (org-metaup))
+        ((my/--md-structure-p) (markdown-move-up))
+        (t (let ((col (current-column)))
+             (transpose-lines 1)
+             (forward-line -2)
+             (move-to-column col)))))
+
+(map! :n "M-j" #'my/move-line-down
+      :n "M-k" #'my/move-line-up
+      (:after evil-org
+       :map evil-org-mode-map
+       :n "M-j" #'my/move-line-down
+       :n "M-k" #'my/move-line-up)
+      (:after evil-markdown
+       :map evil-markdown-mode-map
+       :n "M-j" #'my/move-line-down
+       :n "M-k" #'my/move-line-up))
+#+end_src
+
+Litt forenklet og nesten, men ikke helt riktig, så gjør koden dette:
+- for hhv. både org-mode og markdown-mode så er det...
+  - ett predikat for å hjelpe til å bestemme om man er i en punktliste eller ikke
+  - en funksjon for å flytte ei linje oppover, og en for å flytte nedover
+    - ...med mindre vi er i en punktliste iht. predikatet. Da bruker vi ingen custom funksjon, bare native løsning
+  - en mapping som overstyrer hva ~M-j~/~M-k~ gjør i ~markdown-mode~ og ~org-mode~
+
 * Doom modeline
 ** Fjerner defaults
 
