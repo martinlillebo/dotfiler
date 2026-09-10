@@ -1107,6 +1107,16 @@ Altså:
 #+begin_quote
 sudo apt install emacs-pgtk
 #+end_quote
+** Binde C-v som paste i søkeboks
+
+I søkefelt er det Emacs' native ~C-y~ som limer inn.
+
+Setter den til ~C-v~ i stedet for:
+
+#+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
+(map! :map (minibuffer-local-map vertico-map)
+      "C-v" #'yank)
+#+end_src
 
 
 * Projectile
@@ -1461,6 +1471,8 @@ En TODO ansees angivelig som "blokkert" når jeg fjerner nedstrøms oppgaver fra
 
 2026-05-20 - Holder den deaktivert, som er hvorfor funksjonen er kommentert ut. Har begynt å skrive [[https://sive.rs/1s][en setning per linje]], og da trenger man at denne funksjonen er deaktivert, som er default i Emacs. 
 
+2026-09-07 kommenterer den inn igjen til jeg ikke lenger knekker eksport for kodeblokker
+
 Org og Markdown er glade i å ignorere enkle linjeskift, sånn at eksempelvis
 
 #+begin_src conf
@@ -1477,7 +1489,7 @@ Linje 1Linje 2
 For meg er det naturlig å beholde slike linjeskift i all eksport, så jeg setter den endringen slik:
 
 #+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
-;; (setq org-export-preserve-breaks t)
+(setq org-export-preserve-breaks t)
 #+end_src
 
 
