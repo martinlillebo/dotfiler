@@ -284,6 +284,7 @@ Fjerner også ~org-self-insert-command~, som kjøres for hvert eneste tastetrykk
 
 [[https://github.com/minad/consult][Consult]] er ei pakke med søke- og navigeringskommandoer som følger med Doom Emacs.
 
+** Consult - Live preview under søking
 Consult har mulighet for live preview av filer når man søker opp et ord, men for meg er det ikke aktivert som standard. Legger til live preview slik:
 
 #+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
@@ -303,7 +304,7 @@ Den viktige linja her er ~:preview-key 'any~. Den sier at for alle søkefunksjon
 
 Default-innstilling kan man se ved å slå opp verdien på ~consult--customize-alist~. Hos meg var alle søkekommandoer satt med ~:preview-key 'SPC-C'~, som betyr at jeg måtte eksplisitt taste SPC-C for å trigge en preview før jeg la til denne konfigurasjonen
 
-2026-03-13 Advice for å muliggjøre preview av filer når man søker gjennom filer med ~consult-fg~. Dette er vibe-kode som jeg ikke har tatt meg tid til å forstå. Endte med dette fordi det
+2026-03-13 Advice for å muliggjøre preview av filer når man søker gjennom filer med ~consult-fg~. Dette er vibe-kode som jeg ikke har tatt meg tid til å forstå.
 
 #+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
 (defadvice! my/consult--find-with-preview (orig-fn prompt builder initial)
@@ -323,9 +324,9 @@ Default-innstilling kan man se ved å slå opp verdien på ~consult--customize-a
 #+end_src
 
 
-** Søkesti-variabel
+** ~my/søkesti~ for å skille jobb og fritid
 
-Noen funksjoner brukes både på jobb og fritid, og avhenger av en path til et par repoer. Typisk søke- og versjonskontrollfunksjoner, som vil si ~Consult~ og ~Magit~ her.
+Noen funksjoner brukes både på jobb og fritid, og avhenger av en path til et par repoer. Typisk søke- og versjonskontrollfunksjoner, som vil si ~Consult~ og ~Magit~ her. Og ~org-agenda~. 
 
 For å unngå to versjoner av alle de funksjonene, har jeg heller en toggle som bytter en sentral pathvariabel, også referer alle funksjonene til den variabelen.
 
