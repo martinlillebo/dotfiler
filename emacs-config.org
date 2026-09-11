@@ -2575,10 +2575,9 @@ Legger inn stream URL:
 Hurtigtast:
 
 #+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
-(map! :leader
-      (:prefix ("r" . "emms")
-       :desc "DEF CON" "d" #'my/radio-defcon))
+(define-key doom-leader-map (kbd "r d") #'my/radio-defcon)
 #+end_src
+
 
 *** NRK P1
 
@@ -2590,9 +2589,7 @@ Hurtigtast:
 #+end_src
 
 #+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
-(map! :leader
-      (:prefix ("r" . "emms")
-       :desc "NRK P1" "1" #'my/radio-nrk-p1))
+(define-key doom-leader-map (kbd "r 1") #'my/radio-nrk-p1)
 #+end_src
 
 *** NRK P2
@@ -2605,9 +2602,7 @@ Hurtigtast:
 #+end_src
 
 #+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
-(map! :leader
-      (:prefix ("r" . "emms")
-       :desc "NRK P2" "2" #'my/radio-nrk-p2))
+(define-key doom-leader-map (kbd "r 2") #'my/radio-nrk-p2)
 #+end_src
 
 *** NRK P3
@@ -2620,9 +2615,7 @@ Hurtigtast:
 #+end_src
 
 #+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
-(map! :leader
-      (:prefix ("r" . "emms")
-       :desc "NRK P3" "3" #'my/radio-nrk-p3))
+(define-key doom-leader-map (kbd "r 3") #'my/radio-nrk-p3)
 #+end_src
 
 *** NRK P13
@@ -2635,9 +2628,7 @@ Hurtigtast:
 #+end_src
 
 #+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
-(map! :leader
-      (:prefix ("r" . "emms")
-       :desc "NRK P13" "t" #'my/radio-nrk-p13))
+(define-key doom-leader-map (kbd "r t") #'my/radio-nrk-p13)
 #+end_src
 
 *** NRK mP3
@@ -2650,9 +2641,7 @@ Hurtigtast:
 #+end_src
 
 #+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
-(map! :leader
-      (:prefix ("r" . "emms")
-       :desc "NRK mP3" "m" #'my/radio-nrk-mp3))
+(define-key doom-leader-map (kbd "r m") #'my/radio-nrk-mp3)
 #+end_src
 
 *** NRK Jazz
@@ -2665,10 +2654,9 @@ Hurtigtast:
 #+end_src
 
 #+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
-(map! :leader
-      (:prefix ("r" . "emms")
-       :desc "NRK Jazz" "j" #'my/radio-nrk-jazz))
+(define-key doom-leader-map (kbd "r j") #'my/radio-nrk-jazz)
 #+end_src
+
 *** NRK Super
 
 - [ ] straem URL
@@ -2682,9 +2670,7 @@ Hurtigtast:
 #+end_src
 
 #+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
-(map! :leader
-      (:prefix ("r" . "emms")
-       :desc "NRK Super" "s" #'my/radio-nrk-super))
+(define-key doom-leader-map (kbd "r s") #'my/radio-nrk-super)
 #+end_src
 
 *** Ilovechillhop
@@ -2699,9 +2685,7 @@ Nettside: https://liveonlineradio.net/chilledcow
 #+end_src
 
 #+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
-(map! :leader
-      (:prefix ("r" . "emms")
-       :desc "ChilledCow" "x" #'my/radio-ilovechillhop))
+(define-key doom-leader-map (kbd "r x") #'my/radio-ilovechillhop)
 #+end_src
 
 *** NRK Klassisk
@@ -2714,9 +2698,7 @@ Nettside: https://liveonlineradio.net/chilledcow
 #+end_src
 
 #+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
-(map! :leader
-      (:prefix ("r" . "emms")
-       :desc "NRK Klassisk" "k" #'my/radio-nrk-klassisk))
+(define-key doom-leader-map (kbd "r k") #'my/radio-nrk-klassisk)
 #+end_src
 
 *** Freecodecamp radio
