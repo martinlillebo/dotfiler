@@ -633,16 +633,14 @@ Standardinnstillingen til Emacs er at man åpner opp fil-innholdet i en uavhengi
 *** ~SPC y p~: yankpad-insert
 
 #+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
-(map! :leader
-      "y p" #'yankpad-insert)
+(define-key doom-leader-map (kbd "y p") #'yankpad-insert)
 #+end_src
 
 *** ~SPC y k~: yank-from-kill-ring
 Bruker denne veldig ofte
 
 #+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
-(map! :leader
-      "y k" #'yank-from-kill-ring)
+(define-key doom-leader-map (kbd "y k") #'yank-from-kill-ring)
 #+end_src
 
 *** ~SPC v s~ for å markere som kode 
@@ -1009,10 +1007,7 @@ Denne feiler om jeg legger den for høyt i configfila. Prøvde en times tid å f
   (evil-visual-char)
   (evil-last-non-blank))
 
-(map! :leader
-  (:prefix ("v" . "markering")
-    :desc "Marker til linjeslutt"
-    "g" #'my/visual-to-line-end))
+(define-key doom-leader-map (kbd "v g") #'my/visual-to-line-end)
 #+end_src
 ** evil-numbers
 
@@ -1922,11 +1917,9 @@ Aka "action menu super buffer". Det er den som popper opp når man har tastet en
 *** Hurtigtast til alle værmeldinger
 
 #+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
-(map! :leader
-      (:prefix ("y" . "yr")
-       :desc "Lillebo"  "l" #'my/yr-lillebo
-       :desc "Innbygda" "i" #'my/yr-innbygda
-       :desc "Oslo"     "o" #'my/yr-oslo-christies))
+(define-key doom-leader-map (kbd "y l") #'my/yr-lillebo)
+(define-key doom-leader-map (kbd "y i") #'my/yr-innbygda)
+(define-key doom-leader-map (kbd "y o") #'my/yr-oslo-christies)
 #+end_src
 
 ** Kalender
@@ -2714,9 +2707,7 @@ https://coderadio.freecodecamp.org/
 #+end_src
 
 #+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
-(map! :leader
-      (:prefix ("r" . "emms")
-       :desc "FreeCodeCamp" "f" #'my/radio-freecodecamp))
+(define-key doom-leader-map (kbd "r f") #'my/radio-freecodecamp)
 #+end_src
 
 *** Radio Pays de Guéret
@@ -2731,9 +2722,7 @@ Fransk [[https://www.radiopaysdegueret.fr/][nettradio]] som spiller veldig varie
 #+end_src
 
 #+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
-(map! :leader
-      (:prefix ("r" . "emms")
-       :desc "Pays de Guéret" "p" #'my/radio-pays-de-gueret))
+(define-key doom-leader-map (kbd "r p") #'my/radio-pays-de-gueret)
 #+end_src
 
 *** P11 Dance
@@ -2748,9 +2737,7 @@ Fra [[https://www.lydenavnorge.no/p11/][P4]]
 #+end_src
 
 #+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
-(map! :leader
-      (:prefix ("r" . "emms")
-       :desc "P11 Dance" "a" #'my/p11-dance))
+(define-key doom-leader-map (kbd "r a") #'my/p11-dance)
 #+end_src
 
 *** Deutschlandfunk
@@ -2763,6 +2750,11 @@ Fra [[https://www.lydenavnorge.no/p11/][P4]]
   (interactive)
   (emms-play-url "https://st01.sslstream.dlf.de/dlf/01/high/opus/stream.opus"))
 #+end_src
+
+#+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
+(define-key doom-leader-map (kbd "r * 0") #'my/radio-deutschlandfunk)
+#+end_src
+
 
 *** WDR 1Live
 
@@ -2779,6 +2771,10 @@ https://www1.wdr.de/radio/1live/index.html
   (emms-play-url "https://wdr-1live-live.icecastssl.wdr.de/wdr/1live/live/mp3/128/stream.mp3"))
 #+end_src
 
+#+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
+(define-key doom-leader-map (kbd "r * 1") #'my/radio-wdr-1live)
+#+end_src
+
 *** laut.fm 100 DeutschPop
 
 100 % tysk pop uten avbrudd mellom sangene
@@ -2791,6 +2787,11 @@ https://laut.fm/100deutschpop
   (interactive)
   (emms-play-url "https://stream.laut.fm/100deutschpop"))
 #+end_src
+
+#+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
+(define-key doom-leader-map (kbd "r * 2") #'my/radio-100-deutschpop)
+#+end_src
+
 *** RPR1 100% Deutsch-Pop
 
 Reklamefinansiert tyskpop-kanal fra Rheinland-Pfalz
@@ -2804,7 +2805,9 @@ https://www.rpr1.de/webradio/100-deutsch-pop
   (emms-play-url "https://stream.rpr1.de/deutschpop/mp3-128/stream.rpr1.de/"))
 #+end_src
 
-
+#+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
+(define-key doom-leader-map (kbd "r * 3") #'my/radio-rpr1-deutschpop)
+#+end_src
 
 ** "Now playing"
 
@@ -2928,13 +2931,13 @@ CHANNEL defaults to \"defcon\"."
 #+end_src
 
 ** Hurtigtast: Stoppe radioen
+
 Mapper ~emms-stop~ til ~SPC r DEL~:
 
 #+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
-(map! :leader
-      (:prefix ("r" . "emms")
-       :desc "Stopp EMMS" "DEL" #'emms-stop))
+(define-key doom-leader-map (kbd "r DEL") #'emms-stop)
 #+end_src
+
 
 ** Kode til styring av DIY nettradio
 
