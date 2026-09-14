@@ -2232,6 +2232,37 @@ Hotkey:
 (map! :leader
       "-" #'my/sjekkboks)
 #+end_src
+** my/handleliste
+
+Legger inn mange sjekkboker i starten av aktiv linje:
+
+#+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
+(defun my/handleliste ()
+  (interactive)
+  (beginning-of-line)
+  (let ((start (point)))
+    (insert "- [ ] ")
+    (end-of-line)
+    (newline)
+    (insert "- [ ] ")
+    (newline)
+    (insert "- [ ] ")
+    (newline)
+    (insert "- [ ] ")
+    (newline)
+    (insert "- [ ] ")
+    (newline)
+    (insert "- [ ] ")
+    (goto-char (+ start 6))))
+#+end_src
+
+Hotkey:
+
+#+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
+(define-key doom-leader-map (kbd ",") #'my/handleliste)
+#+end_src
+
+
 ** my/en-linje-per-setning
 
 Funksjon som bryter opp en paragraf til å legge hver setning på sin egen linje. 
