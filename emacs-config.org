@@ -1550,6 +1550,44 @@ Hjemmesnekra alternativ til ~org-export-to-html~, som eksporterer til ~/tmp~ i s
 (map! :leader
       "e h" #'my/org-eksport-to-tmp-html)
 #+end_src
+*** Fix for å reparere linjeskift i MS Teams
+
+Når man limer inn i MS Teams, så blir newlines enten strippet bort eller doblet i antall
+
+Ikke satt meg inn i hvorfor ennå, men her er et stykke vibekode som løser hele problemet automagisk:
+- men det krasjer Emacs ved oppstart om man tangler det til permanent config. Så det må forstås og renskrives
+
+#+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
+;; (defun my/html-teams-friendly (output backend _info)
+;;   "Convert newlines/indent inside <pre> to <br> and &nbsp; for Teams."
+;;   (when (org-export-derived-backend-p backend 'html)
+;;     (with-temp-buffer
+;;       (insert output)
+;;       (goto-char (point-min))
+;;       (while (re-search-forward "<pre[^>]*>" nil t)
+;;         (let ((start (point))
+;;               (end (save-excursion
+;;                      (when (re-search-forward "</pre>" nil t)
+;;                        (match-beginning 0)))))
+;;           (when end
+;;             (save-restriction
+;;               (narrow-to-region start end)
+;;               (goto-char (point-min))
+;;               (while (re-search-forward "^\\( +\\)" nil t)
+;;                 (replace-match (mapconcat (lambda (_) "&nbsp;")
+;;                                           (match-string 1) "")
+;;                                t t nil 1))
+;;               (goto-char (point-min))
+;;               (while (search-forward "\n" nil t)
+;;                 (replace-match "<br>" t t))
+;;               (goto-char (point-max))))))
+;;       (buffer-string))))
+
+;; (add-to-list 'org-export-filter-final-output-functions #'my/html-teams-friendly)
+#+end_src
+
+#+RESULTS:
+| my/html-teams-friendly |
 
 
 ** Eksport til PDF
