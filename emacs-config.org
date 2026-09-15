@@ -2262,7 +2262,6 @@ Hotkey:
 (define-key doom-leader-map (kbd ",") #'my/handleliste)
 #+end_src
 
-
 ** my/en-linje-per-setning
 
 Funksjon som bryter opp en paragraf til å legge hver setning på sin egen linje. 
