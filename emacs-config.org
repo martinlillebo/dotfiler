@@ -1485,6 +1485,7 @@ For meg er det naturlig å beholde slike linjeskift i all eksport, så jeg sette
 
 #+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
 (setq org-export-preserve-breaks t)
+;; (setq org-export-preserve-breaks nil)
 #+end_src
 
 
