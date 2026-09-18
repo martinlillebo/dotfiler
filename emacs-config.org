@@ -546,8 +546,7 @@ Det som er ekstra spennende, er at hele Doom Emacs-korthuset ramler sammen drama
 
 (setq doom-font (font-spec :size 15 ))
 
-Installasjon av nerd fonts kan gjøres sånn:
-*** Hvordan installere Nerd Fonts:
+*** WSL: Installere Nerd Fonts 
 
 1. Last ned en font-variasjon av Nerd Fonts, f.eks. ~Fantasque~, [[https://www.nerdfonts.com/font-downloads][herfra]]
    - [[https://github.com/ryanoasis/nerd-fonts/releases/download/v3.4.0/FantasqueSansMono.zip][Direktelenke til FantasqueSansMono.zip]] 
@@ -558,7 +557,19 @@ Installasjon av nerd fonts kan gjøres sånn:
 mkdir -p ~/.local/share/fonts
 cp FantasqueSansMNerdFont-*.ttf ~/.local/share/fonts/
 fc-cache -fv
-#+end_src 
+#+end_src
+
+*** WSL: Installere Nerd Fonts' symbolpakke
+
+For å få modeline til å vise riktige symboler. ~Fantasque~-fonten fikser bare brødteksten inni hver buffer
+
+#+begin_src conf
+cd /tmp
+curl -LO https://github.com/ryanoasis/nerd-fonts/releases/download/v3.4.0/NerdFontsSymbolsOnly.zip
+unzip NerdFontsSymbolsOnly.zip -d nfsymbols
+cp nfsymbols/SymbolsNerdFontMono-Regular.ttf ~/.local/share/fonts/
+fc-cache -fv
+#+end_src
 
 ** Grunnleggende personinfo
 
@@ -2250,6 +2261,8 @@ Hotkey:
 (map! :leader
       "i w" #'my/wrap-med-src-conf)
 #+end_src
+
+
 
 ** my/sjekkboks
 
