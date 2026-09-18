@@ -1420,19 +1420,30 @@ Her er et stykke vibekode fra Claude som setter opp to filterfunksjoner + et age
         nil
       subtree-end)))
 
+(defvar my/agenda-jobb   (list org-directory) "Overstyres i privat config.")
+(defvar my/agenda-fritid (list org-directory) "Overstyres i privat config.")
+
 (setq org-agenda-custom-commands
-      '(
-        ("d" "Daily"
-         ((agenda ""
-                  ((org-agenda-span 'day)
-                   (org-agenda-skip-function '(my/skip-recurring))
-                   (org-agenda-overriding-header " ")))
-          (agenda ""
-                  ((org-agenda-span 'day)
-                   (org-agenda-skip-function '(my/skip-non-recurring))
-                   (org-agenda-overriding-header "\nDaglig")))))))
+      `(("j" "Jobb"
+         ((agenda "" ((org-agenda-span 'day)
+                      (org-agenda-skip-function '(my/skip-recurring))
+                      (org-agenda-overriding-header " ")))
+          (agenda "" ((org-agenda-span 'day)
+                      (org-agenda-skip-function '(my/skip-non-recurring))
+                      (org-agenda-overriding-header "\nDaglig"))))
+         ((org-agenda-files my/agenda-jobb)))
+        ("f" "Fritid"
+         ((agenda "" ((org-agenda-span 'day)
+                      (org-agenda-skip-function '(my/skip-recurring))
+                      (org-agenda-overriding-header " ")))
+          (agenda "" ((org-agenda-span 'day)
+                      (org-agenda-skip-function '(my/skip-non-recurring))
+                      (org-agenda-overriding-header "\nDaglig"))))
+         ((org-agenda-files my/agenda-fritid)))))
 
 #+end_src
+
+
 ** Hurtigtaster
 
 Dooms default for å kalle ~org-agenda~ er ~SPC o A~, som er litt for langt. Setter den til ~SPC A~:
