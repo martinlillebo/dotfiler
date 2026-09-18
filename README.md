@@ -1,2 +1,3 @@
-- dotfiler-mappa klones til `home`
-- så kjøres en Ansible-playbook for å symlenke alt ut til riktig plass
+- Dotfiler-mappa klones til `home`
+- Så symlenkes alt ut til riktig plass
+  - Enten med Ansible eller manuelt, avhengig av maskinen det kjøres på
