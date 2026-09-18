@@ -380,9 +380,7 @@ Togglefunksjonen:
 Legger til en hotkey for togglefunksjonen: 
 
 #+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
-(map! :leader
-      :desc "kjører my/toggle-jobb-fritid"
-      "t t" #'my/toggle-jobb-fritid)
+(define-key doom-leader-map (kbd "t t") #'my/toggle-jobb-fritid)
 #+end_src
 
 
@@ -2485,10 +2483,8 @@ Starts at a random point in the episode. Call `my/shadow-stop' to end."
 Hotkeys for å starte/stopp raskt:
 
 #+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
-(map! :leader
-      (:prefix ("t" . "shadow")
-       :desc "play" "p" #'my/shadow-play
-       :desc "stop" "s" #'my/shadow-stop))
+(define-key doom-leader-map (kbd "t p") #'my/shadow-play)
+(define-key doom-leader-map (kbd "t s") #'my/shadow-stop)
 #+end_src
 
 * Dirvish
@@ -2515,6 +2511,17 @@ Skifter ut ~SPC o /~ for å åpne filutforskeren med ~SPC o o~, for å passe bed
 (map! :leader
       (:prefix ("o" . "open")
        :desc "Open Dirvish (alias SPC o /)" "o" #'dirvish))
+#+end_src
+
+Setter noen hotkeys for å navigere rett til mapper jeg bruker ofte
+
+#+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
+(defun my/dirvish-jobb ()
+  "Åpne Dirvish i ~/repos/jobb/."
+  (interactive)
+  (dirvish "~/repos/jobb/"))
+
+(define-key doom-leader-map (kbd "o j") #'my/dirvish-jobb)
 #+end_src
 
 ** ~dirvish-quick-access-entries~
