@@ -1048,6 +1048,11 @@ Uten denne configen, så Emacs på Windows åpne URL-er i ~eww~-leseren hvis kj�
 Trikset er å utnytte ~system-type~ som returnerer ~gnu/linux~ i WSL og Linux, og ~android~ på Android. For å skille WSL fra Linux er det en ~and~ clause som i tillegg sjekker om miljøvariablene ~WSLENV~ er satt til noe, for det er den bare i WSL. Kunne sikkert kommet unna med å bare sjekke ~WSLENV~, men det funker slik det står. 
 
 #+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
+(defun my/cmd-escape-url (args)
+  "Escape cmd.exe metacharacters in the URL passed to `browse-url-generic'."
+  (cons (replace-regexp-in-string "[&|^<>()]" "^\\&" (car args))
+        (cdr args)))
+
 (after! browse-url
   ;; Default to Firefox everywhere
   (setq browse-url-browser-function 'browse-url-generic)
@@ -1057,7 +1062,9 @@ Trikset er å utnytte ~system-type~ som returnerer ~gnu/linux~ i WSL og Linux, o
    ((and (eq system-type 'gnu/linux)
          (getenv "WSLENV"))
     (setq browse-url-generic-program "cmd.exe"
-          browse-url-generic-args '("/c" "start" "")))
+          browse-url-generic-args '("/c" "start" ""))
+    ;; escape-løsning for å komme rundt at cmd.exe ser på "& | ^ < > ( )" som syntakstegn og ikke literaler:
+    (advice-add #'browse-url-generic :filter-args #'my/cmd-escape-url))
 
    ;; --- Linux ---
    ((eq system-type 'gnu/linux)
@@ -1067,6 +1074,8 @@ Trikset er å utnytte ~system-type~ som returnerer ~gnu/linux~ i WSL og Linux, o
    ((eq system-type 'android)
     (setq browse-url-generic-program "xdg-open"))))
 #+end_src
+
+#+RESULTS:
 
 - Detaljer om WSL-nettleserlinjene:
   - ~cmd.exe /c~: Kjør det som kommer etterpå i ~cmd.exe~.
