@@ -1492,9 +1492,7 @@ En TODO ansees angivelig som "blokkert" når jeg fjerner nedstrøms oppgaver fra
 
 *** Inkludere enkle linjeskift
 
-2026-05-20 - Holder den deaktivert, som er hvorfor funksjonen er kommentert ut. Har begynt å skrive [[https://sive.rs/1s][en setning per linje]], og da trenger man at denne funksjonen er deaktivert, som er default i Emacs. 
-
-2026-09-07 kommenterer den inn igjen til jeg ikke lenger knekker eksport for kodeblokker
+~org-export-preserve-breaks~ lik ~t~ gjør at punktlister får en newline mellom hvert punkt når man limer inn rendered HTML til Teams. Så jeg setter den til ~nil~
 
 Org og Markdown er glade i å ignorere enkle linjeskift, sånn at eksempelvis
 
@@ -1502,6 +1500,12 @@ Org og Markdown er glade i å ignorere enkle linjeskift, sånn at eksempelvis
 Linje 1
 Linje 2
 #+end_src
+
+- 1
+- 2
+
+1
+2
 
 Eksporteres som
 
@@ -1516,12 +1520,90 @@ For meg er det naturlig å beholde slike linjeskift i all eksport, så jeg sette
 ;; (setq org-export-preserve-breaks nil)
 #+end_src
 
-
 Om man vil ha det tilbake i enkeltfiler, så kan man legge til:
 
 #+begin_src org
 #+OPTIONS: \n:t
 #+end_src
+
+Lager en enkel toggle-funksjon, da jeg flipp-flopper mellom hva jeg vil ha, avhengig av kontekst: 
+
+#+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
+(defun my/toggle-org-export-preserve-breaks ()
+  "Toggle `org-export-preserve-breaks' fram og tilbake mellom t og nil"
+  (interactive)
+  (setq org-export-preserve-breaks (not org-export-preserve-breaks))
+  (message "org-export-preserve-breaks: %s"
+           (if org-export-preserve-breaks "t (for å beholde linjeskift mellom setninger)" "nil (til Teams-vennlig HTML-eksport)")))
+#+end_src
+
+**** notater
+2026-05-20 - Holder den deaktivert, som er hvorfor funksjonen er kommentert ut. Har begynt å skrive [[https://sive.rs/1s][en setning per linje]], og da trenger man at denne funksjonen er deaktivert, som er default i Emacs. 
+
+2026-09-07 kommenterer den inn igjen til jeg ikke lenger knekker eksport for kodeblokker
+
+2026-09-24 kommenterer den ut igjen, men lager en togglefunksjon så jeg kan sette den midlertidig på, til når jeg vil eksportere punktlister til Teams uten å ha ekstra newlines overalt
+*** Teams-spesifikk tilpasning for config-blokker
+
+Blokker på akkurat dette formatet:
+
+#+begin_src conf
+EN=1
+TO=2
+TRE=3
+#+end_src
+
+...ser helt fine ut i HTML i nettleser, men i Teams limes de inn slik:
+
+#+begin_src conf
+EN=1TO=2TRE=3
+#+end_src
+
+
+#+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
+(defun my/html-teams-friendly (output backend _info)
+  "Convert newlines/indent inside <pre> to <br> and &nbsp; for Teams."
+  (when (org-export-derived-backend-p backend 'html)
+    (with-temp-buffer
+      (insert output)
+      (goto-char (point-min))
+      (while (re-search-forward "<pre[^>]*>" nil t)
+        (let ((start (point))
+              (end (save-excursion
+                     (when (re-search-forward "</pre>" nil t)
+                       (match-beginning 0)))))
+          (when end
+            (save-restriction
+              (narrow-to-region start end)
+              ;; drop trailing newline Org emits before </code>/</pre>
+              (goto-char (point-min))
+              (when (re-search-forward "[ \t\n]+\\(</code>\\)?\\'" nil t)
+                (replace-match (or (match-string 1) "") t t))
+              (goto-char (point-min))
+              (while (re-search-forward "^\\( +\\)" nil t)
+                (replace-match (mapconcat (lambda (_) "&nbsp;")
+                                          (match-string 1) "")
+                               t t nil 1))
+              (goto-char (point-min))
+              (while (search-forward "\n" nil t)
+                (replace-match "<br>" t t))
+              (goto-char (point-max))))))
+      (buffer-string))))
+
+(add-hook 'org-export-filter-final-output-functions #'my/html-teams-friendly)
+#+end_src
+
+...pluss vibekode for å fjerne break tags mellom punkter i punktlister
+
+#+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
+(defun my/html-strip-br-in-items (item backend _info)
+  "Remove trailing <br/> inside <li> so Teams doesn't pad bullets."
+  (when (org-export-derived-backend-p backend 'html)
+    (replace-regexp-in-string "<br\\s-*/?>\\s-*</li>" "</li>" item)))
+
+(add-hook 'org-export-filter-item-functions #'my/html-strip-br-in-items)
+#+end_src
+
 
 *** Eksportere knekte lenker
 
@@ -2288,6 +2370,11 @@ De to wrapper-ene jeg bruker mest: ~quote~ og ~src conf~:
   "Rammer inn region eller paragraf i en #+begin_quote block."
   (interactive)
   (my/wrap-med-block "quote"))
+
+(defun my/wrap-med-src-elisp ()
+  "Rammer inn region eller paragraf i en #+begin_src elisp block."
+  (interactive)
+  (my/wrap-med-block "src" "elisp"))
 #+end_src
 
 Til slutt hotkeys for hver av de: 
@@ -2295,6 +2382,7 @@ Til slutt hotkeys for hver av de:
 #+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
 (define-key doom-leader-map (kbd "i w") #'my/wrap-med-src-conf)
 (define-key doom-leader-map (kbd "i q") #'my/wrap-med-quote)
+(define-key doom-leader-map (kbd "i e") #'my/wrap-med-src-elisp)
 #+end_src
 
 
