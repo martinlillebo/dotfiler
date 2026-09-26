@@ -95,3 +95,6 @@ if [[ -f "$HOME/.zsh_secrets.zsh" ]]; then
   source "$HOME/.zsh_secrets.zsh"
 fi
 
+
+# opencode
+export PATH=~/.opencode/bin:$PATH
