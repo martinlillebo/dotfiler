@@ -688,7 +688,7 @@ Brukes mye på mobilen - vil ofte gå til et sentralt innboksnotat, og bare rabl
 (map! :n "SPC 1"
       (lambda ()
         (interactive)
-        (find-file "~/repos/notater/202012111337 Innboks.org")
+        ;; (find-file "~/repos/notater/202012111337 Innboks.org")
         (goto-char (point-max))
         (newline)
         (evil-insert-state)))
@@ -3461,4 +3461,5 @@ Flisespikker på smådetaljer:
 #+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
 (setq nerd-icons-ibuffer-icon-size 1.2)
 #+end_src
+
 
