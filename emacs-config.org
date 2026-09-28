@@ -2251,7 +2251,12 @@ For å skrive inn der markøren står:
 (map! "<C-S-delete>" #'my/tidsstempel-sekund)
 #+end_src
 
+Legger til ekstra hotkey til bruk på mobiltastatur:
 
+#+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
+(define-key doom-leader-map (kbd "d") #'my/tidsstempel-dato)
+(define-key doom-leader-map (kbd "D") #'my/tidsstempel-sekund)
+#+end_src
 
 ** Ukenummer til echo area
 
