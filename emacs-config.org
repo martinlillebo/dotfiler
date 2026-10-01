@@ -1931,6 +1931,32 @@ Legger inn en hook som kjører ~(doom-load-session)~ på riktig tidspunkt, for �
 (add-hook 'doom-init-ui-hook #'doom-load-session t)
 #+end_src
 
+*** Folde ut til markørposisjonen
+
+~persp-mode~ gjenoppretter markørposisjonen i hvert workspace, men jeg har ofte satt ~#+STARTUP: overview~ i de største dokumentene, så markøren legges bare til øverste headline.
+
+Her er en funksjon og et par hooks som folder ut igjen dokumentet ned til der markøren er lagret. Resten holder seg foldet. 
+
+Den første hook-en håndterer workspacet som er aktivt ved oppstart. Den andre gjør det samme når jeg bytter til et annet gjenopprettet workspace.
+
+#+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
+(defun my/reveal-org-workspace-point-h (&rest _)
+  "Folder ut buffer til der markøren står lagret"
+  (dolist (window (window-list))
+    (with-selected-window window
+      (when (and (derived-mode-p 'org-mode)
+                 (org-invisible-p))
+        (org-fold-show-context)))))
+
+(after! persp-mode
+  (add-hook 'persp-after-load-state-functions
+            #'my/reveal-org-workspace-point-h t)
+  (add-hook 'persp-activated-functions
+            #'my/reveal-org-workspace-point-h t))
+#+end_src
+
+
+
 ** Default navn på første workspace
 
 Default-navnet er originalt "main", som er litt dumt, siden det også ofte er navnet på git-branchen jeg er på, som også listes opp ved siden av. Endrer det til noe annet, artigere: 
