@@ -1921,6 +1921,16 @@ Til slutt en hook for å aktivere alle funksjonene ovenfor når jeg er i en Mark
 
 * Workspaces
 
+** Gjenopprette workspaces automatisk
+
+Doom lagrer automatisk workspace-sessionen når Emacs avsluttes normalt med ~persp-mode~, men laster den ikke inn igjen ved oppstart.
+
+Legger inn en hook som kjører ~(doom-load-session)~ på riktig tidspunkt, for å gjenopprette forrige session
+
+#+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
+(add-hook 'doom-init-ui-hook #'doom-load-session t)
+#+end_src
+
 ** Default navn på første workspace
 
 Default-navnet er originalt "main", som er litt dumt, siden det også ofte er navnet på git-branchen jeg er på, som også listes opp ved siden av. Endrer det til noe annet, artigere: 
@@ -3469,4 +3479,3 @@ Flisespikker på smådetaljer:
 #+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
 (setq nerd-icons-ibuffer-icon-size 1.2)
 #+end_src
-
