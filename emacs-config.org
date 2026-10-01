@@ -2714,16 +2714,19 @@ Utgangspunktet er kopi-pasta rett fra README-en
 
 * Startside
 
-Setter Emacs til å starte opp i et generisk innboksnotat.
+Setter Emacs til å starte opp i et generisk innboksnotat som standard, med mindre Emacs kjører i WSL (som bare skjer på jobb) - da åpnes heller et eget jobb-innboksnotat. 
 
-~unless~-linja er der fordi jeg av og til har en jobbrelatert fil som oppstartsbuffer. Den settes i så fall i en ~.secrets~-fil som lastes tidligere. 
+~unless~-linja gjør at en filbane satt i ~.emacs.secrets~, som lastes tidligere, fortsatt overstyrer begge standardvalgene.
 
 Så lenge jeg bruker Doom Emacs, så er ~initial-buffer-choice~ satt til symbolet ~doom-fallback-buffer~ med mindre jeg har satt den til noe annet. "Noe annet" vil i så fall være en filbane i plaintext. Derfor sjekker jeg om ~initial-buffer-choice~ er en string, og hvis den ikke er det, da setter jeg den til standardfilen nedenfor
 
 #+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
 (unless (stringp initial-buffer-choice)
-  (setq initial-buffer-choice "~/repos/notater/202012111337 Innboks.org")
-  )
+  (setq initial-buffer-choice
+        (if (and (eq system-type 'gnu/linux)
+                 (getenv "WSLENV"))
+            "~/repos/notater/202111121500 Innboks jobb.org"
+          "~/repos/notater/202012111337 Innboks.org")))
 #+end_src
 
 Tidligere starta jeg opp med å vise agendaen for dagen. Kan gjøres med å erstatte ~setq~-linja med denne:
@@ -3466,5 +3469,4 @@ Flisespikker på smådetaljer:
 #+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
 (setq nerd-icons-ibuffer-icon-size 1.2)
 #+end_src
-
 
