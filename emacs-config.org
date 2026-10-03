@@ -231,6 +231,9 @@ Dette er hele ~init.el~-fila slik den er originalt etter Doom Emacs-rammeverket.
        ;;literate
        (default +bindings +smartparens))
 #+end_src
+
+#+RESULTS:
+
 * packages.el
 
 Her ligger det småpakker som ikke har gjort seg fortjent til egne kapitler
