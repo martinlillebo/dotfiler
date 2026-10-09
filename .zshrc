@@ -1,3 +1,7 @@
+# Importer ev. lokal, jobb-spesifikk config
+if [ -f $HOME/.zshrc_jobb ]; then
+    . $HOME/.zshrc_jobb
+fi
 
 # Deaktiver ansible-lint
 export SKIP=ansible-lint
