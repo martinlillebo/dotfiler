@@ -3508,3 +3508,47 @@ Flisespikker på smådetaljer:
 #+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
 (setq nerd-icons-ibuffer-icon-size 1.2)
 #+end_src
+
+* OpenCode
+
+Kommandoer som åpner [[https://opencode.ai][OpenCode]] i et nytt terminalvindu i et gitt repo, i ~/bin/terminator~ på Linux, og Windows' Terminal på WSL i Windowd
+
+- ~my/opencode-dotfiler~: ~~/repos/dotfiler~
+- ~my/opencode-misc~: ~~/repos/misc~
+- ~my/opencode-dette-repoet~: rota til repoet bufferen ligger i, eller mappa til bufferen hvis den ikke er i et repo
+
+#+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
+(defun my/--opencode-i-repo (dir)
+  "Generell funksjon for å åpne Opencode i enten WSL eller Linux"
+  (let ((dir (expand-file-name dir))
+        (shell (or (getenv "SHELL") "/bin/bash")))
+    (cond
+     ;; WSL: Windows Terminal med et WSL-shell
+     ((and (eq system-type 'gnu/linux) (getenv "WSLENV"))
+      (call-process "wt.exe" nil 0 nil
+                    "wsl.exe" "--cd" dir "--" shell "-lic" "opencode"))
+     ;; Linux: Terminator
+     ((eq system-type 'gnu/linux)
+      (call-process "/usr/bin/terminator" nil 0 nil
+                    (concat "--working-directory=" dir)
+                    "-x" shell "-lic" "opencode"))
+     (t (user-error "my/opencode: ingen terminal satt opp for %s" system-type)))))
+
+(defun my/opencode-dotfiler ()
+  "Starter opencode i ~/repos/dotfiler"
+  (interactive)
+  (my/--opencode-i-repo "~/repos/dotfiler"))
+
+(defun my/opencode-misc ()
+  "Starter opencode i ~/repos/misc"
+  (interactive)
+  (my/--opencode-i-repo "~/repos/misc"))
+
+(defun my/opencode-dette-repoet ()
+  "Starter opencode i aktivt repo"
+  (interactive)
+  (my/--opencode-i-repo (or (doom-project-root) default-directory)))
+#+end_src
+
+#+RESULTS:
+: my/opencode-dette-repoet
