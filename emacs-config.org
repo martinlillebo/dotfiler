@@ -2666,6 +2666,123 @@ Hotkeys for å starte/stopp raskt:
 (define-key doom-leader-map (kbd "t p") #'my/shadow-play)
 (define-key doom-leader-map (kbd "t s") #'my/shadow-stop)
 #+end_src
+** my/how-im-feeling
+
+tatt [[https://takeonrules.com/2026/09/01/how-im-feeling-emacs-package/][herfra]] og endret innholdet selv/med tips fra ki
+
+#+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
+(defvar how-im-feeling-responses
+  '(("Angry"
+     "Slow your breathing with long exhales"
+     "Walk away for 20 minutes"
+     "Delay replying to messages"
+     "Name the feeling and its cause")
+    ("Stressed"
+     "Go for a walk"
+     "List what's in and out of your control"
+     "Do one small task"
+     "Progressive muscle relaxation"
+     "Drop one commitment")
+    ("Procrastinating"
+     "Define the very next physical action"
+     "Put your phone in another room"
+     "Work next to someone"
+     "Decide when and where you'll start")
+    ("Sad"
+     "Get sunlight"
+     "Do one small rewarding activity"
+     "Be around people"
+     "Move your body"
+     "Watch or listen to something comforting")
+    ("Can't focus"
+     "Single-task with notifications off"
+     "Work in short sprints"
+     "Check if you're hungry, tired or thirsty"
+     "Write down distracting thoughts")
+    ("Negative thoughts"
+     "Write the thought and test the evidence"
+     "Ask: what would I tell a friend?"
+     "Label it: \"I'm having the thought that...\"")
+    ("Stuck"
+     "Explain the problem out loud"
+     "Sleep on it"
+     "Break it into smaller pieces"
+     "Ask for help")
+    ("Low energy"
+     "Get outside in daylight"
+     "Eat a proper meal"
+     "Take a nap under 20 minutes")
+    ("Overthinking"
+     "Schedule a fixed worry time"
+     "Make one decision and act on it"
+     "Do a demanding physical activity"
+     "Ask: can I act on this now? If not, park it")
+    ("Lonely"
+     "Send a short message"
+     "Join a recurring activity"
+     "Go somewhere with people around"
+     "Reconnect with an old contact")
+    ("No motivation"
+     "Start with 2 minutes"
+     "Act first, motivation follows"
+     "Make the task smaller"
+     "Add a reward"
+     "Remind yourself why it matters")
+    ("Anxiety"
+     "Splash cold water on your face"
+     "Approach instead of avoiding"
+     "Cut back on caffeine")
+    ("Brain fog"
+     "Get fresh air"
+     "Eat something with protein"
+     "Take a screen break"
+     "Review sleep and alcohol")
+    ("Low confidence"
+     "List past wins"
+     "Practice the skill deliberately"
+     "Stop comparing yourself to others"
+     "Act before you feel ready")
+    ("Lost"
+     "Clarify your values"
+     "Run small experiments"
+     "Talk to people a few steps ahead"
+     "Review what has energized you before"))
+  "How I'm feeling and simple responses to move with that feeling.")
+
+(defun how-im-feeling ()
+  "Prompt for how I'm feeling and respond with what to do."
+  (interactive)
+  (let ((feels
+         (completing-read-multiple "I'm Feeling: "
+                                   how-im-feeling-responses
+                                   #'completing-read-omit-p
+                                   t))
+        (concatter
+         (lambda (feel)
+           (format "- *%s:*\n%s"
+                   feel
+                   (mapconcat (lambda (response)
+                                (format "  - %s" response))
+                              (alist-get feel
+                                         how-im-feeling-responses
+                                         nil nil #'string=)
+                              "\n")))))
+    (insert
+     (format "I'm feeling:\n\n%s\n"
+             (mapconcat concatter feels "\n")))))
+
+(defun completing-read-omit-p (candidate)
+  "Omit CANDIDATE if it has already been entered."
+  (let ((name (if (consp candidate) (car candidate) candidate))
+        (chosen
+         (butlast (split-string
+                   (minibuffer-contents-no-properties)
+                   crm-separator))))
+    (not (member name chosen))))
+
+#+end_src
+
+
 
 * Dirvish
 Dired/Dirvish config
