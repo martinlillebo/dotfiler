@@ -1167,7 +1167,7 @@ Setter opp et advice som gjør at ~projectile-invalidate-cache~ kjøres etter hv
 * Org-mode
 ** Småting
 
-Setter ~org-log-into-drawer~ fra default ~nil~ til ~t~. Det gjør at notater som skrives med ~org-add-note~ havner inni en dedikert ~:PROPERTIES:~-skuff, i stedet for å legges rett innunder headeren som plaintekst: 
+Setter ~org-log-into-drawer~ fra default ~nil~ til ~t~. Det gjør at notater som skrives med ~org-add-note~ havner inni en dedikert ~:LOGBOOK:~-skuff, i stedet for å legges rett innunder headeren som plaintekst: 
 
 #+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
 (setq org-log-into-drawer t)
@@ -1251,22 +1251,6 @@ Denne setter opp en "CLOSED" timestamp når en oppgave markeres som DONE:
 
 #+RESULTS:
 : time
-
-** Egendefinert filnavn på nye org-filer
-
-Org har sin egen måte å lage filnavn på, men jeg liker bedre standaradmåten sublimeless gjorde det på
-
-#+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
-(defun my/datert-orgfil (title)
-  "Create a new Org file with format YYYYMMDDMM Title.org in ~/repos/notater/."
-  (interactive "sTitle: ")
-  (let* ((timestamp (format-time-string "%Y%m%d%H%M"))
-         (filename (format "~/repos/notater/%s %s.org" timestamp title)))
-    (find-file filename)))
-#+end_src
-
-#+RESULTS:
-: my/datert-orgfil
 
 ** Org-directory
 
