@@ -2113,6 +2113,11 @@ Aka "action menu super buffer". Det er den som popper opp når man har tastet en
   (browse-url "https://outlook.office.com/calendar/view/week"))
 #+end_src
 
+Hotkey:
+
+#+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
+(define-key doom-leader-map (kbd "o k") #'my/open-outlook-kalender-firefox-tab)
+#+end_src
 * Magit
 ** ~magit-list-repositories~
 
