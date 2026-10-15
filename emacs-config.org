@@ -96,7 +96,7 @@ Dette er hele ~init.el~-fila slik den er originalt etter Doom Emacs-rammeverket.
        (evil +everywhere); come to the dark side, we have cookies
        file-templates    ; auto-snippets for empty files
        fold              ; (nigh) universal code folding
-       ;;(format +onsave)  ; automated prettiness
+       (format +onsave)  ; automated prettiness
        ;;god               ; run Emacs commands without modifier keys
        ;;lispy             ; vim for lisp, for people who don't like vim
        multiple-cursors  ; editing in many places at once
@@ -254,6 +254,7 @@ Her ligger det småpakker som ikke har gjort seg fortjent til egne kapitler
 (package! verb)
 (package! keycast)
 (package! yankpad)
+(package! ox-gfm)
 #+end_src
 
 
@@ -1173,7 +1174,7 @@ Setter ~org-log-into-drawer~ fra default ~nil~ til ~t~. Det gjør at notater som
 (setq org-log-into-drawer t)
 #+end_src
 
-** Org-eksport
+** Org-eksport: PDF, HTML
 
 Setter noen verdier for å tilpasse info som inngår i eksport til HTML, PDF og lignende. Dette gir et minimum som er det jeg vanligvis trenger for å lime inn HTML til eposter og andre samarbeidsverktøy på jobb.
 
@@ -1199,6 +1200,38 @@ Setter en global fallback for alle org-filer som ikke har en ~HTML_HEAD~-linje l
 #+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
 (setq org-html-head-extra
       "<link rel=\"stylesheet\" href=\"https://cdn.simplecss.org/simple.min.css\">")
+#+end_src
+** Org-eksport: Markdown
+
+Øker headline levels fra default på ~3~ til ~6~, som er max i Markdown-speccen.
+
+Hvis ikke blir f.eks. 4. nivå headlines eksportert som en nummerert liste i stedet for "~####~"
+
+#+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
+(setq org-export-headline-levels 6)
+#+end_src
+
+Lenker uten beskrivelse eksporteres som f.eks. ~<https://www.nrk.no>~, og det knekker noen statiske sidegeneratorer (bl.a. Docusaurus).
+
+Her er en adhoc funksjon som autokonverterer alle beskrivelsesløse lenker i valgt område fra ~https://www.nrk.no~ til ~[[https://www.nrk.no][https://www.nrk.no]]~, slik at det passerer til ~[https://www.nrk.no](https://www.nrk.no)~
+
+#+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
+(defun my/org-linkify-region (beg end)
+  "Linkifiserer URL-er uten beskrivelse i valgt region til [url][url]]."
+  (interactive "r")
+  (save-excursion
+    (save-restriction
+      (narrow-to-region beg end)
+      (goto-char (point-min))
+      (while (re-search-forward
+              "\\(?:^\\|[[:space:]]\\)\\(https?://[^][<>[:space:]]+\\)" nil t)
+        (let ((s (match-beginning 1)))
+          ;; leave trailing punctuation outside the link
+          (skip-chars-backward ".,;:!?)" s)
+          (let ((url (buffer-substring s (point))))
+            (delete-region s (point))
+            (goto-char s)
+            (insert (format "[[%s][%s]]" url url))))))))
 #+end_src
 
 ** Org-ellipsis
@@ -2408,6 +2441,11 @@ De to wrapper-ene jeg bruker mest: ~quote~ og ~src conf~:
   "Rammer inn region eller paragraf i en #+begin_src elisp block."
   (interactive)
   (my/wrap-med-block "src" "elisp"))
+
+(defun my/wrap-med-src-shell ()
+  "Rammer inn region eller paragraf i en #+begin_src shell block."
+  (interactive)
+  (my/wrap-med-block "src" "shell"))
 #+end_src
 
 Til slutt hotkeys for hver av de: 
@@ -2416,6 +2454,7 @@ Til slutt hotkeys for hver av de:
 (define-key doom-leader-map (kbd "i w") #'my/wrap-med-src-conf)
 (define-key doom-leader-map (kbd "i q") #'my/wrap-med-quote)
 (define-key doom-leader-map (kbd "i e") #'my/wrap-med-src-elisp)
+(define-key doom-leader-map (kbd "i s") #'my/wrap-med-src-shell) ;; Denne overskriver 
 #+end_src
 
 
