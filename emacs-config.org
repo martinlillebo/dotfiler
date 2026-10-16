@@ -2424,7 +2424,7 @@ ARGS legges til på begin-linja, f.eks. \"conf\" eller \":tangle no\"."
             (deactivate-mark)))))))
 #+end_src
 
-De to wrapper-ene jeg bruker mest: ~quote~ og ~src conf~: 
+Wrapper-ene jeg bruker mest er disse: 
 
 #+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
 (defun my/wrap-med-src-conf ()
@@ -2446,6 +2446,11 @@ De to wrapper-ene jeg bruker mest: ~quote~ og ~src conf~:
   "Rammer inn region eller paragraf i en #+begin_src shell block."
   (interactive)
   (my/wrap-med-block "src" "shell"))
+
+(defun my/wrap-med-src-yaml ()
+  "Rammer inn region eller paragraf i en #+begin_src yaml block."
+  (interactive)
+  (my/wrap-med-block "src" "yaml"))
 #+end_src
 
 Til slutt hotkeys for hver av de: 
@@ -2455,6 +2460,7 @@ Til slutt hotkeys for hver av de:
 (define-key doom-leader-map (kbd "i q") #'my/wrap-med-quote)
 (define-key doom-leader-map (kbd "i e") #'my/wrap-med-src-elisp)
 (define-key doom-leader-map (kbd "i s") #'my/wrap-med-src-shell) ;; Denne overskriver 
+(define-key doom-leader-map (kbd "i y") #'my/wrap-med-src-yaml)
 #+end_src
 
 
