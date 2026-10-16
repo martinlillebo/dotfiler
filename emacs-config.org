@@ -3671,8 +3671,10 @@ Kommandoer som åpner [[https://opencode.ai][OpenCode]] i et nytt terminalvindu 
      ;; WSL: Windows Terminal med et WSL-shell
      ((and (eq system-type 'gnu/linux) (getenv "WSLENV"))
       (call-process "wt.exe" nil 0 nil
+                    "-w" "0" "nt"
                     "wsl.exe" "-d" (getenv "WSL_DISTRO_NAME")
-                    "--cd" dir "--" shell "-lic" "opencode"))
+                    "--cd" dir "--" shell "-lic"
+                    (concat "opencode\\; exec " shell " -l")))
      ;; Linux: Terminator
      ((eq system-type 'gnu/linux)
       (call-process "/usr/bin/terminator" nil 0 nil
