@@ -189,7 +189,7 @@ Dette er hele ~init.el~-fila slik den er originalt etter Doom Emacs-rammeverket.
        ;;lua               ; one-based indices? one-based indices
        markdown          ; writing docs for people to ignore
        ;;nim               ; python + lisp at the speed of c
-       ;;nix               ; I hereby declare "nix geht mehr!"
+       nix               ; I hereby declare "nix geht mehr!"
        ;;ocaml             ; an objective camel
        (org +roam2)               ; organize your plain life in plain text
        ;;php               ; perl's insecure younger brother
@@ -810,6 +810,13 @@ Denne tror jeg er standard i Doom Emacs. Men den gir feilmelding ved oppstart i 
 #+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
 (when (eq system-type 'android)
     (advice-add 'ultra-scroll-mode :override #'ignore))
+#+end_src
+
+Fjerner en hook der ~ultra-scroll~ ellers ville prøvd å å kalle ~jit-lock-mode~. Jeg har ikke satt meg godt nok inn i det ennå, men ~jit-lock~ handler om å ikke fargelegge tekst og gjøre andre GUI-triks før det er nødvendig, som er når teksten faktisk vises på skjermen. I en narrowed buffer kan det gjør at hele jit-funksjonen tar kvelden, og man ender opp med en slags visuell fundamental-mode. Unngår det slik: 
+
+#+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
+(after! ultra-scroll
+  (remove-hook 'ultra-scroll-hide-functions #'jit-lock-mode))
 #+end_src
 ** Muliggjøre flytting av linjer som ikke er strukturelle elementer
 
