@@ -1983,6 +1983,28 @@ Den første hook-en håndterer workspacet som er aktivt ved oppstart. Den andre 
             #'my/reveal-org-workspace-point-h t))
 #+end_src
 
+*** Unngå å starte i nil-workspacet ("none")
+
+En vibelaget fix på en selvlaget bug: 
+
+Lang historie kort, om jeg bare har ett workspace aktivt, og det ikke har mitt standard-workspacenavn, så havner jeg i Emacs' "none"-workspace ved neste reboot. 
+
+Denne hook-en kjører sist og velger første workspace som ikke er ~"none"~:
+
+#+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
+(after! persp-mode
+  (add-hook 'persp-after-load-state-functions
+            (defun my/workspaces-leave-nil-h (&rest _)
+              "Doom's nil-guard uses `cadr' of the hash keys, which can be \"none\"."
+              (dolist (frame (frame-list))
+                (when (string= (safe-persp-name (get-current-persp frame)) persp-nil-name)
+                  (persp-frame-switch
+                   (or (car (remove persp-nil-name (hash-table-keys *persp-hash*)))
+                       +workspaces-main)
+                   frame))))
+            t))
+#+end_src
+
 
 
 ** Default navn på første workspace
