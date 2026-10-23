@@ -815,9 +815,8 @@ Denne tror jeg er standard i Doom Emacs. Men den gir feilmelding ved oppstart i 
 Fjerner en hook der ~ultra-scroll~ ellers ville prøvd å å kalle ~jit-lock-mode~. Jeg har ikke satt meg godt nok inn i det ennå, men ~jit-lock~ handler om å ikke fargelegge tekst og gjøre andre GUI-triks før det er nødvendig, som er når teksten faktisk vises på skjermen. I en narrowed buffer kan det gjør at hele jit-funksjonen tar kvelden, og man ender opp med en slags visuell fundamental-mode. Unngår det slik: 
 
 #+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
-;; 2026-10-23 mulig denne knekker noe i WSL
-;; (after! ultra-scroll
-;;   (remove-hook 'ultra-scroll-hide-functions #'jit-lock-mode))
+(after! ultra-scroll
+  (remove-hook 'ultra-scroll-hide-functions #'jit-lock-mode))
 #+end_src
 ** Muliggjøre flytting av linjer som ikke er strukturelle elementer
 
@@ -2845,7 +2844,20 @@ tatt [[https://takeonrules.com/2026/09/01/how-im-feeling-emacs-package/][herfra]
     (not (member name chosen))))
 
 #+end_src
+** my/skillelinje
 
+#+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
+(defun my/skillelinje ()
+  "Skillelinje til å bla gjennom tekster"
+  (interactive)
+  (insert "*~~~~~~~~~~~~~~~~~~*"))
+#+end_src
+
+Hotkey:
+
+#+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
+(define-key doom-leader-map (kbd "i ~") #'my/skillelinje)
+#+end_src
 
 
 * Dirvish
