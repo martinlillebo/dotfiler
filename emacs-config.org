@@ -486,7 +486,15 @@ Lagrer eksisterende utklippstavle-innhold til kill ring før man appender kill r
 #+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
 (setq save-interprogram-paste-before-kill t)
 #+end_src
+** WSL-fix for å tvinge UTF-8
 
+
+
+#+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
+(when (and (eq system-type 'gnu/linux) (getenv "WSLENV"))
+  (setq x-select-request-type '(text/plain\;charset=utf-8 UTF8_STRING STRING)))
+
+#+end_src
 
 
 * Generell Emacs config
