@@ -1,0 +1,10 @@
+{
+  "$schema": "https://opencode.ai/config.json",
+  "permissions": [
+    { "action": "edit", "resource": "*doom/config.el", "effect": "deny" },
+    { "action": "edit", "resource": "*doom/init.el", "effect": "deny" },
+    { "action": "edit", "resource": "*doom/packages.el", "effect": "deny" },
+    { "action": "edit", "resource": "*doom/custom.el", "effect": "deny" },
+    { "action": "edit", "resource": "*doom/lisp/*", "effect": "deny" }
+  ]
+}

@@ -754,13 +754,6 @@ Disse er rett ved piltastene på min laptop, og jeg kommer borti de hele tiden. 
 #+end_src
 
 uten ~with-eval-after-load~ så funker ikke ~defalias~-uttrykkene, selv om de legges helt nederst i ~config.el~
-** Garbage collection-meldinger :noexport:
-
-Setter på denne for å må melding i echo-area når garbage collection starter og slutter. Bare fordi det er interessant å få et inntrykk av hvor ofte det skjer: 
-
-#+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
-(setq garbage-collection-messages t)
-#+end_src
 
 ** Gå ut av insert mode etter idletid
 
@@ -1748,18 +1741,6 @@ Dette er den vanlige eksportfunksjonen ~org-latex-export-to-pdf~, pluss...
       (browse-url pdf-file))))
 #+end_src
 
-** noeksport = notangle
-
-~:noexport:~-taggen gjør at alt nedstrøms headline blir ignorert når man eksporterer til PDF/HTML og andre formater. Mem den har i utgangspunktet ingenting med tangling til konfigfil å gjøre.
-
-Her legger jeg inn et advice på ~org-babel-tangle-single-block~-funksjonen, og ber den ignorere alle kodeblokker nedstrøms en :noexport:-tagg.
-
-#+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
-(advice-add 'org-babel-tangle-single-block :before-while
-            (lambda (&rest _)
-                          (not (member "noexport" (org-get-tags)))))
-#+end_src
-
 * Org-bullets
 
 Gjør headerpunkter finere. Prøvde opprinnelig ~org-modern~, men det inneholdt så mye annet rart som ikke funket så bra med temaet jeg har. 
@@ -2158,6 +2139,15 @@ Hotkey:
 #+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
 (define-key doom-leader-map (kbd "o k") #'my/open-outlook-kalender-firefox-tab)
 #+end_src
+** Deichman login
+
+#+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
+(defun my/deichman-login ()
+  "Åpner deichman.no sin login-side"
+  (interactive)
+  (browse-url "https://login.deichman.no/realms/oslo/protocol/openid-connect/auth?client_id=deichman-no&scope=openid%20email%20profile&response_type=code&redirect_uri=https%3A%2F%2Fdeichman.no%2Fapi%2Fauth%2Fcallback%2Fkeycloak"))
+#+end_src
+  
 * Magit
 ** ~magit-list-repositories~
 
