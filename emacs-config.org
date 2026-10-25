@@ -486,7 +486,15 @@ Lagrer eksisterende utklippstavle-innhold til kill ring før man appender kill r
 #+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
 (setq save-interprogram-paste-before-kill t)
 #+end_src
+** WSL-fix for å tvinge UTF-8
 
+
+
+#+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
+(when (and (eq system-type 'gnu/linux) (getenv "WSLENV"))
+  (setq x-select-request-type '(text/plain\;charset=utf-8 UTF8_STRING STRING)))
+
+#+end_src
 
 
 * Generell Emacs config
@@ -1963,6 +1971,28 @@ Den første hook-en håndterer workspacet som er aktivt ved oppstart. Den andre 
             #'my/reveal-org-workspace-point-h t))
 #+end_src
 
+*** Unngå å starte i nil-workspacet ("none")
+
+En vibelaget fix på en selvlaget bug: 
+
+Lang historie kort, om jeg bare har ett workspace aktivt, og det ikke har mitt standard-workspacenavn, så havner jeg i Emacs' "none"-workspace ved neste reboot. 
+
+Denne hook-en kjører sist og velger første workspace som ikke er ~"none"~:
+
+#+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
+(after! persp-mode
+  (add-hook 'persp-after-load-state-functions
+            (defun my/workspaces-leave-nil-h (&rest _)
+              "Doom's nil-guard uses `cadr' of the hash keys, which can be \"none\"."
+              (dolist (frame (frame-list))
+                (when (string= (safe-persp-name (get-current-persp frame)) persp-nil-name)
+                  (persp-frame-switch
+                   (or (car (remove persp-nil-name (hash-table-keys *persp-hash*)))
+                       +workspaces-main)
+                   frame))))
+            t))
+#+end_src
+
 
 
 ** Default navn på første workspace
@@ -2812,7 +2842,20 @@ tatt [[https://takeonrules.com/2026/09/01/how-im-feeling-emacs-package/][herfra]
     (not (member name chosen))))
 
 #+end_src
+** my/skillelinje
 
+#+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
+(defun my/skillelinje ()
+  "Skillelinje til å bla gjennom tekster"
+  (interactive)
+  (insert "*~~~~~~~~~~~~~~~~~~*"))
+#+end_src
+
+Hotkey:
+
+#+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
+(define-key doom-leader-map (kbd "i ~") #'my/skillelinje)
+#+end_src
 
 
 * Dirvish
