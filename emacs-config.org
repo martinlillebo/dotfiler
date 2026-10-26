@@ -1211,6 +1211,7 @@ Setter en global fallback for alle org-filer som ikke har en ~HTML_HEAD~-linje l
 #+end_src
 ** Org-eksport: Markdown
 
+*** Støtte 6 nivåer med headlines
 Øker headline levels fra default på ~3~ til ~6~, som er max i Markdown-speccen.
 
 Hvis ikke blir f.eks. 4. nivå headlines eksportert som en nummerert liste i stedet for "~####~"
@@ -1240,6 +1241,11 @@ Her er en adhoc funksjon som autokonverterer alle beskrivelsesløse lenker i val
             (delete-region s (point))
             (goto-char s)
             (insert (format "[[%s][%s]]" url url))))))))
+#+end_src
+*** Hotkey til eksport
+
+#+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
+(define-key doom-leader-map (kbd "e m") #'org-gfm-export-as-markdown)
 #+end_src
 
 ** Org-ellipsis
