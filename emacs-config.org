@@ -243,6 +243,7 @@ Her ligger det småpakker som ikke har gjort seg fortjent til egne kapitler
 - ~keyfreq~ gir statistikk på hvor ofte kommandoer brukes
 - ~verb~ er [[https://github.com/federicotdn/verb][herfra]]. Et alternativ til ~restclient.el~
 - ~keycast~ er veldig nyttig for å se hvilke funksjoner som kalles
+- [[https://github.com/davidshepherd7/terminal-here][terminal-here]] for å åpne opp terminalen i gjeldende mappe
 
 #+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/packages.el
 (package! fireplace)
@@ -255,6 +256,7 @@ Her ligger det småpakker som ikke har gjort seg fortjent til egne kapitler
 (package! keycast)
 (package! yankpad)
 (package! ox-gfm)
+(package! terminal-here)
 #+end_src
 
 
