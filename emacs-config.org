@@ -2562,9 +2562,6 @@ Først en liste over norske forkortelser som ikke skal tolkes som slutten på en
   "Norwegian abbreviations to protect from sentence splitting.")
 #+end_src
 
-#+RESULTS:
-: my/no-abbreviations
-
 Deretter en blokk med vibekode:
 
 #+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
@@ -3194,9 +3191,6 @@ https://nightride.fm/stations?station=nightride
   (emms-play-url "https://stream.nightride.fm/nightride.mp3"))
 #+end_src
 
-#+RESULTS:
-: my/radio-nightride
-
 #+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
 (define-key doom-leader-map (kbd "r n") #'my/radio-nightride)
 #+end_src
@@ -3212,15 +3206,9 @@ https://nightride.fm/stations?station=chillsynth
   (emms-play-url "https://stream.nightride.fm/chillsynth.mp3"))
 #+end_src
 
-#+RESULTS:
-: my/radio-chillsynth
-
 #+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
 (define-key doom-leader-map (kbd "r c") #'my/radio-chillsynth)
 #+end_src
-
-#+RESULTS:
-: my/radio-chillsynth
 
 *** P11 Dance
 
@@ -3790,6 +3778,3 @@ Kommandoer som åpner [[https://opencode.ai][OpenCode]] i et nytt terminalvindu 
   (interactive)
   (my/--opencode-i-repo (or (doom-project-root) default-directory)))
 #+end_src
-
-#+RESULTS:
-: my/opencode-dette-repoet
