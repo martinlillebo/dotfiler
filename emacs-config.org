@@ -604,7 +604,7 @@ Dette er linja helt på toppen av hele Emacs-GUI-et
 Default fra Doom-config er filnavn + "". Endrer den til å være blank
 
 #+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
-(setq frame-title-format nil)
+(setq frame-title-format "%f")
 #+end_src
 
 Lager også en enkel toggle så jeg kan endre til å skrive full path etter behov:
