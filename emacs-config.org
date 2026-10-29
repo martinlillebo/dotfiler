@@ -3183,6 +3183,45 @@ Fransk [[https://www.radiopaysdegueret.fr/][nettradio]] som spiller veldig varie
 (define-key doom-leader-map (kbd "r p") #'my/radio-pays-de-gueret)
 #+end_src
 
+*** Nightride FM
+
+https://nightride.fm/stations?station=nightride
+
+#+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
+(defun my/radio-nightride ()
+  "Spiller av Nightride FM - synthwave"
+  (interactive)
+  (emms-play-url "https://stream.nightride.fm/nightride.mp3"))
+#+end_src
+
+#+RESULTS:
+: my/radio-nightride
+
+#+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
+(define-key doom-leader-map (kbd "r n") #'my/radio-nightride)
+#+end_src
+
+*** Nightride FM - Chillsynth
+
+https://nightride.fm/stations?station=chillsynth
+
+#+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
+(defun my/radio-chillsynth ()
+  "Spiller av Nightride FM - Chillsynth"
+  (interactive)
+  (emms-play-url "https://stream.nightride.fm/chillsynth.mp3"))
+#+end_src
+
+#+RESULTS:
+: my/radio-chillsynth
+
+#+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
+(define-key doom-leader-map (kbd "r c") #'my/radio-chillsynth)
+#+end_src
+
+#+RESULTS:
+: my/radio-chillsynth
+
 *** P11 Dance
 
 Fra [[https://www.lydenavnorge.no/p11/][P4]]
