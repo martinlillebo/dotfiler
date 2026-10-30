@@ -1392,6 +1392,22 @@ Sistnevnte funksjon tillater bare ASCII-tegn, som gjør at f.eks. "Å" omgjøres
                                         (org-roam-node-title node)))))
 #+end_src
 
+** RET på bullet i første listeelement
+
+Doom har en "bug" der man ikke kan sjekke av en ~- [ ]~-boks med RET hvis man har markøren på ~-~-symbolet i første listepunkt. ~C-c C-c~ funker som vanlig i den situasjonen, så advice-et nedenfor fanger opp akkurat den situasjonen og kaller C-c C-c om jeg bruker RET, som ellers ikke vil gjort noe 
+
+#+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
+(defadvice! my/org-dwim-checkbox-at-list-start-a (fn &rest args)
+  "Bruk C-c C-c når punkt står på starten av en liste med avkrysningsboks."
+  :around #'+org/dwim-at-point
+  (if (and (eq (org-element-type (org-element-context)) 'plain-list)
+           (org-at-item-checkbox-p))
+      (org-ctrl-c-ctrl-c)
+    (apply fn args)))
+#+end_src
+
+#+RESULTS:
+
 * Org-agenda
 ** Sortering
 
@@ -1652,20 +1668,13 @@ Dette styres av ~org-export-with-broken-links~. Setter den til ~'mark~ foreløpi
 #+end_src
 
 
-** Ansible-støtte
+** YAML-fargelegging av ~#+begin_src ansible~-blokker
 
-~org-babel~ støtter ikke Ansible-kode ut fra boksen, men det kan legges til med ~ob-ansible.el~. Jeg klarte ikke finne på en smart måte å legge den til, så jeg lasta ned ob-ansible fra Github og kopierte kildekoden rett inn i ~/dotfiler/doom/lokal/ob-ansible.el~, og ~require~-er den inn derfra. Så jeg har en frossen kopi av akkurat denne pakka. Antar jeg la til den ´add-load-path´-setningen først for å få Emacs til å lete etter ~ob-ansible~ i riktig mappe
+Jeg har gamle notater som definerer ~#+begin_src ansible~ der jeg burde ha skrevet ~(...) yaml~~. Mapper "ansible" over til "yaml" slik: 
 
 #+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
-
-(add-load-path! "~/.config/doom/lokal")
-
 (after! org
-  (require 'ob-ansible)
-  (org-babel-do-load-languages
-   'org-babel-load-languages
-   '((ansible . t)  
-     )))
+  (add-to-list 'org-src-lang-modes '("ansible" . yaml)))
 #+end_src
 
 ** Eksport til HTML
