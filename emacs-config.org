@@ -2,9 +2,12 @@
 #+STARTUP: overview
 #+HTML_HEAD: <link rel="stylesheet" href="https://cdn.simplecss.org/simple.min.css">
 
-Denne Emacs-konfigurasjonen baserer seg på [[https://github.com/doomemacs/doomemacs][Doom Emacs]]-rammeverket, som deler inn all konfigurasjon til ~init.el~, ~packages.el~, og ~config.el~.
+Literal konfigurasjonsfil for å tilpasse min versjon av [[https://github.com/doomemacs/doomemacs][Doom Emacs]]
 
-Dette er en [[https://orgmode.org/manual/Extracting-Source-Code.html][literal konfigurasjonsfil]], som betyr at all konfigurasjon defineres i denne artikkelen, også hentes innholdet i kodeblokkene her ut til de riktige konfigfilene når man ønsker å oppdatere. Med andre ord skriver man README-en først, også utgår all konfig automatisk ut fra den. 
+All konfig defineres i denne fila, også hentes innholdet i kodeblokkene ut til riktige filer når man ønsker å oppdatere.
+
+Med andre ord skriver man README-en først, også utgår all konfig automatisk ut fra den. 
+
 
 * Profiling av oppstartstid
 
