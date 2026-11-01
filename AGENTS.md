@@ -21,3 +21,8 @@ Personal dotfiles, symlinked into place manually or with Ansible. The Doom Emacs
 - Secrets live in `~/.emacs.secrets`, outside the repo. Never put personal or work-specific data in the org file.
 - After editing, check paren balance in the changed blocks and tell the user that a `doom sync` is needed if you changed `packages.el` or `init.el`.
 - Suggest small refactoring edits where appropriate, but keep these suggestions small and atomic
+
+## Refactor plan
+
+- Ongoing refactor: `docs/refaktor.org`. Follow "How we work" there.
+- The user does all git work (staging, commits, tags).

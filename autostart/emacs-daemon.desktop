@@ -3,6 +3,6 @@ Type=Application
 Exec=emacs --daemon
 Hidden=false
 NoDisplay=false
-X-GNOME-Autostart-enabled=true
+X-GNOME-Autostart-enabled=false
 Name=Emacs Daemon
 Comment=Start Emacs server on login

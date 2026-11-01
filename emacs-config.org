@@ -44,11 +44,12 @@ Om oppstart av Emacs går treigt, pleier jeg å legge inn disse to linjene manue
 
 Sensitiv info som passord, personlige notatnavn, og jobbrelaterte referanser som ikke passer seg på et offentlig repo legges til en ~.emacs.secrets~-fil som jeg synkroniserer privat, utenfor denne configen.
 
-~when~-uttrykket på første linje passer på at Emacs ikke krasjer hvis ~.secrets~-fila skulle mangle
+~when~-uttrykket på første linje passer på at Emacs ikke krasjer hvis ~.secrets~-fila skulle mangle. ~with-demoted-errors~ gjør at en feil i fila ikke stopper resten av configen.
 
 #+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
 (when (file-exists-p "~/.emacs.secrets")
-  (load-file "~/.emacs.secrets"))
+  (with-demoted-errors "Feil i ~/.emacs.secrets: %S"
+    (load-file "~/.emacs.secrets")))
 #+end_src
 
 * init.el
@@ -1964,7 +1965,12 @@ Doom lagrer automatisk workspace-sessionen når Emacs avsluttes normalt med ~per
 Legger inn en hook som kjører ~(doom-load-session)~ på riktig tidspunkt, for å gjenopprette forrige session
 
 #+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
-(add-hook 'doom-init-ui-hook #'doom-load-session t)
+(defun my/last-session-trygt ()
+  "Last forrige session uten at en feil stopper resten av Dooms UI-oppsett."
+  (with-demoted-errors "Kunne ikke laste session: %S"
+    (doom-load-session)))
+
+(add-hook 'doom-init-ui-hook #'my/last-session-trygt t)
 #+end_src
 
 *** Folde ut til markørposisjonen
@@ -2236,7 +2242,7 @@ Det er fortsatt litt for mange steg på en mobiltelefon, så jeg automatiserer d
 #+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
 (defun my/notatcommit ()
   (interactive)
-  (magit-stage-modified)
+  (magit-stage-modified t)
   (magit-commit-create (list "-m" (concat "NN " (format-time-string "%Y-%m-%d %H:%M:%S")))))
 #+end_src
 
