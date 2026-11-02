@@ -681,17 +681,35 @@ bruker ~SPC v s~ fordi den minner meg om den originale versjonen.
 Lager i tillegg en versjon som bare kjører "S ~" når jeg har markert tekst, slik at jeg har en løsning som også kan håndtere flere ord med mellomrom mellom seg. Da har jeg samme hotkey for normal mode og visual mode. 
 
 #+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
-(define-key evil-normal-state-map (kbd "SPC v s")
-  (lambda () (interactive)
-    (execute-kbd-macro (kbd "v i W S ~"))
-    (evil-forward-WORD-end)))
+(defun my/tilde-rundt (beg end)
+  "Sett ~ rundt BEG..END og plasser markøren på siste ~."
+  (goto-char end)
+  (insert "~")
+  (goto-char beg)
+  (insert "~")
+  (goto-char (1+ end)))
 
-(define-key evil-visual-state-map (kbd "SPC v s")
-  (lambda () (interactive)
-    (let ((end-pos (region-end)))
-      (execute-kbd-macro (kbd "S ~"))
-      (goto-char (+ end-pos 1)))))
+(defun my/marker-ord-som-kode ()
+  (interactive)
+  (let ((range (evil-inner-WORD)))
+    (my/tilde-rundt (nth 0 range) (nth 1 range))))
+
+(defun my/marker-region-som-kode ()
+  (interactive)
+  (let ((beg (marker-position evil-visual-beginning))
+        (end (if (eq (evil-visual-type) 'line)
+                 (1- evil-visual-end)
+               (marker-position evil-visual-end))))
+    (evil-exit-visual-state)
+    (my/tilde-rundt beg end)))
+
+(define-key evil-normal-state-map (kbd "SPC v s") #'my/marker-ord-som-kode)
+(define-key evil-visual-state-map (kbd "SPC v s") #'my/marker-region-som-kode)
 #+end_src
+
+#+RESULTS:
+: my/marker-region-som-kode
+
 *** ~SPC i c~ for ~insert-char~
 
 #+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
