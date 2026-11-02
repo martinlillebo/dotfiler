@@ -1542,7 +1542,7 @@ En TODO ansees angivelig som "blokkert" når jeg fjerner nedstrøms oppgaver fra
 
 *** Inkludere enkle linjeskift
 
-~org-export-preserve-breaks~ lik ~t~ gjør at punktlister får en newline mellom hvert punkt når man limer inn rendered HTML til Teams. Så jeg setter den til ~nil~
+~org-export-preserve-breaks~ lik ~t~ gjør at punktlister får en newline mellom hvert punkt når man limer inn rendered HTML til Teams. Står på ~t~ som standard; slå av midlertidig med ~my/toggle-org-export-preserve-breaks~
 
 Org og Markdown er glade i å ignorere enkle linjeskift, sånn at eksempelvis
 
