@@ -1510,19 +1510,13 @@ Her er et stykke vibekode fra Claude som setter opp to filterfunksjoner + et age
 #+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
 (defun my/skip-recurring ()
   "Skip entries with repeating timestamps."
-  (let ((subtree-end (save-excursion (org-end-of-subtree t))))
-    (if (save-excursion
-          (re-search-forward "<[^>]*\\+[0-9]+[dwmy][^>]*>" subtree-end t))
-        subtree-end
-      nil)))
+  (when (org-get-repeat)
+    (or (save-excursion (outline-next-heading)) (point-max))))
 
 (defun my/skip-non-recurring ()
   "Skip entries WITHOUT repeating timestamps."
-  (let ((subtree-end (save-excursion (org-end-of-subtree t))))
-    (if (save-excursion
-          (re-search-forward "<[^>]*\\+[0-9]+[dwmy][^>]*>" subtree-end t))
-        nil
-      subtree-end)))
+  (unless (org-get-repeat)
+    (or (save-excursion (outline-next-heading)) (point-max))))
 
 (defvar my/agenda-jobb   (list org-directory) "Overstyres i privat config.")
 (defvar my/agenda-fritid (list org-directory) "Overstyres i privat config.")
@@ -1804,10 +1798,8 @@ Dette er den vanlige eksportfunksjonen ~org-latex-export-to-pdf~, pluss...
   "Export subtree using headline as title and open in browser."
   (interactive)
   (org-back-to-heading t)
-  (let* ((title (nth 4 (org-heading-components)))
-         (pdf-file (progn
-                     (org-set-property "EXPORT_TITLE" title)
-                     (org-latex-export-to-pdf nil t))))
+  (let* ((org-export-with-title t)
+         (pdf-file (org-latex-export-to-pdf nil t)))
     (when pdf-file
       (browse-url pdf-file))))
 #+end_src
