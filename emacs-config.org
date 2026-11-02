@@ -1681,6 +1681,9 @@ Jeg har gamle notater som definerer ~#+begin_src ansible~ der jeg burde ha skrev
   (add-to-list 'org-src-lang-modes '("ansible" . yaml)))
 #+end_src
 
+#+RESULTS:
+: ((ansible . yaml) (md . markdown) (C . c) (C++ . c++) (asymptote . asy) (beamer . latex) (calc . fundamental) (cpp . c++) (ditaa . artist) (desktop . conf-desktop) (dot . graphviz-dot) (elisp . emacs-lisp) (ocaml . tuareg) (screen . shell-script) (sqlite . sql) (toml . conf-toml) (shell . sh) (ash . sh) (sh . sh) (bash . sh) (jsh . sh) (bash2 . sh) (dash . sh) (dtksh . sh) (ksh . sh) (es . sh) (rc . sh) (itcsh . sh) (tcsh . sh) (jcsh . sh) (csh . sh) (ksh88 . sh) (oash . sh) (pdksh . sh) (mksh . sh) (posix . sh) (wksh . sh) (wsh . sh) (zsh . sh) (rpm . sh))
+
 ** Eksport til HTML
 Hjemmesnekra alternativ til ~org-export-to-html~, som eksporterer til ~/tmp~ i stedet for den versjonskontrollerte mappa jeg vanligvis er i. Også åpner den automatisk fila i nettleser. Den sender samtidig hele output-et rett til utklippstavla
 
@@ -3795,4 +3798,9 @@ Kommandoer som åpner [[https://opencode.ai][OpenCode]] i et nytt terminalvindu 
   "Starter opencode i aktivt repo"
   (interactive)
   (my/--opencode-i-repo (or (doom-project-root) default-directory)))
+#+end_src
+* test
+
+#+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
+(setq pgtk-selection-timeout 1000)
 #+end_src
