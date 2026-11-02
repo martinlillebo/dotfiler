@@ -9,6 +9,10 @@ All konfig defineres i denne fila, også hentes innholdet i kodeblokkene ut til 
 Med andre ord skriver man README-en først, også utgår all konfig automatisk ut fra den. 
 
 
+* tangle: no
+
+2026-11-02 har gjort ganske mange endringer ila et par dager, mange av de er satt til ~tangle: no~ i stedet for å slette de helt. Sletter de permanent etter hvert, når det har gått en stund
+
 * Profiling av oppstartstid
 
 
@@ -535,7 +539,7 @@ Det er egentlig fint at ord wrapper på høyresiden av skjermen, men ~word-wrap~
 
 Det er uansett raskt å bytte mellom modusene med ~M-x toggle-ord-wrap~. Setter default til å ikke bryte:
 
-#+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
+#+begin_src emacs-lisp :tangle no
 ;(setq word-wrap nil)
 (add-hook 'doom-after-init-modules-hook
   (lambda () (setq-default word-wrap nil)))
