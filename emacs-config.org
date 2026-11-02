@@ -1142,15 +1142,22 @@ Legger til mapper jeg ofte søker gjennom
     (projectile-add-known-project p)))
 #+end_src
 
-Bytter caching metode fra hybrid til alien, for at nye filer skal bli søkbare med en gang. Før jeg gjorde dette, måtte jeg kjøre ~projectile-invalidate-cache~ ofte for å få med nye filer
+Skrur av caching, slik at nye og omdøpte filer er søkbare med en gang.
 
 #+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
+(after! projectile
+  (setq projectile-enable-caching nil))
+#+end_src
+
+Bytter caching metode fra hybrid til alien, for at nye filer skal bli søkbare med en gang. Før jeg gjorde dette, måtte jeg kjøre ~projectile-invalidate-cache~ ofte for å få med nye filer
+
+#+begin_src emacs-lisp :tangle no
 (setq projectile-indexing-method 'alien)
 #+end_src
 
 Setter opp et advice som gjør at ~projectile-invalidate-cache~ kjøres etter hver ~rename-file~, slik at filer med nytt navn er automatisk søkbare i Projectile etter navneendring.
 
-#+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
+#+begin_src emacs-lisp :tangle no
 (after! projectile
   (defun my/rename-file-invalidate-projectile-cache (&rest _)
       (when (and (called-interactively-p 'any)
