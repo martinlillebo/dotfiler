@@ -1412,6 +1412,25 @@ Doom har en "bug" der man ikke kan sjekke av en ~- [ ]~-boks med RET hvis man ha
 
 #+RESULTS:
 
+** Setter ~zn~ til å narrow-e i indirekte buffer
+
+~zn~ sin defaultverdi mapper til ~org-tree-to-indirect-buffer~, som lager en ny buffer som baserer seg på den originale, men narrow-ed ned til en headline. Om man da ~zn~-er en annen heading i et annet vindu, vil Org lukke den forrige bufferen som var narrow-ed på en annen headline. Dette vinduet reverterer til en annen buffer, som vanligvis er underliggende base-buffer. Det vil si hele filen uten narrow-ing. 
+
+Løsningen er å la Org beholde de tidligere indirekte bufferne i stedet for å bare beholde den nyeste. Ulempen her er at man får en haug med åpne buffere som alle peker til samme base-buffer, men det kan jeg leve med
+
+#+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
+(defun my/org-narrow-heading-here ()
+  "Open current subtree in a new indirect buffer in this window.
+Keeps earlier indirect buffers, like `C-u' does."
+  (interactive)
+  (let ((org-indirect-buffer-display 'current-window))
+    (org-tree-to-indirect-buffer '(4))))
+
+(map! :after evil-org
+      :map (org-mode-map evil-org-mode-map)
+      :n "zn" #'my/org-narrow-heading-here)
+#+end_src
+
 * Org-agenda
 ** Sortering
 
