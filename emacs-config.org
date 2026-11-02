@@ -1040,10 +1040,31 @@ Setter hotkeys for ~evil-numbers~ som øker/senker tallet man har markøren på:
 * Utviklermiljø
 ** Parenteser
 
-Aktiverer ~smartparens-mode~ overalt for å lyse opp motsats-parentesen til den jeg har markøren på:
+Aktiverer ~smartparens-mode~ overalt for å lyse opp motsats-parentesen til den jeg har markøren på i org-filer. 
+
+Doom sin kildekode for Org har en detalj om at de deaktiverer ~show-paren-mode~ i Org-dokumenter på grunn av et problem med "flimmer":
+
+Dvs:
+
+#+begin_src conf
+~/.config/emacs/sources/doom+/modules/lang/org/config.el
+#+end_src
+
+...i disse linjene:
+
+#+begin_src elisp
+1126   (add-hook! 'org-mode-hook
+1127              ;; `show-paren-mode' causes flickering with indent overlays made by
+1128              ;; `org-indent-mode', so we turn off show-paren-mode altogether
+1129              #'doom-disable-show-paren-mode-h
+1130              ;; disable `show-trailing-whitespace'; shows a lot of false positives
+1131              #'doom-disable-show-trailing-whitespace-h)
+#+end_src
+
+Så i stedet for å bruke ~show-paren-mode~ i Org docs, bruker vi ~show-smartparens-mode~ i stedet for som funker fint:
 
 #+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
-(show-smartparens-global-mode 1)
+(add-hook 'org-mode-hook #'show-smartparens-mode)
 #+end_src
 
 
