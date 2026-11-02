@@ -2528,6 +2528,11 @@ Wrapper-ene jeg bruker mest er disse:
   "Rammer inn region eller paragraf i en #+begin_src yaml block."
   (interactive)
   (my/wrap-med-block "src" "yaml"))
+
+(defun my/wrap-med-src-markdown ()
+  "Rammer inn region eller paragraf i en #+begin_src yaml block."
+  (interactive)
+  (my/wrap-med-block "src" "markdown"))
 #+end_src
 
 Til slutt hotkeys for hver av de: 
@@ -2538,6 +2543,7 @@ Til slutt hotkeys for hver av de:
 (define-key doom-leader-map (kbd "i e") #'my/wrap-med-src-elisp)
 (define-key doom-leader-map (kbd "i s") #'my/wrap-med-src-shell) ;; Denne overskriver 
 (define-key doom-leader-map (kbd "i y") #'my/wrap-med-src-yaml)
+(define-key doom-leader-map (kbd "i m") #'my/wrap-med-src-markdown)
 #+end_src
 
 
