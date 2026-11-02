@@ -236,8 +236,6 @@ Dette er hele ~init.el~-fila slik den er originalt etter Doom Emacs-rammeverket.
        (default +bindings +smartparens))
 #+end_src
 
-#+RESULTS:
-
 * packages.el
 
 Her ligger det småpakker som ikke har gjort seg fortjent til egne kapitler
@@ -381,9 +379,6 @@ Togglefunksjonen:
   (message "Søkesti: %s" my/søkesti))
 #+end_src
 
-#+RESULTS:
-: my/toggle-jobb-fritid
-
 - ~force-mode-line-update t~ sier at modeline-innholdet skal oppdateres
 - referanser til "git-depth" er det tallet nedenfor ~magit-repository-directories~, som sier hvor mange subdirectories nedover man skal lete etter git-repoer
 
@@ -459,9 +454,6 @@ Deretter må det settes i ~config.el~ vha. ~doom-theme~. Temaet kommer i fire va
 (when (fboundp 'catppuccin-reload)
   (catppuccin-reload))
 #+end_src
-
-#+RESULTS:
-: t
 
 ** Modus Vivendi
 Protesilaos' temaer: https://protesilaos.com/emacs/modus-themes
@@ -707,9 +699,6 @@ Lager i tillegg en versjon som bare kjører "S ~" når jeg har markert tekst, sl
 (define-key evil-visual-state-map (kbd "SPC v s") #'my/marker-region-som-kode)
 #+end_src
 
-#+RESULTS:
-: my/marker-region-som-kode
-
 *** ~SPC i c~ for ~insert-char~
 
 #+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
@@ -810,9 +799,6 @@ Det var nå jeg måtte lære meg hva en "frame" er, i tillegg til "window" og "b
 (set-frame-parameter (selected-frame) 'alpha '(95 . 95))
 (add-to-list 'default-frame-alist '(alpha . (95 . 95)))
 #+end_src
-
-#+RESULTS:
-: ((alpha 96 . 96) (buffer-predicate . doom-buffer-frame-predicate) (right-divider-width . 1) (bottom-divider-width . 1) (alpha 94 . 94) (vertical-scroll-bars) (tool-bar-lines . 0) (menu-bar-lines . 0) (left-fringe . 8) (right-fringe . 8))
 
 ** Avslutte med riktig kommando
 
@@ -1010,8 +996,6 @@ Evils vanlige hopp (~G~, ~/~, ~n~, ~%~, ~gd~ osv.) havner allerede i lista. Her 
   (advice-add 'evil-previous-line :around #'my/hopp-ved-tall-a))
 #+end_src
 
-#+RESULTS:
-
 ** Hurtigtast - Markere til linjeslutt
 
 Jeg markerer veldig okte til slutten av ei linje uten å ville ta med linjeskift. Lager en hotkey for det:
@@ -1105,8 +1089,6 @@ Trikset er å utnytte ~system-type~ som returnerer ~gnu/linux~ i WSL og Linux, o
    ((eq system-type 'android)
     (setq browse-url-generic-program "xdg-open"))))
 #+end_src
-
-#+RESULTS:
 
 - Detaljer om WSL-nettleserlinjene:
   - ~cmd.exe /c~: Kjør det som kommer etterpå i ~cmd.exe~.
@@ -1306,17 +1288,12 @@ Standard-fargene er ikke helt topp, så her er noen endringer:
           )))
 #+end_src
 
-#+RESULTS:
-
 ** CLOSED-property til TODO's
 Denne setter opp en "CLOSED" timestamp når en oppgave markeres som DONE:
 
 #+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
 (setq org-log-done 'time)
 #+end_src
-
-#+RESULTS:
-: time
 
 ** Org-directory
 
@@ -1420,8 +1397,6 @@ Doom har en "bug" der man ikke kan sjekke av en ~- [ ]~-boks med RET hvis man ha
       (org-ctrl-c-ctrl-c)
     (apply fn args)))
 #+end_src
-
-#+RESULTS:
 
 ** Setter ~zn~ til å narrow-e i indirekte buffer
 
@@ -1707,9 +1682,6 @@ Jeg har gamle notater som definerer ~#+begin_src ansible~ der jeg burde ha skrev
   (add-to-list 'org-src-lang-modes '("ansible" . yaml)))
 #+end_src
 
-#+RESULTS:
-: ((ansible . yaml) (md . markdown) (C . c) (C++ . c++) (asymptote . asy) (beamer . latex) (calc . fundamental) (cpp . c++) (ditaa . artist) (desktop . conf-desktop) (dot . graphviz-dot) (elisp . emacs-lisp) (ocaml . tuareg) (screen . shell-script) (sqlite . sql) (toml . conf-toml) (shell . sh) (ash . sh) (sh . sh) (bash . sh) (jsh . sh) (bash2 . sh) (dash . sh) (dtksh . sh) (ksh . sh) (es . sh) (rc . sh) (itcsh . sh) (tcsh . sh) (jcsh . sh) (csh . sh) (ksh88 . sh) (oash . sh) (pdksh . sh) (mksh . sh) (posix . sh) (wksh . sh) (wsh . sh) (zsh . sh) (rpm . sh))
-
 ** Eksport til HTML
 Hjemmesnekra alternativ til ~org-export-to-html~, som eksporterer til ~/tmp~ i stedet for den versjonskontrollerte mappa jeg vanligvis er i. Også åpner den automatisk fila i nettleser. Den sender samtidig hele output-et rett til utklippstavla
 
@@ -1774,10 +1746,6 @@ Ikke satt meg inn i hvorfor ennå, men her er et stykke vibekode som løser hele
 
 ;; (add-to-list 'org-export-filter-final-output-functions #'my/html-teams-friendly)
 #+end_src
-
-#+RESULTS:
-| my/html-teams-friendly |
-
 
 ** Eksport til PDF
 
@@ -1980,11 +1948,6 @@ Til slutt en hook for å aktivere alle funksjonene ovenfor når jeg er i en Mark
 #+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
  ;; (add-hook 'markdown-mode-hook #'nb/markdown-unhighlight)
 #+end_src
-
-#+RESULTS:
-| nb/markdown-unhighlight | evil-markdown-mode | +corfu-add-cape-elisp-block-h |
-
-
 * Workspaces
 
 ** Gjenopprette workspaces automatisk
