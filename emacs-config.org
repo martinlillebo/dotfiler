@@ -2307,9 +2307,6 @@ Resultat:
 #+end_quote
 
 ** Legge inn debugprint i *Messages*-bufferen
-:PROPERTIES:
-:EXPORT_TITLE: Linjeskift/debugprint i *Messages*-bufferen
-:END:
 
 For å lage luft, og se hvor noe starter og noe annet slutter
 
@@ -2852,7 +2849,6 @@ Utgangspunktet er kopi-pasta rett fra README-en
 #+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
 (use-package blamer
   :bind (("s-i" . blamer-show-commit-info))
-  :defer 20
   :custom
   (blamer-idle-time 0.3)
   (blamer-min-offset 70)
@@ -2860,9 +2856,7 @@ Utgangspunktet er kopi-pasta rett fra README-en
   (blamer-face ((t :foreground "#7a88cf"
                     :background unspecified
                     :height 140
-                    :italic t)))
-  :config
-  (global-blamer-mode 0))
+                    :italic t))))
 #+end_src
 
 * Startside
