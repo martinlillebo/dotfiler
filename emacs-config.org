@@ -1331,8 +1331,6 @@ Forteller Emacs/org-mode hvor det skal letes etter ~.org~-filer:
 (setq org-directory (expand-file-name "~/repos/notater/"))
 
 (setq org-roam-directory org-directory)
-(after! org-roam
-  (org-roam-db-autosync-mode))
 #+end_src
 
 ** Org-capture templates
