@@ -1347,7 +1347,7 @@ toc-org het opprinnelig org-toc, men så var det noe navnekonflikter som førte 
 
 Denne linja gjør at innholdsfortegnelser tar med statuser som TODO/STRT/DONE o.l., i stedet for standardsettingen som er å ignorere de
 
-#+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
+#+begin_src emacs-lisp :tangle no
 (setq org-export-with-todo-keywords t)
 #+end_src
 ** ~NEXT~-status 
