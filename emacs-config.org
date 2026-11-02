@@ -640,11 +640,11 @@ Forskjellen mellom lexical/dynamic binding handler om hvorvidt verdier satt med 
 
 ** Autolagre buffere
 
-Standardinnstillingen til Emacs er at man åpner opp fil-innholdet i en uavhengig buffer, også skrives ikke endringer til filen før man husker å lagre med ~SPC b s~. Det glemmer jeg hele tida, så denne innstillingen aktiverer autolagring-modus med ~+1~ med 5-sekunders intervall mellom hver lagring
+Standardinnstillingen til Emacs er at man åpner opp fil-innholdet i en uavhengig buffer, også skrives ikke endringer til filen før man husker å lagre med ~SPC b s~. Det glemmer jeg hele tida, så denne innstillingen aktiverer autolagring-modus med ~+1~ med 20-sekunders intervall mellom hver lagring
 
 
 #+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
-(setq auto-save-visited-interval 5)
+(setq auto-save-visited-interval 20)
 (auto-save-visited-mode +1)
 #+end_src
 
