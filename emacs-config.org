@@ -965,24 +965,6 @@ Veldig vibekodet. Men her er noen detaljer:
 
 Alt som har med Vim-bevegelser og navigasjon å gjøre
 
-** Fjerne uvaner
-
-Et vanlig tips for å bli flinkere i Vim er å deaktivere ting som nybegynnere ofte klamrer seg til, for å tvinge overgang til bedre vaner. En av tingene er å bruke piltastene. Egentlig i det hele tatt, men spesielt i insert mode. Starter med å fjerne de akkurat i insert mode, hvor jeg ofte havner der
-
-#+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
-;; 2026-03-28 Tror jeg er avvent nå. Deaktiverer midlertidig
-;; (after! evil
-;;   (defun my/deaktivere-piltaster ()
-;;     (interactive)
-;;     (message "Piltaster deaktivert."))
-
-;;   (dolist (key '("<left>" "<right>" "<up>" "<down>"))
-;;     (define-key evil-insert-state-map (kbd key) 'my/deaktivere-piltaster)
-;;     (define-key evil-normal-state-map (kbd key) 'my/deaktivere-piltaster)
-;;     )
-;;   )
-#+end_src
-
 ** Better-jumper
 
 I ~Vim~ så funker ~``~ fint til å hoppe mellom ~evil-next-line~/~evil-previous-line~ når disse kalles med et tall, f.eks. ~5j~ eller ~10k~. Men ~evil-mode~ inkluderer ikke det.
