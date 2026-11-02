@@ -706,7 +706,7 @@ Brukes mye på mobilen - vil ofte gå til et sentralt innboksnotat, og bare rabl
 (map! :n "SPC 1"
       (lambda ()
         (interactive)
-        ;; (find-file "~/repos/notater/202012111337 Innboks.org")
+        (find-file "~/repos/notater/202012111337 Innboks.org")
         (goto-char (point-max))
         (newline)
         (evil-insert-state)))
@@ -2354,10 +2354,10 @@ regex-en er vibbekoda med Claude. Før regex-en er det noen linjer for å få pl
 (defun my/markdown-lenke-til-org ()
   (interactive)
   (beginning-of-line)
-  (search-forward "[")
-  (backward-char)
-  (when (looking-at "\\[\\([^]]+\\)\\](\\([^)]+\\))")
-    (replace-match "[[\\2][\\1]]")))
+  (when (search-forward "[" (line-end-position) t)
+    (backward-char)
+    (when (looking-at "\\[\\([^]]+\\)\\](\\([^)]+\\))")
+      (replace-match "[[\\2][\\1]]"))))
 #+end_src
 
 ** Funksjon for å skrive YYYY-MM-DD-TT-MM
@@ -2620,11 +2620,13 @@ Deretter en blokk med vibekode:
         (placeholder-map nil))
     ;; Protect abbreviations
     (dolist (abbr my/no-abbreviations)
-      (let ((placeholder (format "\0%s\0" abbr)))
-        (push (cons placeholder (concat abbr ".")) placeholder-map)
-        (setq text (replace-regexp-in-string
-                    (concat (regexp-quote abbr) "\\.")
-                    placeholder text t t))))
+      (setq text (replace-regexp-in-string
+                  (concat "\\b" (regexp-quote abbr) "\\.")
+                  (lambda (m)
+                    (let ((placeholder (format "\0%d\0" (length placeholder-map))))
+                      (push (cons placeholder m) placeholder-map)
+                      placeholder))
+                  text t t)))
     ;; Split on sentence endings
     (setq text (replace-regexp-in-string "\\([.!?]\\) +" "\\1\n" text))
     ;; Restore abbreviations
@@ -3665,15 +3667,17 @@ også laster vi inn major-mode-koden ved oppstart av Emacs slik:
 * gptel
 ** Installering og aktivering
 
+2026-11-02 Utkommentert alt, fordi jeg ikke bruker ~gptel~. Sletter det etterhvert om det ikke endrer seg
+
 Installerer gptel-pakka:
 
-#+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/packages.el
+#+begin_src emacs-lisp :tangle no
 (package! gptel :recipe (:nonrecursive t))
 #+end_src
 
 Aktiverer den i Emacs:
 
-#+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
+#+begin_src emacs-lisp :tangle no
 (use-package! gptel)
 #+end_src
 
@@ -3681,7 +3685,7 @@ Aktiverer den i Emacs:
 
 Ofte kalt "personalisering"-parameteren. Det er den teksten som mates inn i forkant av hver request, for å tilpasse oppførselen til AI-en.
 
-#+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
+#+begin_src emacs-lisp :tangle no
 (defvar gptel-systemmelding
 "Please keep it short and to the point.
 
@@ -3704,20 +3708,20 @@ Avoid filler text. It is OK if that makes the responses look \"cold\" or detache
 
 Lager en preset i gptel-configen her:
 
-#+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
+#+begin_src emacs-lisp :tangle no
 (gptel-make-preset 'standard-test
   :system gptel-systemmelding)
 #+end_src
 
 Setter den som standard ved boot:
 
-#+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
+#+begin_src emacs-lisp :tangle no
 (gptel--apply-preset 'standard-test)
 #+end_src
 
 Noen ganger har jeg lurt på om systemmeldingen i det hele tatt blir lest og tatt i bruk. Da har jeg byttet til ~emoji-preset~ nedenfor her som et debugging-verktøy, for da blir det ganske åpenbart om AI-en følger instruksen eller ikke
 
-#+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
+#+begin_src emacs-lisp :tangle no
 (defvar gptel-emojitest "only reply with emojis and nothing else")
 
 (gptel-make-preset 'emoji-preset
@@ -3729,13 +3733,13 @@ Som default bruker ~gptel~ bare ChatGPT-modellene. Legger inn Anthropic sine Cla
 
 API-nøkkelen til Claude har jeg lagret i en ~~/.authinfo~-fil, som oppdages automatisk av ~auth-source-pick-first-password~-funksjonen:
 
-#+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
+#+begin_src emacs-lisp :tangle no
 (gptel-make-anthropic "Claude"
   :stream t
   :key (auth-source-pick-first-password :host "api.anthropic.com"))
 #+end_src
 
-#+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
+#+begin_src emacs-lisp :tangle no
 (setq gptel-backend (gptel-make-anthropic "Claude"
                  :stream t
                  :key (auth-source-pick-first-password :host "api.anthropic.com")))
@@ -3743,7 +3747,7 @@ API-nøkkelen til Claude har jeg lagret i en ~~/.authinfo~-fil, som oppdages aut
 
 Setter ~haiku~-modellen til å være standardvalget, da den koster ca. 0 kroner i bruk. 
 
-#+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
+#+begin_src emacs-lisp :tangle no
 (setq gptel-model 'claude-3-haiku-20240307)
 #+end_src
 
@@ -3751,7 +3755,7 @@ Setter ~haiku~-modellen til å være standardvalget, da den koster ca. 0 kroner 
 
 Setter org-mode som standardsyntax over Markdown som er default:
 
-#+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
+#+begin_src emacs-lisp :tangle no
 (setq gptel-default-mode #'org-mode)
 #+end_src
 
