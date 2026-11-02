@@ -992,52 +992,26 @@ Et vanlig tips for å bli flinkere i Vim er å deaktivere ting som nybegynnere o
 ;;     )
 ;;   )
 #+end_src
+
 ** Better-jumper
 
 I ~Vim~ så funker ~``~ fint til å hoppe mellom ~evil-next-line~/~evil-previous-line~ når disse kalles med et tall, f.eks. ~5j~ eller ~10k~. Men ~evil-mode~ inkluderer ikke det.
 
-Jeg brukte litt for mye tid til å prøve å vibe det til å virke, også ga jeg opp. Men jeg fant en løsning som heller bruker ~better-jumper~, som Doom har bundet til ~C-o~/~C-i~.
-
-Boilerplate-koden nedenfor her er henta fra denne [[https://www.reddit.com/r/emacs/comments/1mztz6i/share_your_tips_for_fast_movements_and_navigation/][reddittråden]], også har jeg lagt til noen ekstra linjer under "jump scenarios" når jeg vil ha inn flere ting til å trigge et mark
+Evils vanlige hopp (~G~, ~/~, ~n~, ~%~, ~gd~ osv.) havner allerede i lista. Her legges bevegelser med ~TALL j~ og ~TALL k~ til i tillegg:
 
 #+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
-(use-package better-jumper
-
-    :custom
-    ; this is the key to avoiding conflict with evils jumping stuff
-    (better-jumper-use-evil-jump-advice nil)
-
-    :config
-    (better-jumper-mode 1)
-
-    ; this lets me toggle between two points. (adapted from evil-jump-backward-swap)
-    (evil-define-motion better-jumper-toggle (count)
-      (let ((pnt (point)))
-        (better-jumper-jump-backward 1)
-        (better-jumper-set-jump pnt)))
-
-    ; this is the key here. This advice makes it so you only set a jump point
-    ; if you move more than one line with whatever command you call. For example
-    ; if you add this advice around evil-next-line, you will set a jump point
-    ; if you do 10 j, but not if you just hit j. I did not write this code, I
-    ; I found it a while back and updated it to work with better-jumper.
-    (defun my-jump-advice (oldfun &rest args)
-      (let ((old-pos (point)))
-        (apply oldfun args)
-        (when (> (abs (- (line-number-at-pos old-pos) (line-number-at-pos (point))))
-                  1)
-          (better-jumper-set-jump old-pos))))
-
-    ; jump scenarios
-    (advice-add 'evil-next-line :around #'my-jump-advice)
-    (advice-add 'evil-previous-line :around #'my-jump-advice)
-    (advice-add 'helm-swoop :around #'my-jump-advice)
-    (advice-add 'evil-goto-definition :around #'my-jump-advice)
-    (advice-add 'evil-goto-mark  :around #'my-jump-advice)
-    (advice-add 'evil-avy-goto-char-2 :around #'my-jump-advice)
-    )
-    ; ... whenever you want a new jump scenario just use the above pattern.
+(after! better-jumper
+  (defun my/hopp-ved-tall-a (fn &optional count &rest args)
+    "Count + j/k is a jump, e.g. 5j."
+    (when (and count (> (abs count) 1))
+      (evil-set-jump))
+    (apply fn count args))
+  (advice-add 'evil-next-line :around #'my/hopp-ved-tall-a)
+  (advice-add 'evil-previous-line :around #'my/hopp-ved-tall-a))
 #+end_src
+
+#+RESULTS:
+
 ** Hurtigtast - Markere til linjeslutt
 
 Jeg markerer veldig okte til slutten av ei linje uten å ville ta med linjeskift. Lager en hotkey for det:
