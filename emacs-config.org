@@ -1829,20 +1829,22 @@ Fant et råd i et gammelt [[https://github.com/syl20bnr/spacemacs/issues/9822#is
 
 * Markdown
 
-** ~markdown-view-mode~ når ~evil-insert~
+** Skjul markdown-markup utenfor ~evil-insert~
 
-Utkast som fungerer.
-Nå aktiveres ~markdown-view-mode~ når jeg er i ~evil-insert~-mode, også deaktiveres den når jeg er tilbake i normal mode.
-Men jeg må taste ESC en ekstra gang for å faktisk trigge ~markdown-view-mode~.
-Lever med det foreløpig.
+Markup (~**~, ~[]()~ osv.) skjules i normal mode og vises i insert mode.
 
 #+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
-(map! :map markdown-view-mode-map
-      :n "i" (cmd! (markdown-mode) (evil-insert-state)))
+(defun my/markdown-vis-markup-h ()
+  (markdown-toggle-markup-hiding -1))
 
-(map! :map markdown-mode-map
-      :n "<escape>" (cmd! (evil-force-normal-state) (markdown-view-mode)))
+(defun my/markdown-skjul-markup-h ()
+  (markdown-toggle-markup-hiding 1))
 
+(add-hook! 'markdown-mode-hook
+  (defun my/markdown-markup-etter-evil-state-h ()
+    (markdown-toggle-markup-hiding 1)
+    (add-hook 'evil-insert-state-entry-hook #'my/markdown-vis-markup-h nil t)
+    (add-hook 'evil-insert-state-exit-hook #'my/markdown-skjul-markup-h nil t)))
 #+end_src
 ** Patch for å forstå legacy syntax for lenker mellom filer
 
