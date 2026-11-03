@@ -1,3 +1,4 @@
+
 #+title: Emacs Config
 #+STARTUP: overview
 #+HTML_HEAD: <link rel="stylesheet" href="https://cdn.simplecss.org/simple.min.css">
@@ -6,15 +7,13 @@ Literal konfigurasjonsfil for å tilpasse min versjon av [[https://github.com/do
 
 All konfig defineres i denne fila, også hentes innholdet i kodeblokkene ut til riktige filer når man ønsker å oppdatere.
 
-Med andre ord skriver man README-en først, også utgår all konfig automatisk ut fra den. 
-
+Med andre ord skrives README-en først, også utgår all konfig automatisk ut fra den. 
 
 * tangle: no
 
 2026-11-02 har gjort ganske mange endringer ila et par dager, mange av de er satt til ~tangle: no~ i stedet for å slette de helt. Sletter de permanent etter hvert, når det har gått en stund
 
 * Profiling av oppstartstid
-
 
 Om oppstart av Emacs går treigt, pleier jeg å legge inn disse to linjene manuelt henholdsvis topp og bunn av ~config.el~. Da får man en callstack-rapport med ~M-x profiler-report~ der det står ganske tydelig hva som tar opp all tiden:
 
