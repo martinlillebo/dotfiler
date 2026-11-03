@@ -110,6 +110,7 @@ Dette er hele ~init.el~-fila slik den er originalt etter Doom Emacs-rammeverket.
        multiple-cursors  ; editing in many places at once
        ;;objed             ; text object editing for the innocent
        ;;parinfer          ; turn lisp into python, sort of
+       (whitespace +guess +trim)  ; a butler for your whitespace
        ;;rotate-text       ; cycle region at point between text candidates
        snippets          ; my elves. They type so I don't have to
        ;;word-wrap         ; soft wrapping with language-aware indent
@@ -119,6 +120,7 @@ Dette er hele ~init.el~-fila slik den er originalt etter Doom Emacs-rammeverket.
        electric          ; smarter, keyword-based electric-indent
        ;;eww               ; the internet is gross
        ;;ibuffer           ; interactive buffer management
+       ;;tramp             ; remote files at your arthritic fingertips
        undo              ; persistent, smarter undo for your inevitable mistakes
        vc                ; version-control and Emacs, sitting in a tree
 
@@ -126,15 +128,16 @@ Dette er hele ~init.el~-fila slik den er originalt etter Doom Emacs-rammeverket.
        ;;eshell            ; the elisp shell that works everywhere
        ;;shell             ; simple shell REPL for Emacs
        ;;term              ; basic terminal emulator for Emacs
-       vterm             ; the best terminal emulation in Emacs
-
+       ;;vterm             ; the best terminal emulation in Emacs
+       ;;ghostel           ; the best terminal emulation in Emacs
+       
        :checkers
        syntax              ; tasing you for every semicolon you forget
        ;;(spell +flyspell) ; tasing you for misspelling mispelling
        ;;grammar           ; tasing grammar mistake every you make
 
        :tools
-       ansible
+       ;;ansible
        ;;biblio            ; Writes a PhD for you (citation needed)
        ;;collab            ; buffers with friends
        ;;debugger          ; FIXME stepping through code, to help you add bugs
@@ -149,7 +152,7 @@ Dette er hele ~init.el~-fila slik den er originalt etter Doom Emacs-rammeverket.
        ;;make              ; run make tasks from Emacs
        ;;pass              ; password manager for nerds
        ;;pdf               ; pdf enhancements
-       terraform         ; infrastructure as code
+       ;;terraform         ; infrastructure as code
        ;;tmux              ; an API for interacting with tmux
        ;;tree-sitter       ; syntax and parsing, sitting in a tree...
        ;;upload            ; map local to remote projects via ssh/ftp
@@ -210,7 +213,7 @@ Dette er hele ~init.el~-fila slik den er originalt etter Doom Emacs-rammeverket.
        ;;raku              ; the artist formerly known as perl6
        rest              ; Emacs as a REST client
        ;;rst               ; ReST in peace
-       (ruby +rails)     ; 1.step {|i| p "Ruby is #{i.even? ? 'love' : 'life'}"}
+       ;;(ruby +rails)     ; 1.step {|i| p "Ruby is #{i.even? ? 'love' : 'life'}"}
        ;;(rust +lsp)       ; Fe2O3.unwrap().unwrap().unwrap().unwrap()
        ;;scala             ; java, but good
        ;;(scheme +guile)   ; a fully conniving family of lisps
@@ -231,7 +234,7 @@ Dette er hele ~init.el~-fila slik den er originalt etter Doom Emacs-rammeverket.
        :app
        ;;calendar
        ;;emms
-       everywhere        ; *leave* Emacs!? You must be joking
+       ;;everywhere        ; *leave* Emacs!? You must be joking
        ;;irc               ; how neckbeards socialize
        ;;(rss +org)        ; emacs as an RSS reader
 
@@ -3695,5 +3698,7 @@ Kommandoer som åpner [[https://opencode.ai][OpenCode]] i et nytt terminalvindu 
 * test
 
 #+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
-(setq pgtk-selection-timeout 1000)
+;; (setq pgtk-selection-timeout 1000)
+
+(setq save-interprogram-paste-before-kill nil)
 #+end_src
