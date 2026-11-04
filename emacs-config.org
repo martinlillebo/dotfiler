@@ -88,7 +88,8 @@ Dette er hele ~init.el~-fila slik den er originalt etter Doom Emacs-rammeverket.
        ;;neotree           ; a project drawer, like NERDTree for vim
        ophints           ; highlight the region an operation acts on
        (popup +defaults)   ; tame sudden yet inevitable temporary windows
-       smooth-scroll     ; So smooth you won't believe it's not butter
+       (:unless (featurep :system 'android)
+         smooth-scroll)  ; So smooth you won't believe it's not butter
        ;;tabs              ; a tab bar for Emacs
        treemacs          ; a project drawer, like neotree but cooler
        ;;unicode           ; extended unicode support for various languages
@@ -787,12 +788,7 @@ Jeg lukker ofte Emacs med ~SPC w q~ uten å mene det, da jeg bruker den mye for 
 
 ** ultra-scroll
 
-Denne tror jeg er standard i Doom Emacs. Men den gir feilmelding ved oppstart i Android, så jeg deaktiverer den på mobil:
-
-#+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
-(when (eq system-type 'android)
-    (advice-add 'ultra-scroll-mode :override #'ignore))
-#+end_src
+Denne tror jeg er standard i Doom Emacs. Men den gir feilmelding ved oppstart i Android, så ~smooth-scroll~-modulen er skrudd av på mobil i ~init.el~.
 
 Fjerner en hook der ~ultra-scroll~ ellers ville prøvd å å kalle ~jit-lock-mode~. Jeg har ikke satt meg godt nok inn i det ennå, men ~jit-lock~ handler om å ikke fargelegge tekst og gjøre andre GUI-triks før det er nødvendig, som er når teksten faktisk vises på skjermen. I en narrowed buffer kan det gjør at hele jit-funksjonen tar kvelden, og man ender opp med en slags visuell fundamental-mode. Unngår det slik: 
 
@@ -1013,7 +1009,7 @@ Configen nedenfor gjør at jeg kan trykke på en URL og forvente at den åpnes i
 
 Uten denne configen, så Emacs på Windows åpne URL-er i ~eww~-leseren hvis kjøres som ~.exe~, og ingensteds gjennom WSL. Og Android-klienten bare klager på at det mangler en innstilling og åpner ingenting.
 
-Trikset er å utnytte ~system-type~ som returnerer ~gnu/linux~ i WSL og Linux, og ~android~ på Android. For å skille WSL fra Linux er det en ~and~ clause som i tillegg sjekker om miljøvariablene ~WSLENV~ er satt til noe, for det er den bare i WSL. Kunne sikkert kommet unna med å bare sjekke ~WSLENV~, men det funker slik det står. 
+Trikset er Dooms ~(featurep :system ...)~, som gir ~linux~ på både Linux og WSL, ~wsl~ i tillegg på WSL, og ~android~ på Android. WSL må derfor sjekkes før Linux.
 
 #+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
 (defun my/cmd-escape-url (args)
