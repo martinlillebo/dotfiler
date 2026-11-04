@@ -78,7 +78,7 @@ Dette er hele ~init.el~-fila slik den er originalt etter Doom Emacs-rammeverket.
        doom              ; what makes DOOM look the way it does
        dashboard    ; a nifty splash screen for Emacs
        ;;doom-quit         ; DOOM quit-message prompts when you quit Emacs
-       (emoji +unicode)  ; 🙂
+       ;;(emoji +unicode)  ; 🙂
        hl-todo           ; highlight TODO/FIXME/NOTE/DEPRECATED/HACK/REVIEW
        ;;indent-guides     ; highlighted indent columns
        ;;ligatures         ; ligatures and symbols to make your code pretty again
@@ -209,7 +209,7 @@ Dette er hele ~init.el~-fila slik den er originalt etter Doom Emacs-rammeverket.
        ;;qt                ; the 'cutest' gui framework ever
        ;;racket            ; a DSL for DSLs
        ;;raku              ; the artist formerly known as perl6
-       rest              ; Emacs as a REST client
+       ;;rest              ; Emacs as a REST client
        ;;rst               ; ReST in peace
        ;;(ruby +rails)     ; 1.step {|i| p "Ruby is #{i.even? ? 'love' : 'life'}"}
        ;;(rust +lsp)       ; Fe2O3.unwrap().unwrap().unwrap().unwrap()
@@ -255,9 +255,6 @@ Her ligger det småpakker som ikke har gjort seg fortjent til egne kapitler
 #+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/packages.el
 (package! fireplace)
 (package! rainbow-mode)
-(package! vimgolf)
-(package! evil-tutor)
-(package! elisp-format)
 (package! keyfreq)
 (package! verb)
 (package! keycast)
@@ -266,17 +263,6 @@ Her ligger det småpakker som ikke har gjort seg fortjent til egne kapitler
 (package! terminal-here)
 #+end_src
 
-
-vimgolf config:
-
-#+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
-(after! vimgolf
-  (map! :leader
-        ;; call vimgolf prompt
-        "g v" #'vimgolf
-        ;; default bindings as listed in README
-        "g V" #'vimgolf-submit))
-#+end_src
 
 keyfreq config: Fjerner tracking av scroll-events, for de støyer ned all statistikken.
 Fjerner også ~org-self-insert-command~, som kjøres for hvert eneste tastetrykk
@@ -533,18 +519,6 @@ Ved første øyekast ser det ut som om vinduet settes til å være nesten dobbel
 
 Det gir mening når man får høre at Emacs måler alt i tekst, og rektangelet som omslutter en bokstav på datamaskiner er mye høyere enn det er bredt.
 
-
-** Fjern word wrap
-
-Det er egentlig fint at ord wrapper på høyresiden av skjermen, men ~word-wrap~ gjør også at URL-er starter med et linjeskift, og det er irriterende. Håper å finne ut en måte å fjerne bare newline på venstresiden, samtidig som jeg kan beholde vanlig word wrap på høyresiden
-
-Det er uansett raskt å bytte mellom modusene med ~M-x toggle-ord-wrap~. Setter default til å ikke bryte:
-
-#+begin_src emacs-lisp :tangle no
-;(setq word-wrap nil)
-(add-hook 'doom-after-init-modules-hook
-  (lambda () (setq-default word-wrap nil)))
-#+end_src
 
 ** Nerd fonts
 
@@ -1149,24 +1123,6 @@ Skrur av caching, slik at nye og omdøpte filer er søkbare med en gang.
 (after! projectile
   (setq projectile-enable-caching nil))
 #+end_src
-
-Bytter caching metode fra hybrid til alien, for at nye filer skal bli søkbare med en gang. Før jeg gjorde dette, måtte jeg kjøre ~projectile-invalidate-cache~ ofte for å få med nye filer
-
-#+begin_src emacs-lisp :tangle no
-(setq projectile-indexing-method 'alien)
-#+end_src
-
-Setter opp et advice som gjør at ~projectile-invalidate-cache~ kjøres etter hver ~rename-file~, slik at filer med nytt navn er automatisk søkbare i Projectile etter navneendring.
-
-#+begin_src emacs-lisp :tangle no
-(after! projectile
-  (defun my/rename-file-invalidate-projectile-cache (&rest _)
-      (when (and (called-interactively-p 'any)
-                       (featurep 'projectile))
-                                     (projectile-invalidate-cache nil)))
-
-  (advice-add 'rename-file :after #'my/rename-file-invalidate-projectile-cache))
-#+end_src
     
 * Org-mode
 ** Småting
@@ -1346,11 +1302,6 @@ Org-capture gjør at man kan få skrevet inn smånotater til en fil uten å måt
 
 toc-org het opprinnelig org-toc, men så var det noe navnekonflikter som førte til navnebytte. Men begge referanser fins fortsatt på internett, som gjør at LLM-er refererer til begge deler når man spør om hjelp.
 
-Denne linja gjør at innholdsfortegnelser tar med statuser som TODO/STRT/DONE o.l., i stedet for standardsettingen som er å ignorere de
-
-#+begin_src emacs-lisp :tangle no
-(setq org-export-with-todo-keywords t)
-#+end_src
 ** ~NEXT~-status 
 
 Legger til en ~NEXT~-status oppå Doom sine defaults:
@@ -1737,11 +1688,6 @@ Gjør headerpunkter finere. Prøvde opprinnelig ~org-modern~, men det inneholdt 
 #+end_src
 
 
-* Org-transclusion
-
-#+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/packages.el
-(package! org-transclusion)
-#+end_src
 * Yasnippet
 
 Yasnippet har en tendens til å indentere den siste linja for å matche indentering i kodeblokken som wrappes. Det gjør at ~end_src~ ender opp slik:
@@ -2825,14 +2771,6 @@ I ~dirvish-quick-access-entries~ kan man liste opp snarveier til filer man bruke
     (setq dirvish-quick-access-entries my/dirvish-snarveier)))
 #+end_src
 
-** TRAMP-tilpasning
-Uten å være helt sikker, så tror jeg preview-funksjonen til Dirvish får SSH-sesjoner med TRAMP til å fryse Emacs. Disabler slik:
-
-#+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
-(after! dirvish
-  (setq dirvish-tramp-preview-disabled t))
-#+end_src
-
 
 
 * Blamer.el - inline git blame
@@ -3526,101 +3464,6 @@ også laster vi inn major-mode-koden ved oppstart av Emacs slik:
 (load! "lisp/radio-mode")
 #+end_src
 
-
-* gptel
-** Installering og aktivering
-
-2026-11-02 Utkommentert alt, fordi jeg ikke bruker ~gptel~. Sletter det etterhvert om det ikke endrer seg
-
-Installerer gptel-pakka:
-
-#+begin_src emacs-lisp :tangle no
-(package! gptel :recipe (:nonrecursive t))
-#+end_src
-
-Aktiverer den i Emacs:
-
-#+begin_src emacs-lisp :tangle no
-(use-package! gptel)
-#+end_src
-
-** System prompt
-
-Ofte kalt "personalisering"-parameteren. Det er den teksten som mates inn i forkant av hver request, for å tilpasse oppførselen til AI-en.
-
-#+begin_src emacs-lisp :tangle no
-(defvar gptel-systemmelding
-"Please keep it short and to the point.
-
-Use bullet points when that can make complex matter easier to read.
-
-Do not start sentences with compliments and phrases like \"aha, good question\" - just reply without this emphasis.
-
-Do not engage in any form of flattery or syncophancy.
-
-Assume I misunderstand basic facts from time to time (like everyone does), and make me aware of this when it looks like I need clarification. Actively try to prove me wrong whenever it seems like I've reached a false conclusion. 
-
-If I send you this and nothing else: \"foobar\", then reply only with the word \"baz\". This is only here to test whether the prompt is being read or not. 
-
-Recommend a book from time to time. Always double check that any book mentioned exists in real life. 
-
-Always reply in English even though I ask you questions in Norwegian, unless specifically asked to reply in Norwegian
-
-Avoid filler text. It is OK if that makes the responses look \"cold\" or detached")
-#+end_src
-
-Lager en preset i gptel-configen her:
-
-#+begin_src emacs-lisp :tangle no
-(gptel-make-preset 'standard-test
-  :system gptel-systemmelding)
-#+end_src
-
-Setter den som standard ved boot:
-
-#+begin_src emacs-lisp :tangle no
-(gptel--apply-preset 'standard-test)
-#+end_src
-
-Noen ganger har jeg lurt på om systemmeldingen i det hele tatt blir lest og tatt i bruk. Da har jeg byttet til ~emoji-preset~ nedenfor her som et debugging-verktøy, for da blir det ganske åpenbart om AI-en følger instruksen eller ikke
-
-#+begin_src emacs-lisp :tangle no
-(defvar gptel-emojitest "only reply with emojis and nothing else")
-
-(gptel-make-preset 'emoji-preset
-  :system gptel-emojitest)
-#+end_src
-
-** Claude: Installering og autentisering
-Som default bruker ~gptel~ bare ChatGPT-modellene. Legger inn Anthropic sine Claude-modeller også, og setter ~claude-3-haiku~ til å være default modell i stedet for ChatGPT sin modell.
-
-API-nøkkelen til Claude har jeg lagret i en ~~/.authinfo~-fil, som oppdages automatisk av ~auth-source-pick-first-password~-funksjonen:
-
-#+begin_src emacs-lisp :tangle no
-(gptel-make-anthropic "Claude"
-  :stream t
-  :key (auth-source-pick-first-password :host "api.anthropic.com"))
-#+end_src
-
-#+begin_src emacs-lisp :tangle no
-(setq gptel-backend (gptel-make-anthropic "Claude"
-                 :stream t
-                 :key (auth-source-pick-first-password :host "api.anthropic.com")))
-#+end_src
-
-Setter ~haiku~-modellen til å være standardvalget, da den koster ca. 0 kroner i bruk. 
-
-#+begin_src emacs-lisp :tangle no
-(setq gptel-model 'claude-3-haiku-20240307)
-#+end_src
-
-** Misc 
-
-Setter org-mode som standardsyntax over Markdown som er default:
-
-#+begin_src emacs-lisp :tangle no
-(setq gptel-default-mode #'org-mode)
-#+end_src
 
 
 * ibuffer
