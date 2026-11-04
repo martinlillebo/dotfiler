@@ -444,6 +444,13 @@ Protesilaos' temaer: https://protesilaos.com/emacs/modus-themes
 
 De er blitt tatt inn som standardtemaer i Emacs, så det er bare å sette dark-versjonen (~modus-vivendi-tinted~) som standard
 
+** Ef-themes
+Protesilaos' fargerike temaer: https://github.com/protesilaos/ef-themes
+
+#+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/packages.el
+(package! ef-themes)
+#+end_src
+
 ** Standardtema
 
 #+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
