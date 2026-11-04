@@ -410,14 +410,6 @@ Samme som over, men for filnavn i stedet for tekstsøk:
 Dette er temaer jeg har lagt til i tillegg til alle som fins i Emacs fra før.
 Siste headline har en ~(setq doom-theme NAVN)~-uttrykk som faktisk velger en av disse
 
-** Kanagawa
-
-Temaet kommer [[https://github.com/emacsmirror/kanagawa-themes][herfra]]. Fargepaletten er inspirert av det japanske [[https://en.wikipedia.org/wiki/The_Great_Wave_off_Kanagawa][Kanagawa-maleriet]]. 
-
-#+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/packages.el
-(package! kanagawa-themes)
-#+end_src
-
 ** Catppuccin
 
 Herfra: [[https://github.com/catppuccin/emacs/][Catppuccin - Soothing pastel theme for Emacs]]
