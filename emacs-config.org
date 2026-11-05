@@ -2722,6 +2722,13 @@ Hotkey:
 
 * Dirvish
 Dired/Dirvish config
+
+** ~dired-omit-mode~
+Setter dotfiler og -mapper til å alltid vises:
+
+#+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
+(remove-hook 'dired-mode-hook #'dired-omit-mode)
+#+end_src
 ** Hotkeys
 Dirvish sin hurtigmeny er bedre enn bookmarks-funksjonen til Emacs, så jeg overstyrer ~SPC RET~ hurtigtasten for det her:
 
