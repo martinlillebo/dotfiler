@@ -3113,23 +3113,6 @@ https://www1.wdr.de/radio/1live/index.html
 (define-key doom-leader-map (kbd "r * 1") #'my/radio-wdr-1live)
 #+end_src
 
-*** laut.fm 100 DeutschPop
-
-100 % tysk pop uten avbrudd mellom sangene
-
-https://laut.fm/100deutschpop
-
-#+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
-(defun my/radio-100-deutschpop ()
-  "Spiller av 100 DEUTSCHPOP"
-  (interactive)
-  (emms-play-url "https://stream.laut.fm/100deutschpop"))
-#+end_src
-
-#+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
-(define-key doom-leader-map (kbd "r * 2") #'my/radio-100-deutschpop)
-#+end_src
-
 *** RPR1 100% Deutsch-Pop
 
 Reklamefinansiert tyskpop-kanal fra Rheinland-Pfalz
@@ -3210,30 +3193,6 @@ CHANNEL defaults to \"defcon\"."
      nil t t)))
 #+end_src
 
-*** 100-deutschpop
-
-#+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
-(defun my/now-playing-100-deutschpop ()
-  "Show currently playing song on laut.fm 100 DeutschPop in the echo area."
-  (interactive)
-  (let ((url "https://api.laut.fm/station/100deutschpop/current_song"))
-    (url-retrieve
-     url
-     (lambda (status)
-       (if (plist-get status :error)
-           (message "100 DeutschPop: fetch failed: %S" (plist-get status :error))
-         (goto-char (point-min))
-         (re-search-forward "\n\n")
-         (condition-case err
-             (let* ((json-object-type 'alist)
-                    (json-array-type 'list)
-                    (data (json-read))
-                    (title (alist-get 'title data))
-                    (artist (alist-get 'name (alist-get 'artist data))))
-               (message "♪ %s — %s" artist title))
-           (error (message "100 DeutschPop: parse failed: %S" err)))))
-     nil t t)))
-#+end_src
 *** ilovechillhop
 
 #+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
@@ -3332,9 +3291,6 @@ NAME is the channel name shown in messages."
   (interactive)
   (my/now-playing--nrk "radio_super" "NRK Super"))
 #+end_src
-
-#+RESULTS:
-: my/now-playing-nrk-super
 
 *** RPR1 Deutschpop
 
@@ -3493,7 +3449,6 @@ Poenget er at alt kan styres med en trådløs numpad som fungerer som fjernkontr
     ;; Page 1 — reach via `*'
     (("0" "Deutschlandfunk"         my/radio-deutschlandfunk)
      ("1" "WDR 1Live"               my/radio-wdr-1live)
-     ("2" "laut.fm 100 DeutschPop"  my/radio-100-deutschpop)
      ("3" "RPR1 100% Deutsch-Pop"   my/radio-rpr1-deutschpop)))
   "Pages of stations. Each page is a list of (KEY LABEL COMMAND).
 Page 0 is the default; press `*' (kp-multiply) once for page 1, twice
