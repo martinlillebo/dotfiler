@@ -2919,17 +2919,17 @@ Hurtigtast:
 (define-key doom-leader-map (kbd "r 3") #'my/radio-nrk-p3)
 #+end_src
 
-*** NRK P13
+*** NRK P3 Musikk
 
 #+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
-(defun my/radio-nrk-p13 ()
-  "Spiller av NRK P13"
+(defun my/radio-nrk-p3-musikk ()
+  "Spiller av NRK P3 Musikk"
   (interactive)
-  (emms-play-url "https://cdn0-47115-liveicecast0.dna.contentdelivery.net/p13_mp3_h"))
+  (emms-play-url "https://cdn0-47115-liveicecast0.dna.contentdelivery.net/p3musikk_mp3_h"))
 #+end_src
 
 #+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
-(define-key doom-leader-map (kbd "r t") #'my/radio-nrk-p13)
+(define-key doom-leader-map (kbd "r t") #'my/radio-nrk-p3-musikk)
 #+end_src
 
 *** NRK mP3
@@ -3340,7 +3340,7 @@ Poenget er at alt kan styres med en trådløs numpad som fungerer som fjernkontr
     (("1" "NRK P1"          my/radio-nrk-p1)
      ("2" "NRK P2"          my/radio-nrk-p2)
      ("3" "NRK P3"          my/radio-nrk-p3)
-     ("4" "NRK P13"         my/radio-nrk-p13)
+     ("4" "NRK P3 Musikk"   my/radio-nrk-p3-musikk)
      ("5" "NRK MP3"         my/radio-nrk-mp3)
      ("6" "NRK Klassisk"    my/radio-nrk-klassisk)
      ("7" "NRK Jazz"        my/radio-nrk-jazz)
