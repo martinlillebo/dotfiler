@@ -3268,18 +3268,20 @@ CHANNEL defaults to \"defcon\"."
 
 #+end_src
 
-*** NRK P1
+*** NRK
+
+Alle NRK-kanalene bruker samme API, så de deler én hjelpefunksjon.
 
 #+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
-(defun my/now-playing-nrk-p1 ()
-  "Show what is currently on NRK P1 in the echo area."
-  (interactive)
-  (let ((url "https://psapi.nrk.no/channels/p1/liveelements/now"))
+(defun my/now-playing--nrk (id name)
+  "Show what is currently on NRK channel ID in the echo area.
+NAME is the channel name shown in messages."
+  (let ((url (format "https://psapi.nrk.no/channels/%s/liveelements/now" id)))
     (url-retrieve
      url
-     (lambda (status)
+     (lambda (status name)
        (if (plist-get status :error)
-           (message "NRK P1: fetch failed: %S" (plist-get status :error))
+           (message "%s: fetch failed: %S" name (plist-get status :error))
          (goto-char (point-min))
          (re-search-forward "\n\n")
          (condition-case err
@@ -3297,12 +3299,75 @@ CHANNEL defaults to \"defcon\"."
                     (artist (alist-get 'description current))
                     (program (alist-get 'programTitle current)))
                (cond ((null current)
-                      (message "NRK P1: nothing playing right now"))
+                      (message "%s: nothing playing right now" name))
                      ((equal (alist-get 'type current) "Music")
                       (message "♪ %s — %s" artist title))
                      (t
-                      (message "NRK P1: %s — %s" program title))))
-           (error (message "NRK P1: parse failed: %S" err)))))
+                      (message "%s: %s — %s" name program title))))
+           (error (message "%s: parse failed: %S" name err)))))
+     (list name) t t)))
+
+(defun my/now-playing-nrk-p1 ()
+  "Show what is currently on NRK P1 in the echo area."
+  (interactive)
+  (my/now-playing--nrk "p1" "NRK P1"))
+
+(defun my/now-playing-nrk-p2 ()
+  "Show what is currently on NRK P2 in the echo area."
+  (interactive)
+  (my/now-playing--nrk "p2" "NRK P2"))
+
+(defun my/now-playing-nrk-p3 ()
+  "Show what is currently on NRK P3 in the echo area."
+  (interactive)
+  (my/now-playing--nrk "p3" "NRK P3"))
+
+(defun my/now-playing-nrk-p3-musikk ()
+  "Show what is currently on NRK P3 Musikk in the echo area."
+  (interactive)
+  (my/now-playing--nrk "p3musikk" "NRK P3 Musikk"))
+
+(defun my/now-playing-nrk-super ()
+  "Show what is currently on NRK Super in the echo area."
+  (interactive)
+  (my/now-playing--nrk "radio_super" "NRK Super"))
+#+end_src
+
+#+RESULTS:
+: my/now-playing-nrk-super
+
+*** RPR1 Deutschpop
+
+Bruker stasjons-ID ~65~ i ~station=~. ~station=100-deutsch-pop~ gir også svar, men fra feil kanal (spilte Londonbeat).
+
+#+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
+(defun my/now-playing-rpr1-deutschpop ()
+  "Show currently playing song on RPR1 100% Deutsch-Pop in the echo area."
+  (interactive)
+  (let ((url "https://asw.api.iris.radiorepo.io/v2/playlist/flow.json?station=65&offset=1&count=1"))
+    (url-retrieve
+     url
+     (lambda (status)
+       (if (plist-get status :error)
+           (message "RPR1 Deutschpop: fetch failed: %S" (plist-get status :error))
+         (goto-char (point-min))
+         (re-search-forward "\n\n")
+         (condition-case err
+             (let* ((json-object-type 'alist)
+                    (json-array-type 'list)
+                    (data (json-read-from-string
+                           (decode-coding-string
+                            (buffer-substring-no-properties (point) (point-max))
+                            'utf-8)))
+                    (entry (car (alist-get 'entry (alist-get 'result data))))
+                    (song (car (alist-get 'entry (alist-get 'song entry))))
+                    (title (alist-get 'title song))
+                    (artist (alist-get 'name
+                                       (car (alist-get 'entry (alist-get 'artist song))))))
+               (if song
+                   (message "♪ %s — %s" artist title)
+                 (message "RPR1 Deutschpop: nothing playing right now")))
+           (error (message "RPR1 Deutschpop: parse failed: %S" err)))))
      nil t t)))
 #+end_src
 
@@ -3314,23 +3379,25 @@ Disse har ikke et enkelt API, så sangtittelen leses fra selve strømmen (ICY-me
 (defun my/now-playing--icy (name url)
   "Show the ICY StreamTitle of stream URL in the echo area.
 NAME is used in error messages."
-  (let ((buf (generate-new-buffer " *now-playing-icy*")))
-    (make-process
-     :name "now-playing-icy"
-     :buffer buf
-     :coding 'utf-8
-     :command (list "sh" "-c"
-                    (format "curl -s -m 10 -H 'Icy-MetaData: 1' %s | grep -a -o -m 1 \"StreamTitle='[^;]*';\""
-                            (shell-quote-argument url)))
-     :sentinel
-     (lambda (proc _event)
-       (unless (process-live-p proc)
-         (with-current-buffer (process-buffer proc)
-           (goto-char (point-min))
-           (if (re-search-forward "StreamTitle='\\(.*\\)';" nil t)
-               (message "♪ %s" (match-string 1))
-             (message "%s: no song info found" name)))
-         (kill-buffer (process-buffer proc)))))))
+  (let* ((buf (generate-new-buffer " *now-playing-icy*"))
+         (proc
+          (make-process
+           :name "now-playing-icy"
+           :buffer buf
+           :coding 'utf-8
+           :command (list "sh" "-c"
+                          (format "curl -s -m 10 -H 'Icy-MetaData: 1' %s | grep -a -o -m 1 \"StreamTitle='[^;]*';\""
+                                  (shell-quote-argument url)))
+           :sentinel
+           (lambda (proc _event)
+             (unless (process-live-p proc)
+               (with-current-buffer (process-buffer proc)
+                 (goto-char (point-min))
+                 (if (re-search-forward "StreamTitle='\\(.*\\)';" nil t)
+                     (message "♪ %s" (match-string 1))
+                   (message "%s: no song info found" (process-get proc 'name))))
+               (kill-buffer (process-buffer proc)))))))
+    (process-put proc 'name name)))
 
 (defun my/now-playing-nightride ()
   "Show currently playing song on Nightride FM in the echo area."
