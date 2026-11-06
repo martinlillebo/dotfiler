@@ -3151,7 +3151,7 @@ https://www.rpr1.de/webradio/100-deutsch-pop
 
 Sier fra i echo area om hvilken sang som spilles av fra en gitt radiokanal
 
-Det meste av funksjonene her er 100 % vibekode rett fra Claude 4.7
+Det meste av funksjonene her er 100 % vibekode rett fra Claude 4.7 og senere Opus 5.5, siden alle kjører isolert, og det er åpenbart om de fungerer eller ikke
 
 *** DEFCON
 
@@ -3266,6 +3266,81 @@ CHANNEL defaults to \"defcon\"."
            (error (message "I Love Chillhop: parse failed: %S" err)))))
      nil t t)))
 
+#+end_src
+
+*** NRK P1
+
+#+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
+(defun my/now-playing-nrk-p1 ()
+  "Show what is currently on NRK P1 in the echo area."
+  (interactive)
+  (let ((url "https://psapi.nrk.no/channels/p1/liveelements/now"))
+    (url-retrieve
+     url
+     (lambda (status)
+       (if (plist-get status :error)
+           (message "NRK P1: fetch failed: %S" (plist-get status :error))
+         (goto-char (point-min))
+         (re-search-forward "\n\n")
+         (condition-case err
+             (let* ((json-object-type 'alist)
+                    (json-array-type 'list)
+                    (data (json-read-from-string
+                           (decode-coding-string
+                            (buffer-substring-no-properties (point) (point-max))
+                            'utf-8)))
+                    (current (seq-find
+                              (lambda (e)
+                                (equal (alist-get 'relativeTimeType e) "Present"))
+                              data))
+                    (title (alist-get 'title current))
+                    (artist (alist-get 'contributors current))
+                    (program (alist-get 'programTitle current)))
+               (cond ((null current)
+                      (message "NRK P1: nothing playing right now"))
+                     ((equal (alist-get 'type current) "Music")
+                      (message "♪ %s — %s" artist title))
+                     (t
+                      (message "NRK P1: %s — %s" program title))))
+           (error (message "NRK P1: parse failed: %S" err)))))
+     nil t t)))
+#+end_src
+
+*** Nightride og Chillsynth
+
+Disse har ikke et enkelt API, så sangtittelen leses fra selve strømmen (ICY-metadata) med ~curl~.
+
+#+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
+(defun my/now-playing--icy (name url)
+  "Show the ICY StreamTitle of stream URL in the echo area.
+NAME is used in error messages."
+  (let ((buf (generate-new-buffer " *now-playing-icy*")))
+    (make-process
+     :name "now-playing-icy"
+     :buffer buf
+     :coding 'utf-8
+     :command (list "sh" "-c"
+                    (format "curl -s -m 10 -H 'Icy-MetaData: 1' %s | grep -a -o -m 1 \"StreamTitle='[^;]*';\""
+                            (shell-quote-argument url)))
+     :sentinel
+     (lambda (proc _event)
+       (unless (process-live-p proc)
+         (with-current-buffer (process-buffer proc)
+           (goto-char (point-min))
+           (if (re-search-forward "StreamTitle='\\(.*\\)';" nil t)
+               (message "♪ %s" (match-string 1))
+             (message "%s: no song info found" name)))
+         (kill-buffer (process-buffer proc)))))))
+
+(defun my/now-playing-nightride ()
+  "Show currently playing song on Nightride FM in the echo area."
+  (interactive)
+  (my/now-playing--icy "Nightride" "https://stream.nightride.fm/nightride.mp3"))
+
+(defun my/now-playing-chillsynth ()
+  "Show currently playing song on Chillsynth in the echo area."
+  (interactive)
+  (my/now-playing--icy "Chillsynth" "https://stream.nightride.fm/chillsynth.mp3"))
 #+end_src
 
 ** Hurtigtast: Stoppe radioen
