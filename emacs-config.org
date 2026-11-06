@@ -1233,6 +1233,23 @@ Standard-fargene er ikke helt topp, så her er noen endringer:
           )))
 #+end_src
 
+** Grå-e ut ~[-]~
+
+Så man ser hvilke små todo's som er strøket ut vs. faktisk gjort:
+
+#+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
+(defface my/org-checkbox-cancelled
+  '((t :foreground "#595e60" :strike-through t))
+  "Face for list items with a [-] checkbox.")
+
+(add-hook! 'org-mode-hook
+  (font-lock-add-keywords
+   nil
+   '(("^[ \t]*\\(?:[-+*]\\|[0-9]+[.)]\\)[ \t]+\\(\\[-\\][ \t]+.*\\)$"
+      1 'my/org-checkbox-cancelled prepend))
+   'append))
+#+end_src
+
 ** CLOSED-property til TODO's
 Denne setter opp en "CLOSED" timestamp når en oppgave markeres som DONE:
 
