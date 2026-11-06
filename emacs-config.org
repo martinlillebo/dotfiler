@@ -3294,7 +3294,7 @@ CHANNEL defaults to \"defcon\"."
                                 (equal (alist-get 'relativeTimeType e) "Present"))
                               data))
                     (title (alist-get 'title current))
-                    (artist (alist-get 'contributors current))
+                    (artist (alist-get 'description current))
                     (program (alist-get 'programTitle current)))
                (cond ((null current)
                       (message "NRK P1: nothing playing right now"))
