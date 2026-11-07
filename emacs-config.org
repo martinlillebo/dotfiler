@@ -454,7 +454,7 @@ Protesilaos' fargerike temaer: https://github.com/protesilaos/ef-themes
 ** Standardtema
 
 #+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
-(setq doom-theme 'modus-vivendi-tinted)
+(setq doom-theme 'ef-bio)
 #+end_src
 
 
@@ -480,7 +480,7 @@ Lagrer eksisterende utklippstavle-innhold til kill ring før man appender kill r
 
 
 #+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
-(when (and (eq system-type 'gnu/linux) (getenv "WSLENV"))
+(when (featurep :system 'wsl)
   (setq x-select-request-type '(text/plain\;charset=utf-8 UTF8_STRING STRING)))
 
 #+end_src
@@ -505,12 +505,12 @@ WSL og Linux oppfører seg forskjellig, så de trenger hver sin setting:
 #+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
 (cond
  ;; ---  WSL  ---
- ((and (eq system-type 'gnu/linux) (getenv "WSLENV"))
+ ((featurep :system 'wsl)
   (add-to-list 'initial-frame-alist '(width . 95))
   (add-to-list 'initial-frame-alist '(height . 50)))
 
  ;; --- Linux ---
- ((eq system-type 'gnu/linux)
+ ((featurep :system 'linux)
   (add-to-list 'initial-frame-alist '(width . 83))
   (add-to-list 'initial-frame-alist '(height . 43))))
 #+end_src
@@ -1029,20 +1029,19 @@ Trikset er Dooms ~(featurep :system ...)~, som gir ~linux~ på både Linux og WS
   (setq browse-url-browser-function 'browse-url-generic)
 
   (cond
-   ;; WSLENV fins bare på WSL, altså Windows
-   ((and (eq system-type 'gnu/linux)
-         (getenv "WSLENV"))
+   ;; WSL, altså Windows
+   ((featurep :system 'wsl)
     (setq browse-url-generic-program "cmd.exe"
           browse-url-generic-args '("/c" "start" ""))
     ;; escape-løsning for å komme rundt at cmd.exe ser på "& | ^ < > ( )" som syntakstegn og ikke literaler:
     (advice-add #'browse-url-generic :filter-args #'my/cmd-escape-url))
 
    ;; --- Linux ---
-   ((eq system-type 'gnu/linux)
+   ((featurep :system 'linux)
     (setq browse-url-generic-program "firefox"))
 
    ;; Android
-   ((eq system-type 'android)
+   ((featurep :system 'android)
     (setq browse-url-generic-program "xdg-open"))))
 #+end_src
 
@@ -1060,7 +1059,7 @@ Men på mobil er det kronglete å scrolle sidelengs, så jeg bytter til ~visual-
 
 
 #+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
-(when (eq system-type 'android)
+(when (featurep :system 'android)
     (add-hook 'help-mode-hook #'visual-line-mode))
 #+end_src
 ** App-hurtigtaster
@@ -1377,6 +1376,17 @@ Keeps earlier indirect buffers, like `C-u' does."
 #+end_src
 
 * Org-agenda
+** Agendafiler
+
+Lista over agendafiler ligger i ~.agenda-files~ i notatrepoet, så den synkes mellom maskinene. ~C-c [~ og ~C-c ]~ redigerer den fila. Uten dette havner lista i ~custom.el~, som er lokal for hver maskin.
+
+#+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
+(after! org
+  (let ((fil (expand-file-name ".agenda-files" org-directory)))
+    (when (file-exists-p fil)
+      (setq org-agenda-files fil))))
+#+end_src
+
 ** Sortering
 
 [[https://orgmode.org/manual/Sorting-of-agenda-items.html][Standard sortering]] er at schedules med klokkeslett kommer aller først, deretter listes TODO-ene i grupper etter hvilken fil ("category") de kommer fra. Innad i hver kategori brukes priority cookies, og til slutt hvorvidt ting er forsinka eller har en deadline som er utgått
@@ -1658,9 +1668,10 @@ Hjemmesnekra alternativ til ~org-export-to-html~, som eksporterer til ~/tmp~ i s
      (format "xclip -selection clipboard -t text/html < %s"
              (shell-quote-argument outfile)))
     ;; Åpner i nettleser
-    (browse-url (if (and (eq system-type 'gnu/linux)
-                         (getenv "WSLENV"))
-                    (concat "\\\\wsl.localhost\\Ubuntu" outfile)
+    (browse-url (if (featurep :system 'wsl)
+                    (concat "\\\\wsl.localhost\\"
+                            (or (getenv "WSL_DISTRO_NAME") "Ubuntu")
+                            outfile)
                   outfile))))
 #+end_src
 
@@ -2460,6 +2471,17 @@ Deretter en blokk med vibekode:
     (delete-region start end)
     (insert text)))
 #+end_src
+** my/last-leketøy
+
+Leketøy-funksjonene under ligger i egne filer i ~doom/lisp/~. De lastes slik at en feil i dem ikke stopper resten av configen.
+
+#+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
+(defun my/last-leketøy (navn)
+  "Laster doom/lisp/NAVN.el. Feil blir til meldinger."
+  (with-demoted-errors "Feil i leketøy: %S"
+    (load! navn (expand-file-name "lisp" doom-user-dir))))
+#+end_src
+
 ** my/joggemodus aka my/shadow-play
 
 130 linjer spaghetti-vibe som gjør dette:
@@ -2469,8 +2491,8 @@ Deretter en blokk med vibekode:
 
 Bruker dette til å høre på tysk podcast mens jeg er på gåtur/løpetur ute, også øver jeg på å snakke etter hva de nettopp sa for hver gang det er pause
 
-#+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
-;;; Shadow-play an audio URL: X sec play, Y sec pause, repeat.
+#+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/lisp/shadow-play.el :mkdirp yes
+;;; shadow-play.el --- X sec play, Y sec pause, repeat -*- lexical-binding: t; -*-
 (require 'cl-lib)
 
 (defvar my/shadow--process nil)
@@ -2602,15 +2624,21 @@ Starts at a random point in the episode. Call `my/shadow-stop' to end."
 
 Hotkeys for å starte/stopp raskt:
 
-#+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
+#+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/lisp/shadow-play.el :mkdirp yes
 (define-key doom-leader-map (kbd "t p") #'my/shadow-play)
 (define-key doom-leader-map (kbd "t s") #'my/shadow-stop)
 #+end_src
+
+#+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
+(my/last-leketøy "shadow-play")
+#+end_src
+
 ** my/how-im-feeling
 
 tatt [[https://takeonrules.com/2026/09/01/how-im-feeling-emacs-package/][herfra]] og endret innholdet selv/med tips fra ki
 
-#+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
+#+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/lisp/how-im-feeling.el :mkdirp yes
+;;; how-im-feeling.el --- Råd ut fra hvordan jeg har det -*- lexical-binding: t; -*-
 (defvar how-im-feeling-responses
   '(("Angry"
      "Slow your breathing with long exhales"
@@ -2719,8 +2747,12 @@ tatt [[https://takeonrules.com/2026/09/01/how-im-feeling-emacs-package/][herfra]
                    (minibuffer-contents-no-properties)
                    crm-separator))))
     (not (member name chosen))))
-
 #+end_src
+
+#+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
+(my/last-leketøy "how-im-feeling")
+#+end_src
+
 ** my/skillelinje
 
 #+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
@@ -2828,8 +2860,7 @@ Så lenge jeg bruker Doom Emacs, så er ~initial-buffer-choice~ satt til symbole
 #+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
 (unless (stringp initial-buffer-choice)
   (setq initial-buffer-choice
-        (if (and (eq system-type 'gnu/linux)
-                 (getenv "WSLENV"))
+        (if (featurep :system 'wsl)
             "~/repos/notater/202111121500 Innboks jobb.org"
           "~/repos/notater/202012111337 Innboks.org")))
 #+end_src
@@ -2847,6 +2878,12 @@ Prøvde opprinnelig å få radiostasjoner inn i ~emms-streams~-lista, men jeg ga
 
 NRK-lenkene er henta herfra: https://lyd.nrk.no/. 
 
+All radiokode tangles til ~doom/lisp/radio.el~, og lastes med [[*my/last-leketøy][my/last-leketøy]] nederst i seksjonen.
+
+#+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/lisp/radio.el :mkdirp yes
+;;; radio.el --- Nettradio med EMMS -*- lexical-binding: t; -*-
+#+end_src
+
 ** Installere EMMS og MPV
 
 Installerer ~emms~:
@@ -2859,7 +2896,7 @@ I utgangspunktet kunne jeg bare avkommentert ~emms~ fra ~init.el~-filen, også h
 
 Når det er installert kan jeg be om å ta i bruk pakka, og peke på en mediaspiller som skal brukes til å spille av lyd. Her er det [[https://mpv.io/][mpv]] som brukes. 
 
-#+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
+#+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/lisp/radio.el :mkdirp yes
 (use-package emms
   :defer t
   :config
@@ -2877,275 +2914,83 @@ Noen nettradioer skjuler stream-URL-en. Da kan man ofte få tak i den slik:
 5) Hvis det ikke er noe, kan man skru radioen av og på for å trigge en ny GET-request
 
 ** Radiostasjoner
-*** DEF CON Radio
 
-[[https://somafm.com/player24/station/defcon][soma fm - DEF CON Radio]]
+Alle stasjonene ligger i én liste. Hver stasjon får en egen kommando (f.eks. ~M-x my/radio-nrk-p1~), en hurtigtast under ~SPC r~, og eventuelt en plass på numpaden i radio-mode:
+- ~:tast~ er tasten etter ~SPC r~
+- ~:numpad~ er ~(SIDE TAST)~ i radio-mode. Side 0 er standard, ~*~ blar til neste side
 
-Legger inn stream URL: 
-
-#+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
-(defun my/radio-defcon ()
-  "Spiller av DEF CON Radio"
-  (interactive)
-  (emms-play-url "http://ice3.somafm.com/defcon-128-mp3"))
+#+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/lisp/radio.el :mkdirp yes
+(defvar my/radiostasjoner
+  '((my/radio-nrk-p1 :navn "NRK P1" :tast "1" :numpad (0 "1")
+     :url "https://cdn0-47115-liveicecast0.dna.contentdelivery.net/p1_mp3_h")
+    (my/radio-nrk-p2 :navn "NRK P2" :tast "2" :numpad (0 "2")
+     :url "https://cdn0-47115-liveicecast0.dna.contentdelivery.net/p2_mp3_h")
+    (my/radio-nrk-p3 :navn "NRK P3" :tast "3" :numpad (0 "3")
+     :url "https://cdn0-47115-liveicecast0.dna.contentdelivery.net/p3_mp3_h")
+    (my/radio-nrk-p3-musikk :navn "NRK P3 Musikk" :tast "t" :numpad (0 "4")
+     :url "https://cdn0-47115-liveicecast0.dna.contentdelivery.net/p3musikk_mp3_h")
+    (my/radio-nrk-mp3 :navn "NRK mP3" :tast "m" :numpad (0 "5")
+     :url "https://cdn0-47115-liveicecast0.dna.contentdelivery.net/mp3_mp3_h")
+    (my/radio-nrk-klassisk :navn "NRK Klassisk" :tast "k" :numpad (0 "6")
+     :url "https://cdn0-47115-liveicecast0.dna.contentdelivery.net/klassisk_mp3_h")
+    (my/radio-nrk-jazz :navn "NRK Jazz" :tast "j" :numpad (0 "7")
+     :url "https://cdn0-47115-liveicecast0.dna.contentdelivery.net/jazz_mp3_h")
+    (my/radio-ilovechillhop :navn "ilovechillhop" :tast "x" :numpad (0 "8")
+     :url "https://ilm.stream35.radiohost.de/ilm_ilovechillhop_mp3-192")
+    (my/radio-nrk-super :navn "NRK Super" :tast "s" :numpad (0 "9")
+     :url "https://cdn0-47115-liveicecast0.dna.contentdelivery.net/radio_super_mp3_h")
+    (my/radio-defcon :navn "DEF CON Radio" :tast "d" :numpad (0 "0")
+     :url "http://ice3.somafm.com/defcon-128-mp3")
+    (my/radio-freecodecamp :navn "freeCodeCamp" :tast "f" :numpad (0 ",")
+     :url "https://coderadio-admin-v2.freecodecamp.org/listen/coderadio/radio.mp3")
+    (my/radio-pays-de-gueret :navn "Radio Pays de Guéret" :tast "p" :numpad (0 "/")
+     :url "https://radiopaysdegueret.ice.infomaniak.ch/radiopaysdegueret.mp3")
+    (my/radio-nightride :navn "Nightride FM" :tast "n"
+     :url "https://stream.nightride.fm/nightride.mp3")
+    (my/radio-chillsynth :navn "Nightride FM - Chillsynth" :tast "c"
+     :url "https://stream.nightride.fm/chillsynth.mp3")
+    (my/p11-dance :navn "P11 Dance" :tast "a"
+     :url "https://p4.p4groupaudio.com/P04_AM")
+    (my/radio-deutschlandfunk :navn "Deutschlandfunk" :tast "* 0" :numpad (1 "0")
+     :url "https://st01.sslstream.dlf.de/dlf/01/high/opus/stream.opus")
+    (my/radio-wdr-1live :navn "WDR 1Live" :tast "* 1" :numpad (1 "1")
+     :url "https://wdr-1live-live.icecastssl.wdr.de/wdr/1live/live/mp3/128/stream.mp3")
+    (my/radio-rpr1-deutschpop :navn "RPR1 100% Deutsch-Pop" :tast "* 3" :numpad (1 "3")
+     :url "https://stream.rpr1.de/deutschpop/mp3-128/stream.rpr1.de/"))
+  "Radiostasjoner: (KOMMANDO :navn :url :tast :numpad).")
 #+end_src
 
-Hurtigtast:
+Lager en kommando og en hurtigtast for hver stasjon:
 
-#+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
-(define-key doom-leader-map (kbd "r d") #'my/radio-defcon)
+#+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/lisp/radio.el :mkdirp yes
+(dolist (stasjon my/radiostasjoner)
+  (let ((kommando (car stasjon))
+        (navn (plist-get (cdr stasjon) :navn))
+        (url (plist-get (cdr stasjon) :url))
+        (tast (plist-get (cdr stasjon) :tast)))
+    (defalias kommando
+      (lambda ()
+        (interactive)
+        (emms-play-url url))
+      (format "Spiller av %s." navn))
+    (when tast
+      (define-key doom-leader-map (kbd (concat "r " tast)) kommando))))
 #+end_src
 
-
-*** NRK P1
-
-#+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
-(defun my/radio-nrk-p1 ()
-  "Spiller av NRK P1"
-  (interactive)
-  (emms-play-url "https://cdn0-47115-liveicecast0.dna.contentdelivery.net/p1_mp3_h"))
-#+end_src
-
-#+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
-(define-key doom-leader-map (kbd "r 1") #'my/radio-nrk-p1)
-#+end_src
-
-*** NRK P2
-
-#+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
-(defun my/radio-nrk-p2 ()
-  "Spiller av NRK P2"
-  (interactive)
-  (emms-play-url "https://cdn0-47115-liveicecast0.dna.contentdelivery.net/p2_mp3_h"))
-#+end_src
-
-#+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
-(define-key doom-leader-map (kbd "r 2") #'my/radio-nrk-p2)
-#+end_src
-
-*** NRK P3
-
-#+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
-(defun my/radio-nrk-p3 ()
-  "Spiller av NRK P3"
-  (interactive)
-  (emms-play-url "https://cdn0-47115-liveicecast0.dna.contentdelivery.net/p3_mp3_h"))
-#+end_src
-
-#+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
-(define-key doom-leader-map (kbd "r 3") #'my/radio-nrk-p3)
-#+end_src
-
-*** NRK P3 Musikk
-
-#+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
-(defun my/radio-nrk-p3-musikk ()
-  "Spiller av NRK P3 Musikk"
-  (interactive)
-  (emms-play-url "https://cdn0-47115-liveicecast0.dna.contentdelivery.net/p3musikk_mp3_h"))
-#+end_src
-
-#+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
-(define-key doom-leader-map (kbd "r t") #'my/radio-nrk-p3-musikk)
-#+end_src
-
-*** NRK mP3
-
-#+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
-(defun my/radio-nrk-mp3 ()
-  "Spiller av NRK mP3"
-  (interactive)
-  (emms-play-url "https://cdn0-47115-liveicecast0.dna.contentdelivery.net/mp3_mp3_h"))
-#+end_src
-
-#+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
-(define-key doom-leader-map (kbd "r m") #'my/radio-nrk-mp3)
-#+end_src
-
-*** NRK Jazz
-
-#+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
-(defun my/radio-nrk-jazz ()
-  "Spiller av NRK Jazz"
-  (interactive)
-  (emms-play-url "https://cdn0-47115-liveicecast0.dna.contentdelivery.net/jazz_mp3_h"))
-#+end_src
-
-#+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
-(define-key doom-leader-map (kbd "r j") #'my/radio-nrk-jazz)
-#+end_src
-
-*** NRK Super
-
-- [ ] straem URL
-- [ ] 
-
-#+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
-(defun my/radio-nrk-super ()
-  "Spiller av NRK Super"
-  (interactive)
-  (emms-play-url "https://cdn0-47115-liveicecast0.dna.contentdelivery.net/radio_super_mp3_h"))
-#+end_src
-
-#+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
-(define-key doom-leader-map (kbd "r s") #'my/radio-nrk-super)
-#+end_src
-
-*** Ilovechillhop
-
-Nettside: https://liveonlineradio.net/chilledcow
-
-#+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
-(defun my/radio-ilovechillhop ()
-  "Spiller av ilovechillhop radio"
-  (interactive)
-  (emms-play-url "https://ilm.stream35.radiohost.de/ilm_ilovechillhop_mp3-192"))
-#+end_src
-
-#+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
-(define-key doom-leader-map (kbd "r x") #'my/radio-ilovechillhop)
-#+end_src
-
-*** NRK Klassisk
-
-#+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
-(defun my/radio-nrk-klassisk ()
-  "Spiller av NRK Klasisk"
-  (interactive)
-  (emms-play-url "https://cdn0-47115-liveicecast0.dna.contentdelivery.net/klassisk_mp3_h"))
-#+end_src
-
-#+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
-(define-key doom-leader-map (kbd "r k") #'my/radio-nrk-klassisk)
-#+end_src
-
-*** Freecodecamp radio
-
-https://coderadio.freecodecamp.org/
-
-#+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
-(defun my/radio-freecodecamp ()
-  "Spiller av freeCodeCamp sin nettradio"
-  (interactive)
-  (emms-play-url "https://coderadio-admin-v2.freecodecamp.org/listen/coderadio/radio.mp3"))
-
-#+end_src
-
-#+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
-(define-key doom-leader-map (kbd "r f") #'my/radio-freecodecamp)
-#+end_src
-
-*** Radio Pays de Guéret
-
-Fransk [[https://www.radiopaysdegueret.fr/][nettradio]] som spiller veldig variert musikk
-
-#+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
-(defun my/radio-pays-de-gueret ()
-  "Spiller av Radio Pays de Gueret - Misc. fransk++"
-  (interactive)
-  (emms-play-url "https://radiopaysdegueret.ice.infomaniak.ch/radiopaysdegueret.mp3"))
-#+end_src
-
-#+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
-(define-key doom-leader-map (kbd "r p") #'my/radio-pays-de-gueret)
-#+end_src
-
-*** Nightride FM
-
-https://nightride.fm/stations?station=nightride
-
-#+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
-(defun my/radio-nightride ()
-  "Spiller av Nightride FM - synthwave"
-  (interactive)
-  (emms-play-url "https://stream.nightride.fm/nightride.mp3"))
-#+end_src
-
-#+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
-(define-key doom-leader-map (kbd "r n") #'my/radio-nightride)
-#+end_src
-
-*** Nightride FM - Chillsynth
-
-https://nightride.fm/stations?station=chillsynth
-
-#+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
-(defun my/radio-chillsynth ()
-  "Spiller av Nightride FM - Chillsynth"
-  (interactive)
-  (emms-play-url "https://stream.nightride.fm/chillsynth.mp3"))
-#+end_src
-
-#+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
-(define-key doom-leader-map (kbd "r c") #'my/radio-chillsynth)
-#+end_src
-
-*** P11 Dance
-
-Fra [[https://www.lydenavnorge.no/p11/][P4]]
-
-#+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
-(defun my/p11-dance ()
-  "Spiller av P11 Dance"
-  (interactive)
-  (emms-play-url "https://p4.p4groupaudio.com/P04_AM"))
-#+end_src
-
-#+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
-(define-key doom-leader-map (kbd "r a") #'my/p11-dance)
-#+end_src
-
-*** Deutschlandfunk
-
-[[https://www.deutschlandfunk.de/livestream-100.html][Unsere Livestreams - Deutschlandfunk live hören]]
-
-#+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
-(defun my/radio-deutschlandfunk ()
-  "Spiller av Deutschlandfunk"
-  (interactive)
-  (emms-play-url "https://st01.sslstream.dlf.de/dlf/01/high/opus/stream.opus"))
-#+end_src
-
-#+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
-(define-key doom-leader-map (kbd "r * 0") #'my/radio-deutschlandfunk)
-#+end_src
-
-
-*** WDR 1Live
-
-WDR er Westdeutschen Rundfunks fra Köln
-
-Musikkfordelingen er ~90 % engelsk, ~10 % tysk. Tyskspråklige programmer imellom sangene
-
-https://www1.wdr.de/radio/1live/index.html
-
-#+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
-(defun my/radio-wdr-1live ()
-  "Spiller av WDR 1Live"
-  (interactive)
-  (emms-play-url "https://wdr-1live-live.icecastssl.wdr.de/wdr/1live/live/mp3/128/stream.mp3"))
-#+end_src
-
-#+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
-(define-key doom-leader-map (kbd "r * 1") #'my/radio-wdr-1live)
-#+end_src
-
-*** RPR1 100% Deutsch-Pop
-
-Reklamefinansiert tyskpop-kanal fra Rheinland-Pfalz
-
-https://www.rpr1.de/webradio/100-deutsch-pop
-
-#+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
-(defun my/radio-rpr1-deutschpop ()
-  "Spiller av RPR1 Deutschpop"
-  (interactive)
-  (emms-play-url "https://stream.rpr1.de/deutschpop/mp3-128/stream.rpr1.de/"))
-#+end_src
-
-#+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
-(define-key doom-leader-map (kbd "r * 3") #'my/radio-rpr1-deutschpop)
-#+end_src
+Notater om stasjonene:
+- DEF CON Radio :: [[https://somafm.com/player24/station/defcon][soma fm - DEF CON Radio]]
+- NRK Super ::
+  - [ ] straem URL
+  - [ ] 
+- ilovechillhop :: Nettside: https://liveonlineradio.net/chilledcow
+- freeCodeCamp :: https://coderadio.freecodecamp.org/
+- Radio Pays de Guéret :: Fransk [[https://www.radiopaysdegueret.fr/][nettradio]] som spiller veldig variert musikk
+- Nightride FM :: https://nightride.fm/stations?station=nightride
+- Nightride FM - Chillsynth :: https://nightride.fm/stations?station=chillsynth
+- P11 Dance :: Fra [[https://www.lydenavnorge.no/p11/][P4]]
+- Deutschlandfunk :: [[https://www.deutschlandfunk.de/livestream-100.html][Unsere Livestreams - Deutschlandfunk live hören]]
+- WDR 1Live :: WDR er Westdeutschen Rundfunks fra Köln. Musikkfordelingen er ~90 % engelsk, ~10 % tysk. Tyskspråklige programmer imellom sangene. https://www1.wdr.de/radio/1live/index.html
+- RPR1 100% Deutsch-Pop :: Reklamefinansiert tyskpop-kanal fra Rheinland-Pfalz. https://www.rpr1.de/webradio/100-deutsch-pop
 
 ** "Now playing"
 
@@ -3155,7 +3000,7 @@ Det meste av funksjonene her er 100 % vibekode rett fra Claude 4.7 og senere Opu
 
 *** DEFCON
 
-#+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
+#+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/lisp/radio.el :mkdirp yes
 (defun my/now-playing-defcon (&optional channel)
   "Show currently playing song on a SomaFM channel in the echo area.
 CHANNEL defaults to \"defcon\"."
@@ -3185,7 +3030,7 @@ CHANNEL defaults to \"defcon\"."
 
 *** Freecodecamp radio
 
-#+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
+#+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/lisp/radio.el :mkdirp yes
 (defun my/now-playing-freecodecamp ()
   "Show currently playing song on freeCodeCamp radio in the echo area."
   (interactive)
@@ -3212,7 +3057,7 @@ CHANNEL defaults to \"defcon\"."
 
 *** ilovechillhop
 
-#+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
+#+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/lisp/radio.el :mkdirp yes
 (defun my/now-playing-ilovechillhop ()
   "Show currently playing song on I Love Chillhop in the echo area."
   (interactive)
@@ -3248,7 +3093,7 @@ CHANNEL defaults to \"defcon\"."
 
 Alle NRK-kanalene bruker samme API, så de deler én hjelpefunksjon.
 
-#+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
+#+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/lisp/radio.el :mkdirp yes
 (defun my/now-playing--nrk (id name)
   "Show what is currently on NRK channel ID in the echo area.
 NAME is the channel name shown in messages."
@@ -3313,7 +3158,7 @@ NAME is the channel name shown in messages."
 
 Bruker stasjons-ID ~65~ i ~station=~. ~station=100-deutsch-pop~ gir også svar, men fra feil kanal (spilte Londonbeat).
 
-#+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
+#+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/lisp/radio.el :mkdirp yes
 (defun my/now-playing-rpr1-deutschpop ()
   "Show currently playing song on RPR1 100% Deutsch-Pop in the echo area."
   (interactive)
@@ -3348,7 +3193,7 @@ Bruker stasjons-ID ~65~ i ~station=~. ~station=100-deutsch-pop~ gir også svar, 
 
 Disse har ikke et enkelt API, så sangtittelen leses fra selve strømmen (ICY-metadata) med ~curl~.
 
-#+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
+#+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/lisp/radio.el :mkdirp yes
 (defun my/now-playing--icy (name url)
   "Show the ICY StreamTitle of stream URL in the echo area.
 NAME is used in error messages."
@@ -3387,7 +3232,7 @@ NAME is used in error messages."
 
 Mapper ~emms-stop~ til ~SPC r DEL~:
 
-#+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
+#+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/lisp/radio.el :mkdirp yes
 (define-key doom-leader-map (kbd "r DEL") #'emms-stop)
 #+end_src
 
@@ -3407,7 +3252,7 @@ Jeg har ikke ~emms-volume-mpv-method~ tilgjengelig, som hinter om at ~emms~-pakk
 
 Vibekode for å bytte ut backend-en til ~emms-volume-raise~/-~lower~, fordi standardbackend-en (ao-volume) ikke fungerer på Pi-en:
 
-#+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
+#+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/lisp/radio.el :mkdirp yes
 (defun my/emms-mpv-volume-change (amount)
      "Change mpv's native (software) volume by AMOUNT."
      (emms-player-mpv-ipc-req-send
@@ -3427,7 +3272,7 @@ note to self om hva ~ao-volume~ er: ~ao-volume~ er én av to måter mpv kan styr
 
 emms-volume inkrementer med 2 %, som er litt lite. Setter til 5 % med:
 
-#+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
+#+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/lisp/radio.el :mkdirp yes
 (setq emms-volume-change-amount 5)
 #+end_src
 *** Major mode *radio*
@@ -3436,9 +3281,7 @@ Veldig vibekode per nå, men dette setter opp en major-mode som heter *Radio*.
 Den lister opp alle radiokanaler jeg har satt opp tidligere.
 Poenget er at alt kan styres med en trådløs numpad som fungerer som fjernkontroll
 
-#+begin_src emacs-lisp :tangle ~/.config/doom/lisp/radio-mode.el :mkdirp yes
-;;; radio-mode.el --- Numpad radio control -*- lexical-binding: t; -*-
-
+#+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/lisp/radio.el :mkdirp yes
 (defun radio--kp-key (key)
   "Translate logical KEY (a single-char string) to its numpad keysym."
   (pcase key
@@ -3450,26 +3293,23 @@ Poenget er at alt kan styres med en trådløs numpad som fungerer som fjernkontr
     ("-" "<kp-subtract>")
     (_   (format "<kp-%s>" key))))
 
-(defvar radio-stations
-  '(;; Page 0
-    (("1" "NRK P1"          my/radio-nrk-p1)
-     ("2" "NRK P2"          my/radio-nrk-p2)
-     ("3" "NRK P3"          my/radio-nrk-p3)
-     ("4" "NRK P3 Musikk"   my/radio-nrk-p3-musikk)
-     ("5" "NRK MP3"         my/radio-nrk-mp3)
-     ("6" "NRK Klassisk"    my/radio-nrk-klassisk)
-     ("7" "NRK Jazz"        my/radio-nrk-jazz)
-     ("8" "ilovechillhop"      my/radio-ilovechillhop)
-     ("0" "Defcon"          my/radio-defcon)
-     ("," "freeCodeCamp"    my/radio-freecodecamp)
-     ("/" "Pays de Guéret"  my/radio-pays-de-gueret))
-    ;; Page 1 — reach via `*'
-    (("0" "Deutschlandfunk"         my/radio-deutschlandfunk)
-     ("1" "WDR 1Live"               my/radio-wdr-1live)
-     ("3" "RPR1 100% Deutsch-Pop"   my/radio-rpr1-deutschpop)))
-  "Pages of stations. Each page is a list of (KEY LABEL COMMAND).
-Page 0 is the default; press `*' (kp-multiply) once for page 1, twice
-for page 2, etc.  Wraps around.")
+(defun radio--sider ()
+  "Lager numpad-sidene fra `my/radiostasjoner'.
+Hver side er en liste av (TAST NAVN KOMMANDO)."
+  (let (sider)
+    (dolist (stasjon my/radiostasjoner)
+      (when-let* ((numpad (plist-get (cdr stasjon) :numpad)))
+        (push (list (cadr numpad)
+                    (plist-get (cdr stasjon) :navn)
+                    (car stasjon))
+              (alist-get (car numpad) sider))))
+    (mapcar (lambda (side) (reverse (cdr side)))
+            (sort sider (lambda (a b) (< (car a) (car b)))))))
+
+(defvar radio-stations (radio--sider)
+  "Pages of stations, built from `my/radiostasjoner'.
+Each page is a list of (KEY LABEL COMMAND). Page 0 is the default; press
+`*' (kp-multiply) once for page 1, twice for page 2, etc.  Wraps around.")
 
 (defvar radio--current-station nil
   "Label of the currently-playing station, or nil.")
@@ -3508,8 +3348,7 @@ for page 2, etc.  Wraps around.")
   (let ((map (make-sparse-keymap)))
     (define-key map (kbd "q")             #'quit-window)
     (define-key map (kbd "g")             #'radio-refresh)
-    (define-key map (kbd "<kp-9>")        #'emms-stop)
-    (define-key map (kbd "9")             #'emms-stop)
+    (define-key map (kbd "DEL")           #'emms-stop)
     (define-key map (kbd "<kp-add>")      #'emms-volume-raise)
     (define-key map (kbd "+")             #'emms-volume-raise)
     (define-key map (kbd "<kp-subtract>") #'emms-volume-lower)
@@ -3540,7 +3379,7 @@ for page 2, etc.  Wraps around.")
     (dolist (entry (radio--page-stations))
       (insert (format "  [%s]  %s\n" (nth 0 entry) (nth 1 entry))))
     (insert "\n")
-    (insert "  [9] stop   [+/-] volume   [*] next page   [g] refresh   [q] quit\n")))
+    (insert "  [Backspace] stop   [+/-] volume   [*] next page   [g] refresh   [q] quit\n")))
 
 (defun radio-refresh ()
   "Re-render the radio buffer if it exists."
@@ -3568,16 +3407,14 @@ for page 2, etc.  Wraps around.")
           (radio--render)
         (radio-mode)))
     (switch-to-buffer buf)))
-
-(provide 'radio-mode)
 #+end_src
 
 ~:mkdirp yes~ sier at ~/lisp~-mappa skal opprettes om den ikke fins allerede
 
-også laster vi inn major-mode-koden ved oppstart av Emacs slik:
+også laster vi inn hele ~radio.el~ ved oppstart av Emacs slik:
 
 #+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
-(load! "lisp/radio-mode")
+(my/last-leketøy "radio")
 #+end_src
 
 
@@ -3598,8 +3435,8 @@ Setter opp en hook som aktiverer ~nerd-icons-ibuffer-mode~ når ~ibuffer~ åpnes
 
 #+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
 (use-package! nerd-icons-ibuffer
-  :unless (eq system-type 'android)
-  :unless (and (eq system-type 'gnu/linux) (getenv "WSLENV"))
+  :unless (featurep :system 'android)
+  :unless (featurep :system 'wsl)
   :hook (ibuffer-mode . nerd-icons-ibuffer-mode))
 #+end_src
 
@@ -3624,14 +3461,14 @@ Kommandoer som åpner [[https://opencode.ai][OpenCode]] i et nytt terminalvindu 
         (shell (or (getenv "SHELL") "/bin/bash")))
     (cond
      ;; WSL: Windows Terminal med et WSL-shell
-     ((and (eq system-type 'gnu/linux) (getenv "WSLENV"))
+     ((featurep :system 'wsl)
       (call-process "wt.exe" nil 0 nil
                     "-w" "0" "nt"
                     "wsl.exe" "-d" (getenv "WSL_DISTRO_NAME")
                     "--cd" dir "--" shell "-lic"
                     (concat "opencode\\; exec " shell " -l")))
      ;; Linux: Terminator
-     ((eq system-type 'gnu/linux)
+     ((featurep :system 'linux)
       (call-process "/usr/bin/terminator" nil 0 nil
                     (concat "--working-directory=" dir)
                     "-x" shell "-lic" "opencode"))
