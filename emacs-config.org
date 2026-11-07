@@ -2471,14 +2471,14 @@ Deretter en blokk med vibekode:
     (delete-region start end)
     (insert text)))
 #+end_src
-** my/last-leketøy
+** my/last-inn-småprogram
 
-Leketøy-funksjonene under ligger i egne filer i ~doom/lisp/~. De lastes slik at en feil i dem ikke stopper resten av configen.
+Småprogrammene under ligger i egne filer i ~doom/lisp/~. De lastes slik at en feil i dem ikke stopper resten av configen.
 
 #+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
-(defun my/last-leketøy (navn)
+(defun my/last-inn-småprogram (navn)
   "Laster doom/lisp/NAVN.el. Feil blir til meldinger."
-  (with-demoted-errors "Feil i leketøy: %S"
+  (with-demoted-errors "Feil i småprogram: %S"
     (load! navn (expand-file-name "lisp" doom-user-dir))))
 #+end_src
 
@@ -2630,7 +2630,7 @@ Hotkeys for å starte/stopp raskt:
 #+end_src
 
 #+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
-(my/last-leketøy "shadow-play")
+(my/last-inn-småprogram "shadow-play")
 #+end_src
 
 ** my/how-im-feeling
@@ -2750,7 +2750,7 @@ tatt [[https://takeonrules.com/2026/09/01/how-im-feeling-emacs-package/][herfra]
 #+end_src
 
 #+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
-(my/last-leketøy "how-im-feeling")
+(my/last-inn-småprogram "how-im-feeling")
 #+end_src
 
 ** my/skillelinje
@@ -2878,7 +2878,7 @@ Prøvde opprinnelig å få radiostasjoner inn i ~emms-streams~-lista, men jeg ga
 
 NRK-lenkene er henta herfra: https://lyd.nrk.no/. 
 
-All radiokode tangles til ~doom/lisp/radio.el~, og lastes med [[*my/last-leketøy][my/last-leketøy]] nederst i seksjonen.
+All radiokode tangles til ~doom/lisp/radio.el~, og lastes med [[*my/last-inn-småprogram][my/last-inn-småprogram]] nederst i seksjonen.
 
 #+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/lisp/radio.el :mkdirp yes
 ;;; radio.el --- Nettradio med EMMS -*- lexical-binding: t; -*-
@@ -3414,7 +3414,7 @@ Each page is a list of (KEY LABEL COMMAND). Page 0 is the default; press
 også laster vi inn hele ~radio.el~ ved oppstart av Emacs slik:
 
 #+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
-(my/last-leketøy "radio")
+(my/last-inn-småprogram "radio")
 #+end_src
 
 
