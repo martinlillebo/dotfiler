@@ -3001,6 +3001,7 @@ Notater om stasjonene:
 - WDR 1Live :: WDR er Westdeutschen Rundfunks fra Köln. Musikkfordelingen er ~90 % engelsk, ~10 % tysk. Tyskspråklige programmer imellom sangene. https://www1.wdr.de/radio/1live/index.html
 - RPR1 100% Deutsch-Pop :: Reklamefinansiert tyskpop-kanal fra Rheinland-Pfalz. https://www.rpr1.de/webradio/100-deutsch-pop
 
+
 ** "Now playing"
 
 Sier fra i echo area om hvilken sang som spilles av fra en gitt radiokanal
@@ -3236,7 +3237,30 @@ NAME is used in error messages."
   (interactive)
   (my/now-playing--icy "Chillsynth" "https://stream.nightride.fm/chillsynth.mp3"))
 #+end_src
+*** Kjapp test for å se om alle fortsatt virker
 
+#+begin_src elisp
+(let ((fns (apropos-internal "^my/now-playing-[^-]" #'commandp)))
+  (mapc #'funcall fns)
+  (sleep-for 3)
+  (with-current-buffer "*Messages*"
+    (string-join (last (split-string (buffer-string) "\n" t) (length fns)) "\n")))
+#+end_src
+
+#+RESULTS:
+#+begin_example
+♪ The Strokes — Someday
+NRK P3: P3søndag — Hvordan var det å være på Vestbredden?
+NRK P2: Det beste fra Musikklivet — Beverly Glenn-Copelands første og siste konsert i Norge
+NRK P1: 4-4-2 Radiosporten: 26. serierunde — Første omgang av 26. eliteserierunde
+♪ AMONOS — MONTROSE
+♪ PROVINZ FEAT. NINA CHUBA — ZORN & LIEBE
+♪ Anita Skorgan — Farger i en vind
+♪ DJ Okawari — Silent Night
+♪ Violation Drive - TFLBPR
+♪ A.L.I.S.O.N - pink cloud days
+♪ Eli & Fur — My Reflection
+#+end_example
 ** Hurtigtast: Stoppe radioen
 
 Mapper ~emms-stop~ til ~SPC r DEL~:
