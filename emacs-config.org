@@ -2130,6 +2130,24 @@ push:
 (map! :leader
       "g P" #'magit-push-current-to-pushremote)
 #+end_src
+
+** Hotkey: commit og push i ett
+~SPC g n~ og ~SPC g P~ i én kommando, på ~SPC g SPC~.
+
+#+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
+(defun my/notatcommit-og-push ()
+  "Stager alt, inkludert nye filer, committer med NN-tidsstempel og pusher."
+  (interactive)
+  (magit-stage-modified t)
+  (when (magit-anything-staged-p)
+    (unless (zerop (magit-run-git "commit" "-m"
+                                  (concat "NN " (format-time-string "%Y-%m-%d %H:%M:%S"))))
+      (user-error "Commit feilet, pusher ikke. Se $ i magit")))
+  (magit-push-current-to-pushremote nil))
+
+(map! :leader
+      :desc "Commit og push" "g SPC" #'my/notatcommit-og-push)
+#+end_src
 ** Legger til authinfo-login
 Noen steder må jeg bruke HTTPS i stedet for SSH-autentisering. Da kan jeg legge GitHub-token-et til ~.authinfo~-filen jeg har separat, og peke Magit til den slik for å slippe å måtte oppgi token hver gang:
 
