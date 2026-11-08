@@ -2870,6 +2870,15 @@ Tidligere starta jeg opp med å vise agendaen for dagen. Kan gjøres med å erst
 #+begin_src elisp
 (setq initial-buffer-choice (lambda () (org-agenda nil "d") (current-buffer)))
 #+end_src
+* Speedbar
+
+[[https://www.gnu.org/software/emacs/manual/html_node/emacs/Speedbar.html][~Speedbar~]] er Emacs' native sidelinje som viser mappehierarki, filer og denslags.
+
+Av en eller annen grunn er defaultsetting at den åpnes i en ny frame. Setter den til å heller åpne som et eget window i eksisterende frame:
+
+#+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
+setq speedbar-prefer-window t
+#+end_src
 
 
 * Nettradio med EMMS
