@@ -1482,11 +1482,157 @@ Default er at en DEADLINE dukker opp i dagens agenda 14 dager før fristen. Sett
   (setq org-deadline-warning-days 21))
 #+end_src
 
-** Separere daglig repeterende oppgaver fra alt annet 
+** Kø i agendaen
+
+
+Agendaen alene lar meg ikke bestemme rekkefølgen på det jeg skal gjøre. Derfor har jobbfila en ~* Kø~-overskrift med en nummerert liste av ~[[id:..]]~-lenker til TODO-er, og den lista er fasit for rekkefølgen. Jeg sorterer om med ~M-<up>~ / ~M-<down>~ i lista.
+
+Jobbagendaen (~SPC A j~) har fem blokker:
+
+1. Møtenotater (~[ ]~) som skal gås gjennom og ryddes i
+2. *Kø*: TODO-ene som er lenket fra ~* Kø~, i samme rekkefølge som lista. DONE forsvinner av seg selv, men lenka i lista må jeg slette selv
+3. *Følg opp*: WAIT-er. SCHEDULED på en WAIT betyr "neste gang jeg skal mase/sjekke status"
+4. *Påminnelser*: Resten av SCHEDULED og DEADLINE. Viser ~Sched. 5x:~ / ~In 18 d.:~ foran, så jeg ser hva som har blitt liggende
+5. *Daglig*: Repeterende oppgaver
+
+En oppgave som ligger i køen vises bare i Kø-blokka, selv om den også er schedulert eller WAIT.
+
+~Q~ i agendaen legger oppgaven under markøren nederst i ~* Kø~ (og gir den en ~:ID:~ om den mangler). Fila med ~* Kø~ er første fil i ~my/agenda-jobb~, med mindre ~my/kø-fil~ er satt.
+
+Datolinja vises bare øverst. I de andre agendablokkene er ~org-agenda-format-date~ en tom streng, og overskriften er en funksjon som ikke avslutter med linjeskift. Da blir den tomme datolinja bare linjeskiftet etter overskriften.
+
+#+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
+(defvar my/kø-fil nil
+  "Fila med `* Kø'-overskriften. nil betyr første fil i `my/agenda-jobb'.")
+
+(defvar my/kø--cache nil
+  "(BUFFER TICK IDER) fra siste gang `* Kø' ble lest.")
+
+(defun my/kø--fil ()
+  (let ((fil (or my/kø-fil (car-safe my/agenda-jobb))))
+    (when (and fil (file-regular-p fil)) fil)))
+
+(defun my/kø--gå-til-overskrift ()
+  "Flytt punkt til slutten av `* Kø'-overskriften. nil om den mangler."
+  (goto-char (point-min))
+  (re-search-forward "^\\* Kø[ \t]*$" nil t))
+
+(defun my/kø-ider ()
+  "ID-ene som lenkes fra `* Kø', i samme rekkefølge som i lista."
+  (when-let* ((fil (my/kø--fil)))
+    (with-current-buffer (find-file-noselect fil)
+      (let ((tick (buffer-chars-modified-tick)))
+        (unless (and (eq (nth 0 my/kø--cache) (current-buffer))
+                     (eq (nth 1 my/kø--cache) tick))
+          (setq my/kø--cache
+                (list (current-buffer) tick
+                      (org-with-wide-buffer
+                       (when (my/kø--gå-til-overskrift)
+                         (let ((slutt (save-excursion (org-end-of-subtree t t)))
+                               ider)
+                           (while (re-search-forward "\\[\\[id:\\([^]]+\\)\\]" slutt t)
+                             (push (match-string-no-properties 1) ider))
+                           (nreverse ider)))))))
+        (nth 2 my/kø--cache)))))
+
+(defun my/kø-i-køen-p ()
+  "Er oppgaven ved punkt lenket fra `* Kø'?"
+  (when-let* ((id (org-entry-get nil "ID")))
+    (member id (my/kø-ider))))
+
+(defun my/kø--møtenotat-p ()
+  (member (org-get-todo-state) '("[ ]" "[-]" "[?]" "[X]")))
+
+(defun my/kø--hopp ()
+  (or (save-excursion (outline-next-heading)) (point-max)))
+
+(defun my/skip-behandle ()
+  "Behold bare møtenotater som skal behandles."
+  (unless (and (my/kø--møtenotat-p) (not (my/kø-i-køen-p)))
+    (my/kø--hopp)))
+
+(defun my/skip-utenfor-kø ()
+  "Behold bare oppgaver som er lenket fra `* Kø'."
+  (unless (my/kø-i-køen-p)
+    (my/kø--hopp)))
+
+(defun my/skip-følg-opp ()
+  "Behold bare WAIT-er som ikke repeterer og ikke er i køen."
+  (unless (and (equal (org-get-todo-state) "WAIT")
+               (not (org-get-repeat))
+               (not (my/kø-i-køen-p)))
+    (my/kø--hopp)))
+
+(defun my/skip-påminnelser ()
+  "Behold alt annet med dato som ikke repeterer."
+  (when (or (org-get-repeat)
+            (my/kø--møtenotat-p)
+            (equal (org-get-todo-state) "WAIT")
+            (my/kø-i-køen-p))
+    (my/kø--hopp)))
+
+(defun my/skip-daglig ()
+  "Behold bare repeterende oppgaver som ikke er i køen."
+  (unless (and (org-get-repeat) (not (my/kø-i-køen-p)))
+    (my/kø--hopp)))
+
+(defun my/kø--plass (linje ider)
+  (let* ((m (get-text-property 0 'org-hd-marker linje))
+         (id (and m (org-entry-get m "ID"))))
+    (or (and id (cl-position id ider :test #'equal))
+        most-positive-fixnum)))
+
+(defun my/kø-cmp (a b)
+  "Sorter agendalinjer etter plassen i `* Kø'."
+  (let* ((ider (my/kø-ider))
+         (pa (my/kø--plass a ider))
+         (pb (my/kø--plass b ider)))
+    (cond ((< pa pb) -1)
+          ((> pa pb) 1))))
+
+(defun my/kø--overskrift (tekst)
+  "Overskrift til agendablokker der datolinja er tom."
+  (apply-partially (lambda (tekst)
+                     (propertize (concat "\n" tekst) 'face 'org-agenda-structure))
+                   tekst))
+
+(defun my/kø-legg-til ()
+  "Legg oppgaven under markøren nederst i `* Kø'."
+  (interactive)
+  (let* ((m (or (org-get-at-bol 'org-hd-marker)
+                (user-error "Ingen oppgave på denne linja")))
+         (fil (or (my/kø--fil) (user-error "Fant ikke fila med `* Kø'")))
+         (id (org-with-point-at m (org-id-get-create)))
+         (tittel (org-with-point-at m
+                   (org-link-display-format (org-get-heading t t t t)))))
+    (if (member id (my/kø-ider))
+        (message "Allerede i køen: %s" tittel)
+      (with-current-buffer (find-file-noselect fil)
+        (org-with-wide-buffer
+         (unless (my/kø--gå-til-overskrift)
+           (user-error "Fant ikke `* Kø' i %s" fil))
+         (let* ((start (point))
+                (slutt (save-excursion (org-end-of-subtree t) (point)))
+                (n (1+ (count-matches "^[0-9]+[.)] " start slutt))))
+           (goto-char slutt)
+           (skip-chars-backward " \t\n")
+           (end-of-line)
+           (insert (format "\n%d. [[id:%s][%s]]" n id tittel)))))
+      (message "Lagt i køen: %s" tittel)
+      (org-agenda-redo t))))
+
+(map! :after evil-org-agenda
+      :map evil-org-agenda-mode-map
+      :m "Q" #'my/kø-legg-til)
+#+end_src
+
+** Separere daglig repeterende oppgaver fra alt annet
 
 Jeg har en liste med daglige småting jeg vil få gjort, og det er fint å få den skilt ut fra de større, viktigere oppgavene jeg setter opp til egne dager.
 
 Her er et stykke vibekode fra Claude som setter opp to filterfunksjoner + et agenda-view som bruker de. Da får jeg to agendaer over hverandre - en for repeterende TODOs og en for ikke-repeterende. 
+
+Fritidsagendaen (~f~) bruker fortsatt bare disse to. Jobbagendaen (~j~) bruker blokkene fra [[*Kø i agendaen][Kø i agendaen]].
 
 #+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
 (defun my/skip-recurring ()
@@ -1505,11 +1651,28 @@ Her er et stykke vibekode fra Claude som setter opp to filterfunksjoner + et age
 (setq org-agenda-custom-commands
       `(("j" "Jobb"
          ((agenda "" ((org-agenda-span 'day)
-                      (org-agenda-skip-function '(my/skip-recurring))
+                      (org-agenda-skip-function '(my/skip-behandle))
                       (org-agenda-overriding-header " ")))
+          (alltodo "" ((org-agenda-skip-function '(my/skip-utenfor-kø))
+                       (org-agenda-sorting-strategy '(user-defined-up))
+                       (org-agenda-cmp-user-defined #'my/kø-cmp)
+                       (org-agenda-overriding-header "\nKø")))
           (agenda "" ((org-agenda-span 'day)
-                      (org-agenda-skip-function '(my/skip-non-recurring))
-                      (org-agenda-overriding-header "\nDaglig"))))
+                      (org-agenda-skip-function '(my/skip-følg-opp))
+                      (org-agenda-format-date "")
+                      (org-agenda-prefix-format '((agenda . "%-12s")))
+                      (org-agenda-scheduled-leaders '("" "Sched.%2dx: "))
+                      (org-agenda-overriding-header (my/kø--overskrift "Følg opp"))))
+          (agenda "" ((org-agenda-span 'day)
+                      (org-agenda-skip-function '(my/skip-påminnelser))
+                      (org-agenda-format-date "")
+                      (org-agenda-prefix-format '((agenda . "%-12s")))
+                      (org-agenda-scheduled-leaders '("" "Sched.%2dx: "))
+                      (org-agenda-overriding-header (my/kø--overskrift "Påminnelser"))))
+          (agenda "" ((org-agenda-span 'day)
+                      (org-agenda-skip-function '(my/skip-daglig))
+                      (org-agenda-format-date "")
+                      (org-agenda-overriding-header (my/kø--overskrift "Daglig")))))
          ((org-agenda-files my/agenda-jobb)))
         ("f" "Fritid"
          ((agenda "" ((org-agenda-span 'day)
