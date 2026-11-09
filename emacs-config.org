@@ -1815,6 +1815,8 @@ TRE=3
 EN=1TO=2TRE=3
 #+end_src
 
+Filtrene under brukes bare av ~SPC e h~ ([[*Eksport til HTML][Eksport til HTML]]), ikke av annen eksport.
+
 
 #+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
 (defun my/html-teams-friendly (output backend _info)
@@ -1845,8 +1847,6 @@ EN=1TO=2TRE=3
                 (replace-match "<br>" t t))
               (goto-char (point-max))))))
       (buffer-string))))
-
-(add-hook 'org-export-filter-final-output-functions #'my/html-teams-friendly)
 #+end_src
 
 ...pluss vibekode for å fjerne break tags mellom punkter i punktlister
@@ -1856,8 +1856,6 @@ EN=1TO=2TRE=3
   "Remove trailing <br/> inside <li> so Teams doesn't pad bullets."
   (when (org-export-derived-backend-p backend 'html)
     (replace-regexp-in-string "<br\\s-*/?>\\s-*</li>" "</li>" item)))
-
-(add-hook 'org-export-filter-item-functions #'my/html-strip-br-in-items)
 #+end_src
 
 
@@ -1893,8 +1891,10 @@ Hjemmesnekra alternativ til ~org-export-to-html~, som eksporterer til ~/tmp~ i s
                          (file-name-base (or (buffer-file-name)
                                              (buffer-name)))
                          ".html")))
-    ;; Eksporterer til HTML til en outfile-variabel
-    (org-export-to-file 'html outfile nil nil nil nil nil)
+    ;; Eksporterer til HTML til en outfile-variabel, med Teams-filtrene
+    (org-export-to-file 'html outfile nil nil nil nil
+                        '(:filter-final-output (my/html-teams-friendly)
+                          :filter-item (my/html-strip-br-in-items)))
     ;; Kopierer til utklippstavla
     (call-process-shell-command
      (format "xclip -selection clipboard -t text/html < %s"
