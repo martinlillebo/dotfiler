@@ -1497,7 +1497,7 @@ Jobbagendaen (~SPC A j~) har fem blokker:
 
 En oppgave som ligger i køen vises bare i Kø-blokka, selv om den også er schedulert eller WAIT.
 
-~Q~ i agendaen legger oppgaven under markøren nederst i ~* Kø~ (og gir den en ~:ID:~ om den mangler). Fila med ~* Kø~ er første fil i ~my/agenda-jobb~, med mindre ~my/kø-fil~ er satt.
+~Q~ i agendaen og ~SPC m q~ på en overskrift i en org-fil legger oppgaven nederst i ~* Kø~ (og gir den en ~:ID:~ om den mangler). ~SPC m q~ var ~org-set-tags-command~, som jeg ikke bruker. Fila med ~* Kø~ er første fil i ~my/agenda-jobb~, med mindre ~my/kø-fil~ er satt.
 
 Datolinja vises bare øverst. I de andre agendablokkene er ~org-agenda-format-date~ en tom streng, og overskriften er en funksjon som ikke avslutter med linjeskift. Da blir den tomme datolinja bare linjeskiftet etter overskriften.
 
@@ -1596,11 +1596,20 @@ Datolinja vises bare øverst. I de andre agendablokkene er ~org-agenda-format-da
                      (propertize (concat "\n" tekst) 'face 'org-agenda-structure))
                    tekst))
 
+(defun my/kø--marker-ved-punkt ()
+  "Marker til oppgaven på agendalinja, eller overskriften punkt står i."
+  (cond ((derived-mode-p 'org-agenda-mode)
+         (or (org-get-at-bol 'org-hd-marker)
+             (user-error "Ingen oppgave på denne linja")))
+        ((derived-mode-p 'org-mode)
+         (save-excursion (org-back-to-heading t) (point-marker)))
+        (t (user-error "Verken i org eller agenda"))))
+
 (defun my/kø-legg-til ()
-  "Legg oppgaven under markøren nederst i `* Kø'."
+  "Legg oppgaven under markøren nederst i `* Kø'.
+Funker både fra agendaen og fra en overskrift i en org-fil."
   (interactive)
-  (let* ((m (or (org-get-at-bol 'org-hd-marker)
-                (user-error "Ingen oppgave på denne linja")))
+  (let* ((m (my/kø--marker-ved-punkt))
          (fil (or (my/kø--fil) (user-error "Fant ikke fila med `* Kø'")))
          (id (org-with-point-at m (org-id-get-create)))
          (tittel (org-with-point-at m
@@ -1619,11 +1628,17 @@ Datolinja vises bare øverst. I de andre agendablokkene er ~org-agenda-format-da
            (end-of-line)
            (insert (format "\n%d. [[id:%s][%s]]" n id tittel)))))
       (message "Lagt i køen: %s" tittel)
-      (org-agenda-redo t))))
+      (when (derived-mode-p 'org-agenda-mode)
+        (org-agenda-redo t)))))
 
 (map! :after evil-org-agenda
       :map evil-org-agenda-mode-map
       :m "Q" #'my/kø-legg-til)
+
+(map! :after org
+      :map org-mode-map
+      :localleader
+      "q" #'my/kø-legg-til)
 #+end_src
 
 ** Separere daglig repeterende oppgaver fra alt annet
@@ -3104,7 +3119,7 @@ Tidligere starta jeg opp med å vise agendaen for dagen. Kan gjøres med å erst
 Av en eller annen grunn er defaultsetting at den åpnes i en ny frame. Setter den til å heller åpne som et eget window i eksisterende frame:
 
 #+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
-setq speedbar-prefer-window t
+(setq speedbar-prefer-window t)
 #+end_src
 
 
