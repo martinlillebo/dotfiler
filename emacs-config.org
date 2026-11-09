@@ -692,7 +692,7 @@ Brukes mye på mobilen - vil ofte gå til et sentralt innboksnotat, og bare rabl
 (map! :n "SPC 1"
       (lambda ()
         (interactive)
-        (find-file "~/repos/notater/202012111337 Innboks.org")
+        (find-file my/innboks)
         (goto-char (point-max))
         (newline)
         (evil-insert-state)))
@@ -704,7 +704,7 @@ Brukes mye på mobilen - vil ofte gå til et sentralt innboksnotat, og bare rabl
 (map! :n "SPC 2"
       (lambda ()
         (interactive)
-        (find-file "~/repos/notater/202111121500 Innboks jobb.org")
+        (find-file my/innboks-jobb)
         (goto-char (point-max))
         (newline)
         (evil-insert-state)))
@@ -1266,25 +1266,33 @@ Forteller Emacs/org-mode hvor det skal letes etter ~.org~-filer:
 (setq org-roam-directory org-directory)
 #+end_src
 
+Innboksnotatene, brukt av ~SPC 1~, ~SPC 2~, capture og startsiden:
+
+#+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
+(defconst my/innboks
+  (expand-file-name "202012111337 Innboks.org" org-directory))
+
+(defconst my/innboks-jobb
+  (expand-file-name "202111121500 Innboks jobb.org" org-directory))
+#+end_src
+
 ** Org-capture templates
 
 Org-capture gjør at man kan få skrevet inn smånotater til en fil uten å måtte åpne filen.
 
 #+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
 (after! org
-  (let ((innboks      "~/repos/notater/202012111337 Innboks.org")
-        (innboks-jobb "~/repos/notater/202111121500 Innboks jobb.org")
-        (hodepine     "~/repos/notater/202205082206 Hodepinelogg.org")
-        (familie      "~/repos/notater/org/20250531191654-todo_familie.org")
-        (personlig    "~/repos/notater/202506120825 Todo.org"))
+  (let ((hodepine  "~/repos/notater/202205082206 Hodepinelogg.org")
+        (familie   "~/repos/notater/org/20250531191654-todo_familie.org")
+        (personlig "~/repos/notater/202506120825 Todo.org"))
 
     (setq org-capture-templates
           `(
             ("i" "Innboks" plain
-             (file ,innboks)
+             (file ,my/innboks)
              "%^{Notat}\n" :prepend t :immediate-finish t :empty-lines 1)
             ("j" "Innboks-jobb" plain
-             (file ,innboks-jobb)
+             (file ,my/innboks-jobb)
              "%^{Notat}\n" :prepend t :immediate-finish t :empty-lines 1)
             ("f" "Todo familie" entry
              (file+headline ,familie "Senere")
@@ -3115,9 +3123,7 @@ Så lenge jeg bruker Doom Emacs, så er ~initial-buffer-choice~ satt til symbole
 #+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
 (unless (stringp initial-buffer-choice)
   (setq initial-buffer-choice
-        (if (featurep :system 'wsl)
-            "~/repos/notater/202111121500 Innboks jobb.org"
-          "~/repos/notater/202012111337 Innboks.org")))
+        (if (featurep :system 'wsl) my/innboks-jobb my/innboks)))
 #+end_src
 
 Tidligere starta jeg opp med å vise agendaen for dagen. Kan gjøres med å erstatte ~setq~-linja med denne:
