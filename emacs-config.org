@@ -2627,14 +2627,27 @@ Til slutt hotkeys for hver av de:
 
 ** my/sjekkboks
 
-Legger inn sjekkboks i starten av aktiv linje:
+Legger inn sjekkboks i starten av aktiv linje, eller på hver linje i markert region:
 
 #+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
-(defun my/sjekkboks ()
-  ""
-  (interactive)
-    (beginning-of-line)
-    (insert "- [ ] "))
+(defun my/sjekkboks (beg end)
+  "Sjekkboksifiserer aktiv linje eller markerte linjer"
+  (interactive
+   (if (use-region-p)
+       (list (region-beginning) (region-end))
+     (list (point) (point))))
+  ;; Ikke ta med linjer som bare er markert via LF-linjeskift-tegnet fra forrige linje, som man får med å V/evil-visual-line
+  (when (and (> end beg)
+             (save-excursion (goto-char end) (bolp)))
+    (setq end (1- end)))
+  (let ((n (1+ (- (line-number-at-pos end) (line-number-at-pos beg)))))
+    (deactivate-mark)
+    (goto-char beg)
+    (dotimes (i n)
+      (beginning-of-line)
+      (insert "- [ ] ")
+      (when (< i (1- n))
+        (forward-line 1)))))
 #+end_src
 
 Hotkey:
