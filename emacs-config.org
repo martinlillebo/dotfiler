@@ -3479,6 +3479,25 @@ NAME is used in error messages."
   (interactive)
   (my/now-playing--icy "Chillsynth" "https://stream.nightride.fm/chillsynth.mp3"))
 #+end_src
+
+*** Hurtigtaster
+
+Samlefunksjon som trigger ~now-playing-~-funksjonene med samme hotkey som den som spiller av selve radioen, bare med en ekstra "r" foran.
+
+For eksempel har DEF CON radio ~SPC r d~ for å spille av, og ~SPC r r d~ for å vise hvilken sang som spilles nå
+
+#+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/lisp/radio.el :mkdirp yes
+(dolist (stasjon my/radiostasjoner)
+  (let* ((kommando (symbol-name (car stasjon)))
+         (tast (plist-get (cdr stasjon) :tast))
+         (nå-spilles (intern (replace-regexp-in-string
+                              "\\`my/radio-" "my/now-playing-" kommando))))
+    (when (and tast (fboundp nå-spilles))
+      (define-key doom-leader-map (kbd (concat "r r " tast)) nå-spilles))))
+#+end_src
+
+#+RESULTS:
+
 *** Kjapp test for å se om alle fortsatt virker
 
 #+begin_src elisp
