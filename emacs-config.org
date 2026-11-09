@@ -1375,6 +1375,46 @@ Keeps earlier indirect buffers, like `C-u' does."
       :n "zn" #'my/org-narrow-heading-here)
 #+end_src
 
+** Ingen innrykk med ~o~ under listepunkt
+
+#+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
+(defun my/org-open-below-no-item-indent (&rest _)
+  "Start at column 0 when `o' opens a line below a list item."
+  (when (and (derived-mode-p 'org-mode)
+             (save-excursion
+               (forward-line -1)
+               (org-in-item-p))
+             (looking-back "^[ \t]*" (line-beginning-position)))
+    (delete-horizontal-space)))
+
+(after! evil-org
+  (advice-add #'evil-org-open-below :after #'my/org-open-below-no-item-indent))
+#+end_src
+
+elisp-bolken ovenfor endrer hvor markøren settes etter at man lager en newline og flytter markøren dit med ~o~ / ~evil-org-open-below~:
+
+Fra:
+
+#+begin_src conf
+- 1
+- 2
+- 3
+  <-- Markør her
+#+end_src
+
+Til:
+
+
+#+begin_src conf
+- 1
+- 2
+- 3
+<-- Markør her
+#+end_src
+
+
+
+
 * Org-agenda
 ** Agendafiler
 
