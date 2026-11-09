@@ -3173,7 +3173,7 @@ Alle stasjonene ligger i én liste. Hver stasjon får en egen kommando (f.eks. ~
 #+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/lisp/radio.el :mkdirp yes
 (defvar my/radiostasjoner
   '((my/radio-nrk-p1 :navn "NRK P1" :tast "1" :numpad (0 "1")
-     :url "https://cdn0-47115-liveicecast0.dna.contentdelivery.net/p1_mp3_h")
+     :url "https://cdn0-47115-liveicecast0.dna.contentdelivery.net/p1_aac_h")
     (my/radio-nrk-p2 :navn "NRK P2" :tast "2" :numpad (0 "2")
      :url "https://cdn0-47115-liveicecast0.dna.contentdelivery.net/p2_mp3_h")
     (my/radio-nrk-p3 :navn "NRK P3" :tast "3" :numpad (0 "3")
@@ -3345,14 +3345,18 @@ CHANNEL defaults to \"defcon\"."
 
 Alle NRK-kanalene bruker samme API, så de deler én hjelpefunksjon.
 
+Under distriktssendinger er ~p1~ tom, og strømmen sender NRK Stor-Oslo. Da faller P1 tilbake på ~p1_oslo_akershus~.
+
 #+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/lisp/radio.el :mkdirp yes
-(defun my/now-playing--nrk (id name)
-  "Show what is currently on NRK channel ID in the echo area.
-NAME is the channel name shown in messages."
-  (let ((url (format "https://psapi.nrk.no/channels/%s/liveelements/now" id)))
+(defun my/now-playing--nrk (ids name)
+  "Show what is currently on NRK channel IDS in the echo area.
+IDS is a channel ID or a list of IDs; the next one is tried when
+nothing is on.  NAME is the channel name shown in messages."
+  (let* ((ids (ensure-list ids))
+         (url (format "https://psapi.nrk.no/channels/%s/liveelements/now" (car ids))))
     (url-retrieve
      url
-     (lambda (status name)
+     (lambda (status name ids)
        (if (plist-get status :error)
            (message "%s: fetch failed: %S" name (plist-get status :error))
          (goto-char (point-min))
@@ -3371,19 +3375,21 @@ NAME is the channel name shown in messages."
                     (title (alist-get 'title current))
                     (artist (alist-get 'description current))
                     (program (alist-get 'programTitle current)))
-               (cond ((null current)
+               (cond ((and (null current) (cdr ids))
+                      (my/now-playing--nrk (cdr ids) name))
+                     ((null current)
                       (message "%s: nothing playing right now" name))
                      ((equal (alist-get 'type current) "Music")
                       (message "♪ %s — %s" artist title))
                      (t
                       (message "%s: %s — %s" name program title))))
            (error (message "%s: parse failed: %S" name err)))))
-     (list name) t t)))
+     (list name ids) t t)))
 
 (defun my/now-playing-nrk-p1 ()
   "Show what is currently on NRK P1 in the echo area."
   (interactive)
-  (my/now-playing--nrk "p1" "NRK P1"))
+  (my/now-playing--nrk '("p1" "p1_oslo_akershus") "NRK P1"))
 
 (defun my/now-playing-nrk-p2 ()
   "Show what is currently on NRK P2 in the echo area."
@@ -3490,8 +3496,8 @@ For eksempel har DEF CON radio ~SPC r d~ for å spille av, og ~SPC r r d~ for å
 (dolist (stasjon my/radiostasjoner)
   (let* ((kommando (symbol-name (car stasjon)))
          (tast (plist-get (cdr stasjon) :tast))
-         (nå-spilles (intern (replace-regexp-in-string
-                              "\\`my/radio-" "my/now-playing-" kommando))))
+         (nå-spilles (and (string-match "\\`my/radio-" kommando)
+                          (intern (replace-match "my/now-playing-" t t kommando)))))
     (when (and tast (fboundp nå-spilles))
       (define-key doom-leader-map (kbd (concat "r r " tast)) nå-spilles))))
 #+end_src
