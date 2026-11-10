@@ -1462,6 +1462,13 @@ Fjerner visning av tags og filnavn
 (setq org-agenda-remove-tags t)
 #+end_src
 
+~org-agenda-use-tag-inheritance~ lar tags arves nedover
+Ingen tag-arv i agendaen. Jeg bruker ikke tags, og arven gjør agendaen tregere.
+
+#+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
+(setq org-agenda-use-tag-inheritance nil)
+#+end_src
+
 Så fjerner jeg alt fra ~org-agenda-prefix-format~. Spesielt ~search~-delen gjør at jeg slipper å se filbanen til hver TODO. Resten gjør ingenting såvidt jeg forstår, så jeg starter like greit med et blankt utgangspunkt og tilpasser det fra scratch:
 
 #+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
