@@ -1525,6 +1525,24 @@ Datolinja vises bare øverst. I de andre agendablokkene er ~org-agenda-format-da
   (goto-char (point-min))
   (re-search-forward "^\\* Kø[ \t]*$" nil t))
 
+(defun my/kø-gå-til ()
+  "Åpne `* Kø' i jobbfila."
+  (interactive)
+  (let ((fil (or (my/kø--fil) (user-error "Fant ikke fila med `* Kø'"))))
+    (pop-to-buffer-same-window (find-file-noselect fil))
+    (widen)
+    (unless (my/kø--gå-til-overskrift)
+      (user-error "Fant ikke `* Kø' i %s" fil))
+    (beginning-of-line)
+    (org-fold-show-context 'agenda)
+    (org-fold-show-entry)))
+
+(defvar my/kø-overskrift-map
+  (let ((map (make-sparse-keymap)))
+    (define-key map [return] #'my/kø-gå-til)
+    (define-key map (kbd "RET") #'my/kø-gå-til)
+    map))
+
 (defun my/kø-ider ()
   "ID-ene som lenkes fra `* Kø', i samme rekkefølge som i lista."
   (when-let* ((fil (my/kø--fil)))
@@ -1679,7 +1697,8 @@ Fritidsagendaen (~f~) bruker fortsatt bare disse to. Jobbagendaen (~j~) bruker b
           (alltodo "" ((org-agenda-skip-function '(my/skip-utenfor-kø))
                        (org-agenda-sorting-strategy '(user-defined-up))
                        (org-agenda-cmp-user-defined #'my/kø-cmp)
-                       (org-agenda-overriding-header "\nKø")))
+                       (org-agenda-overriding-header
+                        ,(concat "\n" (propertize "Kø" 'keymap my/kø-overskrift-map)))))
           (agenda "" ((org-agenda-span 'day)
                       (org-agenda-skip-function '(my/skip-følg-opp))
                       (org-agenda-format-date "")
