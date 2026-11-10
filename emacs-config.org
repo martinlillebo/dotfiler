@@ -2442,6 +2442,33 @@ Noen steder må jeg bruke HTTPS i stedet for SSH-autentisering. Da kan jeg legge
             'magit-process-password-auth-source))
 #+end_src
 
+** diff-hl: endringsstreker i margen
+
+~diff-hl~ fargelegger venstremargen iht. statusendringer fra Git. Jeg bruker ofte et tema/Doom-config som gjør de usynlige i enkelte filer. Reaktiverer de slik:
+
+#+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
+(defun my/diff-hl-temafarger-h (&rest _)
+  "Bruk temaets bakgrunnsfarge som strekfarge, om temaet ikke har en egen."
+  (dolist (face '(diff-hl-insert diff-hl-change diff-hl-delete))
+    (let ((attr (face-spec-choose (cadr (car (get face 'theme-face))))))
+      (when (and (stringp (plist-get attr :background))
+                 (not (plist-get attr :foreground)))
+        (set-face-foreground face (plist-get attr :background))))))
+
+(after! diff-hl
+  (add-hook! '(diff-hl-mode-hook doom-load-theme-hook) :append
+             #'my/diff-hl-temafarger-h))
+#+end_src
+
+I svære filer aktiveres ~so-long-mode~ som slår av en del effekter, bl.a. ~diff-hl~. Skrur den tilbake på her:
+
+#+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
+(after! so-long
+  (setq so-long-minor-modes
+        (cl-set-difference so-long-minor-modes
+                           '(diff-hl-mode diff-hl-flydiff-mode diff-hl-amend-mode))))
+#+end_src
+
 * Små funksjoner og hurtigtaster
 ** my/narrow-dwim
 
