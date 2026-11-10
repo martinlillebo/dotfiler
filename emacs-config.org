@@ -1462,8 +1462,7 @@ Fjerner visning av tags og filnavn
 (setq org-agenda-remove-tags t)
 #+end_src
 
-~org-agenda-use-tag-inheritance~ lar tags arves nedover
-Ingen tag-arv i agendaen. Jeg bruker ikke tags, og arven gjør agendaen tregere.
+~org-agenda-use-tag-inheritance~ lar tags arves nedover i headline-hierarkier. Men jeg bruker ikke tags. Fjerner for å unngå å bruke ressurser på det:
 
 #+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
 (setq org-agenda-use-tag-inheritance nil)
