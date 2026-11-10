@@ -1667,6 +1667,8 @@ Funker både fra agendaen og fra en overskrift i en org-fil."
       "q" #'my/kø-legg-til)
 #+end_src
 
+#+RESULTS:
+
 ** Separere daglig repeterende oppgaver fra alt annet
 
 Jeg har en liste med daglige småting jeg vil få gjort, og det er fint å få den skilt ut fra de større, viktigere oppgavene jeg setter opp til egne dager.
@@ -1726,6 +1728,12 @@ Fritidsagendaen (~f~) bruker fortsatt bare disse to. Jobbagendaen (~j~) bruker b
          ((org-agenda-files my/agenda-fritid)))))
 
 #+end_src
+
+#+RESULTS:
+| j | Jobb | ((agenda  ((org-agenda-span 'day) (org-agenda-skip-function '(my/skip-behandle)) (org-agenda-overriding-header  ))) (alltodo  ((org-agenda-skip-function '(my/skip-utenfor-kø)) (org-agenda-sorting-strategy '(user-defined-up)) (org-agenda-cmp-user-defined #'my/kø-cmp) (org-agenda-overriding-header |
+Kø))) (agenda  ((org-agenda-span 'day) (org-agenda-skip-function '(my/skip-følg-opp)) (org-agenda-format-date ) (org-agenda-prefix-format '((agenda . %-12s))) (org-agenda-scheduled-leaders '( Sched.%2dx: )) (org-agenda-overriding-header (my/kø--overskrift Følg opp)))) (agenda  ((org-agenda-span 'day) (org-agenda-skip-function '(my/skip-påminnelser)) (org-agenda-format-date ) (org-agenda-prefix-format '((agenda . %-12s))) (org-agenda-scheduled-leaders '( Sched.%2dx: )) (org-agenda-overriding-header (my/kø--overskrift Påminnelser)))) (agenda  ((org-agenda-span 'day) (org-agenda-skip-function '(my/skip-daglig)) (org-agenda-format-date ) (org-agenda-overriding-header (my/kø--overskrift Daglig))))) |((org-agenda-files my/agenda-jobb)) |
+| f | Fritid | ((agenda  ((org-agenda-span 'day) (org-agenda-skip-function '(my/skip-recurring)) (org-agenda-overriding-header  ))) (agenda  ((org-agenda-span 'day) (org-agenda-skip-function '(my/skip-non-recurring)) (org-agenda-overriding-header |
+Daglig)))) |((org-agenda-files my/agenda-fritid)) |
 
 
 ** Hurtigtaster
