@@ -2460,7 +2460,7 @@ Noen steder må jeg bruke HTTPS i stedet for SSH-autentisering. Da kan jeg legge
              #'my/diff-hl-temafarger-h))
 #+end_src
 
-I svære filer aktiveres ~so-long-mode~ som slår av en del effekter, bl.a. ~diff-hl~. Skrur den tilbake på her:
+I svære filer aktiveres ~so-long-mode~ som slår av en del effekter, bl.a. ~diff-hl~. Skrur tilbake på her:
 
 #+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
 (after! so-long
