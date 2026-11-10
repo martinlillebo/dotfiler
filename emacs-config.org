@@ -276,7 +276,6 @@ Fjerner også ~org-self-insert-command~, som kjøres for hvert eneste tastetrykk
           self-insert-command
           org-self-insert-command))
 
-(setq keyfreq-autosave-timeout 180)
 (keyfreq-mode 1)
 (keyfreq-autosave-mode 1)
 #+end_src
