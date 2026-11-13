@@ -1120,12 +1120,6 @@ Skrur av caching, slik at nye og omdøpte filer er søkbare med en gang.
 * Org-mode
 ** Småting
 
-Setter ~org-log-into-drawer~ fra default ~nil~ til ~t~. Det gjør at notater som skrives med ~org-add-note~ havner inni en dedikert ~:LOGBOOK:~-skuff, i stedet for å legges rett innunder headeren som plaintekst: 
-
-#+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
-(setq org-log-into-drawer t)
-#+end_src
-
 ** Org-eksport: PDF, HTML
 
 Setter noen verdier for å tilpasse info som inngår i eksport til HTML, PDF og lignende. Dette gir et minimum som er det jeg vanligvis trenger for å lime inn HTML til eposter og andre samarbeidsverktøy på jobb.
