@@ -1118,8 +1118,6 @@ Skrur av caching, slik at nye og omdøpte filer er søkbare med en gang.
 #+end_src
     
 * Org-mode
-** Småting
-
 ** Org-eksport: PDF, HTML
 
 Setter noen verdier for å tilpasse info som inngår i eksport til HTML, PDF og lignende. Dette gir et minimum som er det jeg vanligvis trenger for å lime inn HTML til eposter og andre samarbeidsverktøy på jobb.
@@ -1341,7 +1339,7 @@ Sistnevnte funksjon tillater bare ASCII-tegn, som gjør at f.eks. "Å" omgjøres
                                         (org-roam-node-title node)))))
 #+end_src
 
-** Ingen org-roam-oppdatering ved lagring av store filer
+** Deaktivere org-roam-oppdatering ved lagring av store filer
 Store filer (over 20 000 linjer) leses inn i org-roam-databasen ved første ~SPC n r~ i neste økt, ikke ved hver lagring.
 
 #+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
