@@ -2344,7 +2344,6 @@ Hotkey:
   (setq webjump-sites
         (append
          '(("test-url" . "https://www.nrk.no")
-           ("test-url2" . "https://www.vg.no")
            ("Deichman" . "https://deichman.no/logg-inn")
            )
          my/webjump-jobblenker)))
@@ -3178,8 +3177,7 @@ Skifter ut ~SPC o /~ for å åpne filutforskeren med ~SPC o o~, for å passe bed
 
 #+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
 (map! :leader
-      (:prefix ("o" . "open")
-       :desc "Open Dirvish (alias SPC o /)" "o" #'dirvish))
+      :desc "Open Dirvish (alias SPC o /)" "o o" #'dirvish)
 #+end_src
 
 Setter noen hotkeys for å navigere rett til mapper jeg bruker ofte
