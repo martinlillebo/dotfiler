@@ -2341,7 +2341,23 @@ Hotkey:
   (interactive)
   (browse-url "https://login.deichman.no/realms/oslo/protocol/openid-connect/auth?client_id=deichman-no&scope=openid%20email%20profile&response_type=code&redirect_uri=https%3A%2F%2Fdeichman.no%2Fapi%2Fauth%2Fcallback%2Fkeycloak"))
 #+end_src
-  
+
+** Webjump
+
+#+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
+(defvar my/webjump-jobblenker nil
+  "Denne hentes fra lokal secretsfil om den fins")
+
+(after! webjump
+  (setq webjump-sites
+        (append
+         '(("test-url" . "https://www.nrk.no")
+           ("test-url2" . "https://www.vg.no")
+           )
+         my/webjump-jobblenker)))
+#+end_src
+
+
 * Magit
 ** ~magit-list-repositories~
 
