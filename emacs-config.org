@@ -2357,6 +2357,12 @@ Hotkey:
          my/webjump-jobblenker)))
 #+end_src
 
+Hotkey:
+
+#+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
+(define-key doom-leader-map (kbd "o w") #'webjump)
+#+end_src
+
 
 * Magit
 ** ~magit-list-repositories~
@@ -3337,8 +3343,6 @@ Lager en kommando og en hurtigtast for hver stasjon:
 Notater om stasjonene:
 - DEF CON Radio :: [[https://somafm.com/player24/station/defcon][soma fm - DEF CON Radio]]
 - NRK Super ::
-  - [ ] straem URL
-  - [ ] 
 - ilovechillhop :: Nettside: https://liveonlineradio.net/chilledcow
 - freeCodeCamp :: https://coderadio.freecodecamp.org/
 - Radio Pays de Guéret :: Fransk [[https://www.radiopaysdegueret.fr/][nettradio]] som spiller veldig variert musikk
