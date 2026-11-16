@@ -1300,13 +1300,13 @@ Org-capture gjør at man kan få skrevet inn smånotater til en fil uten å måt
             ("h" "Hodepine" plain
              (file+headline ,hodepine "Logg")
              "%<%Y-%m-%d %H:%M:%S %a> - %^{Intensitet (1-10)} - %^{Kontekst: }\n" :prepend t :immediate-finish t)
+            ("w" "Webjump-lenke" plain
+             (file+function "~/repos/dotfiler/emacs-config.org" my/webjump-capture-sted)
+             "%(my/webjump-capture-lenke)" :immediate-finish t)
             ))))
 #+end_src
 
-
-- ~:immediate-finish t~ gjør at teksten bare lagres i buffer uten at man blir bedt om å dobbeltsjekke resultatet i en visningbuffer
 - ~file+headline~ sier at teksten skal skrives inn i filen som oppgis først, og under headline-en som oppgis etterpå. F.eks. ~Logg~ her
-- 
 
 ** toc-org
 
@@ -2362,6 +2362,37 @@ Hotkey:
 #+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
 (define-key doom-leader-map (kbd "o w") #'webjump)
 #+end_src
+
+*** Capture-template for nye lenker
+
+#+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
+(defun my/webjump-capture-sted ()
+  "Flytter punktet til slutten av den offentlige webjump-lista."
+  (goto-char (point-min))
+  (re-search-forward "^(after! webjump")
+  (search-forward "'(")
+  (backward-char)
+  (org-capture-put :webjump-innrykk (1+ (current-column)))
+  (with-syntax-table emacs-lisp-mode-syntax-table
+    (forward-sexp))
+  (backward-char)
+  (when (looking-back "^[ \t]*" (line-beginning-position))
+    (beginning-of-line)))
+
+(defun my/webjump-capture-lenke ()
+  "Spør om lenke og navn, og returnerer en webjump-oppføring."
+  (let ((lenke (read-string "Lenke: "))
+        (navn (read-string "Navn: ")))
+    (when (or (string-blank-p lenke) (string-blank-p navn))
+      (user-error "Både lenke og navn må fylles ut"))
+    (require 'webjump)
+    (add-to-list 'webjump-sites (cons navn lenke) t)
+    (concat (make-string (org-capture-get :webjump-innrykk) ?\s)
+            (format "(%S . %S)" navn lenke))))
+#+end_src
+
+#+RESULTS:
+: my/webjump-capture-lenke
 
 
 * Magit
