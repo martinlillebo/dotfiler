@@ -652,12 +652,13 @@ Lager i tillegg en versjon som bare kjører "S ~" når jeg har markert tekst, sl
 
 #+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
 (defun my/tilde-rundt (beg end)
-  "Sett ~ rundt BEG..END og plasser markøren på siste ~."
-  (goto-char end)
-  (insert "~")
-  (goto-char beg)
-  (insert "~")
-  (goto-char (1+ end)))
+  "Sett ~ (eller ` i markdown) rundt BEG..END og plasser markøren på siste tegn."
+  (let ((tegn (if (derived-mode-p 'markdown-mode) "`" "~")))
+    (goto-char end)
+    (insert tegn)
+    (goto-char beg)
+    (insert tegn)
+    (goto-char (1+ end))))
 
 (defun my/marker-ord-som-kode ()
   (interactive)
@@ -2680,8 +2681,11 @@ ARGS legges til på begin-linja, f.eks. \"conf\" eller \":tangle no\"."
                     (car (bounds-of-thing-at-point 'paragraph))))
          (end-raw (if region (region-end)
                     (cdr (bounds-of-thing-at-point 'paragraph))))
-         (begin-line (concat "#+begin_" type (if args (concat " " args) "")))
-         (end-line (concat "#+end_" type)))
+         (md (and (derived-mode-p 'markdown-mode) (string= type "src")))
+         (begin-line (if md
+                         (concat "```" (or args ""))
+                       (concat "#+begin_" type (if args (concat " " args) ""))))
+         (end-line (if md "```" (concat "#+end_" type))))
     (when (and beg-raw end-raw)
       (goto-char end-raw)
       (skip-chars-backward " \t\n" beg-raw)
@@ -2731,7 +2735,7 @@ Wrapper-ene jeg bruker mest er disse:
   (my/wrap-med-block "src" "yaml"))
 
 (defun my/wrap-med-src-markdown ()
-  "Rammer inn region eller paragraf i en #+begin_src yaml block."
+  "Rammer inn region eller paragraf i en #+begin_src markdown block."
   (interactive)
   (my/wrap-med-block "src" "markdown"))
 #+end_src
