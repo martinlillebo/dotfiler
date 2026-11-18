@@ -3932,3 +3932,11 @@ Kommandoer som åpner [[https://opencode.ai][OpenCode]] i et nytt terminalvindu 
 
 (setq save-interprogram-paste-before-kill nil)
 #+end_src
+* Midlertidig
+
+2026-11-18
+Tror ~diff-hl-update-async t~ gir en feil i store filer. Deaktiverer:
+
+#+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
+(after! diff-hl (setq diff-hl-update-async nil))
+#+end_src
