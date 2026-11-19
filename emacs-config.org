@@ -2344,8 +2344,9 @@ Hotkey:
 (after! webjump
   (setq webjump-sites
         (append
-         '(("test-url" . "https://www.nrk.no")
+         '(
            ("Deichman" . "https://deichman.no/logg-inn")
+           ("Outlook calendar/kalender" . "https://outlook.office.com/calendar/")
            )
          my/webjump-jobblenker)))
 #+end_src
