@@ -1322,7 +1322,7 @@ Org-capture gjør at man kan få skrevet inn smånotater til en fil uten å måt
             ("w" "Webjump-lenke" plain
              (file+function "~/repos/dotfiler/emacs-config.org" my/webjump-capture-sted)
              "%(my/webjump-capture-lenke)" :immediate-finish t)
-            ("n" "Lest artikkel" entry
+            ("n" "Nettartikkel" entry
              (file+headline ,artikler "Artikler")
              "%(my/artikkel-capture-lenke)" :prepend t :immediate-finish t)
             ))))
