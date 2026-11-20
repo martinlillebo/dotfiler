@@ -1530,7 +1530,7 @@ Jobbagendaen (~SPC A j~) har fem blokker:
 
 En oppgave som ligger i køen vises bare i Kø-blokka, selv om den også er schedulert eller WAIT.
 
-~Q~ i agendaen og ~SPC m q~ på en overskrift i en org-fil legger oppgaven nederst i ~* Kø~ (og gir den en ~:ID:~ om den mangler). ~SPC m q~ var ~org-set-tags-command~, som jeg ikke bruker. Fila med ~* Kø~ er første fil i ~my/agenda-jobb~, med mindre ~my/kø-fil~ er satt.
+~Q~ i agendaen og ~SPC m q~ på en overskrift i en org-fil legger oppgaven nederst i ~* Kø~ (og gir den en ~:ID:~ om den mangler). ~SPC m Q~ og ~SPC u Q~ i agendaen legger den øverst. ~SPC m q~ var ~org-set-tags-command~, som jeg ikke bruker. Fila med ~* Kø~ er første fil i ~my/agenda-jobb~, med mindre ~my/kø-fil~ er satt.
 
 Datolinja vises bare øverst. I de andre agendablokkene er ~org-agenda-format-date~ en tom streng, og overskriften er en funksjon som ikke avslutter med linjeskift. Da blir den tomme datolinja bare linjeskiftet etter overskriften.
 
@@ -1656,31 +1656,51 @@ Datolinja vises bare øverst. I de andre agendablokkene er ~org-agenda-format-da
          (save-excursion (org-back-to-heading t) (point-marker)))
         (t (user-error "Verken i org eller agenda"))))
 
-(defun my/kø-legg-til ()
-  "Legg oppgaven under markøren nederst i `* Kø'.
+(defun my/kø--nummerer (start slutt)
+  "Nummerer punktene mellom START og SLUTT fortløpende fra 1."
+  (save-excursion
+    (goto-char start)
+    (let ((n 0))
+      (while (re-search-forward "^\\([0-9]+\\)[.)] " slutt t)
+        (replace-match (number-to-string (cl-incf n)) t t nil 1)))))
+
+(defun my/kø-legg-til (&optional øverst)
+  "Legg oppgaven under markøren nederst i `* Kø', eller øverst med ØVERST.
 Funker både fra agendaen og fra en overskrift i en org-fil."
-  (interactive)
+  (interactive "P")
   (let* ((m (my/kø--marker-ved-punkt))
          (fil (or (my/kø--fil) (user-error "Fant ikke fila med `* Kø'")))
          (id (org-with-point-at m (org-id-get-create)))
          (tittel (org-with-point-at m
-                   (org-link-display-format (org-get-heading t t t t)))))
+                   (org-link-display-format (org-get-heading t t t t))))
+         (lenke (format "[[id:%s][%s]]" id tittel)))
     (if (member id (my/kø-ider))
         (message "Allerede i køen: %s" tittel)
       (with-current-buffer (find-file-noselect fil)
         (org-with-wide-buffer
          (unless (my/kø--gå-til-overskrift)
            (user-error "Fant ikke `* Kø' i %s" fil))
-         (let* ((start (point))
-                (slutt (save-excursion (org-end-of-subtree t) (point)))
-                (n (1+ (count-matches "^[0-9]+[.)] " start slutt))))
-           (goto-char slutt)
-           (skip-chars-backward " \t\n")
-           (end-of-line)
-           (insert (format "\n%d. [[id:%s][%s]]" n id tittel)))))
-      (message "Lagt i køen: %s" tittel)
+         (let ((start (point))
+               (slutt (save-excursion (org-end-of-subtree t) (point-marker))))
+           (if (and øverst (re-search-forward "^[0-9]+\\([.)]\\) " slutt t))
+               (progn
+                 (beginning-of-line)
+                 (insert (format "1%s %s\n" (match-string 1) lenke))
+                 (my/kø--nummerer start slutt))
+             (let ((n (1+ (count-matches "^[0-9]+[.)] " start slutt))))
+               (goto-char slutt)
+               (skip-chars-backward " \t\n")
+               (end-of-line)
+               (insert (format "\n%d. %s" n lenke))))
+           (set-marker slutt nil))))
+      (message "Lagt %s i køen: %s" (if øverst "øverst" "nederst") tittel)
       (when (derived-mode-p 'org-agenda-mode)
         (org-agenda-redo t)))))
+
+(defun my/kø-legg-til-øverst ()
+  "Legg oppgaven under markøren øverst i `* Kø'."
+  (interactive)
+  (my/kø-legg-til t))
 
 (map! :after evil-org-agenda
       :map evil-org-agenda-mode-map
@@ -1689,7 +1709,8 @@ Funker både fra agendaen og fra en overskrift i en org-fil."
 (map! :after org
       :map org-mode-map
       :localleader
-      "q" #'my/kø-legg-til)
+      "q" #'my/kø-legg-til
+      "Q" #'my/kø-legg-til-øverst)
 #+end_src
 
 #+RESULTS:
