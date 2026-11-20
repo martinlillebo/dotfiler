@@ -1119,6 +1119,13 @@ Skrur av caching, slik at nye og omdøpte filer er søkbare med en gang.
 #+end_src
     
 * Org-mode
+** org-log-into-drawer
+
+~org-log-into-drawer~ gjør at repeterende TODO-oppgaver får den lange rekka med "CLOSED"-timestamps inni en dedikert ~:LOGBOOK:~-skuff, i stedet for å legges rett innunder headeren som plaintekst som fyller opp visningen.
+
+#+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
+(setq org-log-into-drawer t)
+#+end_src
 ** Org-eksport: PDF, HTML
 
 Setter noen verdier for å tilpasse info som inngår i eksport til HTML, PDF og lignende. Dette gir et minimum som er det jeg vanligvis trenger for å lime inn HTML til eposter og andre samarbeidsverktøy på jobb.
