@@ -1280,10 +1280,21 @@ Innboksnotatene, brukt av ~SPC 1~, ~SPC 2~, capture og startsiden:
 Org-capture gjør at man kan få skrevet inn smånotater til en fil uten å måtte åpne filen.
 
 #+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
+(defun my/artikkel-capture-lenke ()
+  "Spør om lenke og tittel, og returnerer en TODO-overskrift med Org-lenke."
+  (let ((lenke (string-trim (read-string "Lenke: ")))
+        (tittel (string-trim (read-string "Tittel: "))))
+    (when (or (string-blank-p lenke) (string-blank-p tittel))
+      (user-error "Både lenke og tittel må fylles ut"))
+    (unless (string-match-p "\\`[[:alpha:]][[:alnum:]+.-]*://" lenke)
+      (setq lenke (concat "https://" lenke)))
+    (concat "* TODO " (org-link-make-string lenke tittel))))
+
 (after! org
   (let ((hodepine  "~/repos/notater/202205082206 Hodepinelogg.org")
         (familie   "~/repos/notater/org/20250531191654-todo_familie.org")
-        (personlig "~/repos/notater/202506120825 Todo.org"))
+        (personlig "~/repos/notater/202506120825 Todo.org")
+        (artikler  "~/repos/notater/202108241856 Nettartikler jeg har lest.org"))
 
     (setq org-capture-templates
           `(
@@ -1311,6 +1322,9 @@ Org-capture gjør at man kan få skrevet inn smånotater til en fil uten å måt
             ("w" "Webjump-lenke" plain
              (file+function "~/repos/dotfiler/emacs-config.org" my/webjump-capture-sted)
              "%(my/webjump-capture-lenke)" :immediate-finish t)
+            ("n" "Lest artikkel" entry
+             (file+headline ,artikler "Artikler")
+             "%(my/artikkel-capture-lenke)" :prepend t :immediate-finish t)
             ))))
 #+end_src
 
