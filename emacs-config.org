@@ -1231,21 +1231,39 @@ Standard-fargene er ikke helt topp, så her er noen endringer:
           )))
 #+end_src
 
-** Grå-e ut ~[-]~
+** Grå-e ut ~[~]~
 
-Så man ser hvilke små todo's som er strøket ut vs. faktisk gjort:
+For å se hvilke små todo-sjekkbokser som er strøket ut vs. faktisk utført:
 
 #+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
 (defface my/org-checkbox-cancelled
   '((t :foreground "#595e60" :strike-through t))
-  "Face for list items with a [-] checkbox.")
+  "Face for list items with a [~] checkbox.")
 
 (add-hook! 'org-mode-hook
   (font-lock-add-keywords
    nil
-   '(("^[ \t]*\\(?:[-+*]\\|[0-9]+[.)]\\)[ \t]+\\(\\[-\\][ \t]+.*\\)$"
+   '(("^[ \t]*\\(?:[-+*]\\|[0-9]+[.)]\\)[ \t]+\\(\\[~\\][ \t]+.*\\)$"
       1 'my/org-checkbox-cancelled prepend))
    'append))
+
+(defun my/org-checkbox-cancel ()
+  "Toggler sjekkboks mellom [~] og [ ]."
+  (interactive)
+  (save-excursion
+    (beginning-of-line)
+    (cond
+     ((looking-at "[ \t]*\\(?:[-+*]\\|[0-9]+[.)]\\)[ \t]+\\(\\[~\\]\\)")
+      (replace-match "[ ]" t t nil 1))
+     ((looking-at "[ \t]*\\(?:[-+*]\\|[0-9]+[.)]\\)[ \t]+\\(\\[[ X-]\\]\\)")
+      (replace-match "[~]" t t nil 1))
+     (t (user-error "No checkbox on this line"))))
+  (org-update-checkbox-count-maybe))
+
+(map! :after org
+      :map org-mode-map
+      :localleader
+      "X" #'my/org-checkbox-cancel)
 #+end_src
 
 ** CLOSED-property til TODO's
@@ -1718,7 +1736,8 @@ Funker både fra agendaen og fra en overskrift i en org-fil."
 
 (map! :after evil-org-agenda
       :map evil-org-agenda-mode-map
-      :m "Q" #'my/kø-legg-til)
+      :m "q" #'my/kø-legg-til
+      :m "Q" #'my/kø-legg-til-øverst)
 
 (map! :after org
       :map org-mode-map
@@ -1974,10 +1993,7 @@ Hjemmesnekra alternativ til ~org-export-to-html~, som eksporterer til ~/tmp~ i s
 #+begin_src emacs-lisp :tangle ~/repos/dotfiler/doom/config.el
 (defun my/org-eksport-to-tmp-html ()
   (interactive)
-  (let ((outfile (concat "/tmp/"
-                         (file-name-base (or (buffer-file-name)
-                                             (buffer-name)))
-                         ".html")))
+  (let ((outfile "/tmp/output.html"))
     ;; Eksporterer til HTML til en outfile-variabel, med Teams-filtrene
     (org-export-to-file 'html outfile nil nil nil nil
                         '(:filter-final-output (my/html-teams-friendly)
