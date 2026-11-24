@@ -1736,8 +1736,7 @@ Funker både fra agendaen og fra en overskrift i en org-fil."
 
 (map! :after evil-org-agenda
       :map evil-org-agenda-mode-map
-      :m "q" #'my/kø-legg-til
-      :m "Q" #'my/kø-legg-til-øverst)
+      :m "Q" #'my/kø-legg-til)
 
 (map! :after org
       :map org-mode-map
